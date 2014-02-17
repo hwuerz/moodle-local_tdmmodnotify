@@ -7,6 +7,8 @@
  * @copyright (c) 2014 The Development Manager Ltd
  */
 
+defined('MOODLE_INTERNAL') || die;
+
 $observers = array(
 
     /*

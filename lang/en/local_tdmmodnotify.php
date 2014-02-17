@@ -7,29 +7,20 @@
  * @copyright (c) 2014 The Development Manager Ltd
  */
 
+defined('MOODLE_INTERNAL') || die;
+
 // Module metadata
 $string['pluginname'] = 'TDM: module modification notification';
 
 // Created notification
-$string['templatecreatedsubj'] = 'New resource';
-$string['templatecreatedbody'] = 'Hi {$a->userfirstname},
+$string['templatesubject'] = 'Resource updates in your courses';
+$string['templatemessage'] = 'Hi {$a->firstname},
 
-A new resource has been uploaded the "{$a->coursefullname}" course.
+The following activities resources have changed in courses you\'re enrolled in.
 
-You can view it here:
-    {$a->sectionurl}
+{$a->notifications}
 
-Regards,
-{$a->siteadmin}';
-
-// Updated notification
-$string['templateupdatedsubj'] = 'Updated resource';
-$string['templateupdatedbody'] = 'Hi {$a->userfirstname},
-
-A resource has been modified in the "{$a->coursefullname}" course.
-
-You can view it here:
-    {$a->sectionurl}
-
-Regards,
-{$a->siteadmin}';
+{$a->signoff}';
+$string['templateresource'] = '* "{$a->modulename}" in "{$a->coursefullname}" was {$a->action}: {$a->url}';
+$string['actioncreated']    = 'created';
+$string['actionupdated']    = 'updated';
