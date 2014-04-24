@@ -17,7 +17,7 @@ clean:
 build/local_tdmmodnotify.zip:
 	mkdir -p $(TOP)build
 	cp -rv $(TOP)src $(TOP)build/tdmmodnotify
+	cp $(TOP)README.md $(TOP)build/tdmmodnotify
 	cd $(TOP)build \
 		&& zip -r local_tdmmodnotify.zip tdmmodnotify
 	rm -rfv $(TOP)build/tdmmodnotify
-
