@@ -3,8 +3,10 @@
     <!--
       == TDM: Module modification notification.
       ==
-      == @author Luke Carrier <luke@tdm.co>
+      == @package   local_tdmmodnotify
+      == @author    Luke Carrier <luke@tdm.co>
       == @copyright (c) 2014 The Development Manager Ltd
+      == @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
       -->
     <TABLES>
         <TABLE NAME="local_tdmmodnotify" COMMENT="Tracks notification messages">
