@@ -26,8 +26,15 @@ Requirements
 
 * Moodle 2.6+, as we make use of the new observer system for consuming events.
 
-Installation
-------------
+Building
+--------
 
-1. Clone this repository into ````local/tdmmodnotify````
-2. Browse to Site Administration -> Notifications and allow the database upgrades to execute
+1. Clone this repository, and ````cd```` into it
+2. Execute ````make```` to generate a zip file containing the plugin
+3. Upload to the ````moodle.org```` plugins site
+
+Installation
+-------------
+1. Copy the zip file to your server
+2. Extract the zip file and move the ````tdmmodnotify```` directory to your Moodle's ````local```` directory
+3. Browse to Site Administration -> Notifications and allow the database upgrades to execute
