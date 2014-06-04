@@ -63,24 +63,24 @@ SQL;
 
         $sql = <<<SQL
 SELECT
-    course_module.id AS moodleid,
-    notification.action as action,
-    course.id AS courseid, course.fullname AS coursefullname,
-    module.name AS modulename,
-    section.id AS coursesectionid, section.name as coursesectionname,
-    user.id AS userid, user.firstname AS userfirstname, user.lastname AS userlastname
-FROM {local_tdmmodnotify} notification
-LEFT JOIN {course_sections} section
-    ON section.id = notification.sectionid
-LEFT JOIN {user} user
-    ON user.id = notification.userid
-LEFT JOIN {course} course
-    ON course.id = notification.courseid
-LEFT JOIN {course_modules} course_module
-    ON course_module.id = notification.coursemoduleid
-LEFT JOIN {modules} module
-    ON module.id = course_module.module
-WHERE user.id = ?
+    cm.id AS moodleid,
+    n.action AS action,
+    c.id AS courseid, c.fullname AS coursefullname,
+    m.name AS modulename,
+    s.id AS coursesectionid, s.name AS coursesectionname,
+    u.id AS userid, u.firstname AS userfirstname, u.lastname AS userlastname
+FROM {local_tdmmodnotify} n
+LEFT JOIN {course_sections} s
+    ON s.id = n.sectionid
+LEFT JOIN {user} u
+    ON u.id = n.userid
+LEFT JOIN {course} c
+    ON c.id = n.courseid
+LEFT JOIN {course_modules} cm
+    ON cm.id = n.coursemoduleid
+LEFT JOIN {modules} m
+    ON m.id = cm.module
+WHERE u.id = ?
 SQL;
 
         return $DB->get_records_sql($sql, array($userid));
