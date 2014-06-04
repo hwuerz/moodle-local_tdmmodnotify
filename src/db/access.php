@@ -26,24 +26,16 @@
 
 defined('MOODLE_INTERNAL') || die;
 
-// Module metadata
-$string['pluginname'] = 'TDM: module modification notification';
+$capabilities = array(
 
-// Created notification
-$string['templatesubject'] = 'Resource updates in your courses';
-$string['templatemessage'] = 'Hi {$a->firstname},
+    /*
+     * Receive change digest for enrolled courses.
+     */
+    'local/tdmmodnotify:receivedigest' => array(
+        'captype'      => 'write',
+        'contextlevel' => CONTEXT_COURSE,
 
-The following activities resources have changed in courses you\'re enrolled in.
+        'archetypes' => array(),
+    ), 
 
-{$a->notifications}
-
-{$a->signoff}';
-$string['templateresource'] = '* "{$a->modulename}" in "{$a->coursefullname}" was {$a->action}: {$a->url}';
-$string['actioncreated']    = 'created';
-$string['actionupdated']    = 'updated';
-
-// Capabilities
-$string['tdmmodnotify:receivedigest'] = 'Receive course modification digest notification';
-
-// Message providers
-$string['messageprovider:digest'] = 'Course modification digest notification';
+);

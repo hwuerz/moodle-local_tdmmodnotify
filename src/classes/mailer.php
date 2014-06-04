@@ -91,23 +91,31 @@ class local_tdmmodnotify_mailer {
      * @return void
      */
     protected function mail($recipient) {
-        $user = core_user::get_user($recipient->userid);
-        $user->mailformat = 1;
-
-        $url = new moodle_url('/course/view.php');
+        $recipientuser = core_user::get_user($recipient->userid);
 
         $substitutions = (object) array(
             'firstname' => $recipient->userfirstname,
             'signoff'   => generate_email_signoff(),
-            'baseurl'   => $url,
+            'baseurl'   => new moodle_url('/course/view.php'),
         );
         $substitutions->notifications = $recipient->build_content($substitutions);
-
-        $subject = get_string('templatesubject', 'local_tdmmodnotify');
 
         $message     = get_string('templatemessage', 'local_tdmmodnotify', $substitutions);
         $messagehtml = text_to_html($message, false, false, true);
 
-        email_to_user($user, $this->supportuser, $subject, $message, $messagehtml);
+        $message = (object) array(
+            'component' => 'local_tdmmodnotify',
+            'name'      => 'digest',
+
+            'userfrom' => core_user::get_noreply_user(),
+            'userto'   => $recipientuser,
+
+            'subject'           => get_string('templatesubject', 'local_tdmmodnotify'),
+            'smallmessage'      => $message,
+            'fullmessage'       => $message,
+            'fullmessageformat' => FORMAT_PLAIN,
+            'fullmessagehtml'   => $messagehtml,
+        );
+        message_send($message);
     }
 }
