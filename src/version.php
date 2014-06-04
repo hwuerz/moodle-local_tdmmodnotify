@@ -30,12 +30,12 @@ global $CFG;
 
 $plugin->component = 'local_tdmmodnotify';
 
-$plugin->release  = '0.1.0';
+$plugin->release  = '0.2.0';
 $plugin->maturity = MATURITY_ALPHA;
 
 // Emails are sent daily unless we're in debug mode
 $plugin->cron = $CFG->debugdeveloper ? 1 : 86400;
 
 // Version format:  YYYYMMDDXX
-$plugin->version  = 2014021400;
+$plugin->version  = 2014060400;
 $plugin->requires = 2013111800;
