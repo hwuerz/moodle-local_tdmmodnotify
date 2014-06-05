@@ -3,6 +3,8 @@ Notify enrolled learners of changes to course content
 
 This simple plugin sends users daily digests of changed content within their enrolled courses.
 
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/LukeCarrier/moodle-local_tdmmodnotify/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/LukeCarrier/moodle-local_tdmmodnotify/?branch=master)
+
 License
 -------
 
