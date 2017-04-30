@@ -16,11 +16,11 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * TDM: Module modification notification.
+ * Upload notification.
  *
- * @package   local_tdmmodnotify
- * @author    Luke Carrier <luke@tdm.co>
- * @copyright (c) 2014 The Development Manager Ltd
+ * @package   local_uploadnotification
+ * @author    Luke Carrier <luke@tdm.co>, Hendrik Wuerz <hendrikmartin.wuerz@stud.tu-darmstadt.de>
+ * @copyright (c) 2014 The Development Manager Ltd, 2017 Hendrik Wuerz
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -28,7 +28,7 @@ defined('MOODLE_INTERNAL') || die;
 
 global $CFG;
 
-$plugin->component = 'local_tdmmodnotify';
+$plugin->component = 'local_uploadnotification';
 
 $plugin->release  = '0.2.0';
 $plugin->maturity = MATURITY_ALPHA;
@@ -37,5 +37,5 @@ $plugin->maturity = MATURITY_ALPHA;
 $plugin->cron = $CFG->debugdeveloper ? 1 : 86400;
 
 // Version format:  YYYYMMDDXX
-$plugin->version  = 2014060400;
+$plugin->version  = 2017043000;
 $plugin->requires = 2013111800;

@@ -16,11 +16,11 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * TDM: Module modification notification.
+ * Upload notification.
  *
- * @package   local_tdmmodnotify
- * @author    Luke Carrier <luke@tdm.co>
- * @copyright (c) 2014 The Development Manager Ltd
+ * @package   local_uploadnotification
+ * @author    Luke Carrier <luke@tdm.co>, Hendrik Wuerz <hendrikmartin.wuerz@stud.tu-darmstadt.de>
+ * @copyright (c) 2014 The Development Manager Ltd, 2017 Hendrik Wuerz
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -29,7 +29,7 @@ defined('MOODLE_INTERNAL') || die;
 /**
  * Recipient iterator.
  */
-class local_tdmmodnotify_recipient_iterator implements Iterator {
+class local_uploadnotification_recipient_iterator implements Iterator {
     /**
      * Record set.
      *
@@ -41,19 +41,19 @@ class local_tdmmodnotify_recipient_iterator implements Iterator {
      * Initialiser.
      */
     public function __construct() {
-        $this->records = local_tdmmodnotify_util::get_scheduled_recipients();
+        $this->records = local_uploadnotification_util::get_scheduled_recipients();
     }
 
     /**
      * Return a recipient object for the current recipient.
      *
-     * @return local_tdmmodnotify_recipient The recipient object.
+     * @return local_uploadnotification_recipient The recipient object.
      */
     public function current() {
         $userid        = current($this->records);
-        $notifications = local_tdmmodnotify_util::get_notification_digest($userid);
+        $notifications = local_uploadnotification_util::get_notification_digest($userid);
 
-        return local_tdmmodnotify_recipient::from_digest($notifications);
+        return local_uploadnotification_recipient::from_digest($notifications);
     }
 
     /**

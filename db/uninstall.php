@@ -16,11 +16,11 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * TDM: Module modification notification.
+ * Upload notification.
  *
- * @package   local_tdmmodnotify
- * @author    Luke Carrier <luke@tdm.co>
- * @copyright (c) 2014 The Development Manager Ltd
+ * @package   local_uploadnotification
+ * @author    Luke Carrier <luke@tdm.co>, Hendrik Wuerz <hendrikmartin.wuerz@stud.tu-darmstadt.de>
+ * @copyright (c) 2014 The Development Manager Ltd, 2017 Hendrik Wuerz
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -31,12 +31,12 @@ defined('MOODLE_INTERNAL') || die;
  *
  * @return boolean Always true (indicating success).
  */
-function xmldb_local_tdmmodnotify_uninstall() {
+function xmldb_local_uploadnotification_uninstall() {
     global $DB;
 
     $dbman = $DB->get_manager();
 
-    $table = new xmldb_table('local_tdmmodnotify');
+    $table = new xmldb_table('local_uploadnotification');
     if ($dbman->table_exists($table)) {
         $dbman->drop_table($table);
     }

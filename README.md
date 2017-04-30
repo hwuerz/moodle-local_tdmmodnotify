@@ -3,12 +3,10 @@ Notify enrolled learners of changes to course content
 
 This simple plugin sends users daily digests of changed content within their enrolled courses.
 
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/LukeCarrier/moodle-local_tdmmodnotify/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/LukeCarrier/moodle-local_tdmmodnotify/?branch=master)
-
 License
 -------
 
-    Copyright (c) The Development Manager Ltd
+    Copyright (c) The Development Manager Ltd, Hendrik Wuerz
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by

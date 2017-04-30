@@ -16,11 +16,11 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * TDM: Module modification notification.
+ * Upload notification.
  *
- * @package   local_tdmmodnotify
- * @author    Luke Carrier <luke@tdm.co>
- * @copyright (c) 2014 The Development Manager Ltd
+ * @package   local_uploadnotification
+ * @author    Luke Carrier <luke@tdm.co>, Hendrik Wuerz <hendrikmartin.wuerz@stud.tu-darmstadt.de>
+ * @copyright (c) 2014 The Development Manager Ltd, 2017 Hendrik Wuerz
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -29,11 +29,11 @@ defined('MOODLE_INTERNAL') || die;
 /**
  * Notification.
  */
-class local_tdmmodnotify_notification extends local_tdmmodnotify_model {
+class local_uploadnotification_notification extends local_uploadnotification_model {
     /**
      * Action.
      *
-     * One of the LOCAL_TDMMODNOTIFY_ACTION_* constants.
+     * One of the LOCAL_UPLOADNOTIFICATION_ACTION_* constants.
      *
      * @var integer
      */
@@ -104,11 +104,11 @@ class local_tdmmodnotify_notification extends local_tdmmodnotify_model {
      */
     public function build_content($substitutions) {
         switch ($this->action) {
-            case LOCAL_TDMMODNOTIFY_ACTION_CREATED:
+            case LOCAL_UPLOADNOTIFICATION_ACTION_CREATED:
                 $action = 'created';
                 break;
 
-            case LOCAL_TDMMODNOTIFY_ACTION_UPDATED:
+            case LOCAL_UPLOADNOTIFICATION_ACTION_UPDATED:
                 $action = 'updated';
                 break;
 
@@ -123,13 +123,13 @@ class local_tdmmodnotify_notification extends local_tdmmodnotify_model {
         foreach ($this->model_accessors() as $attribute) {
             $substitutions->{$attribute} = $this->{$attribute};
         }
-        $substitutions->action = get_string("action{$action}", 'local_tdmmodnotify');
+        $substitutions->action = get_string("action{$action}", 'local_uploadnotification');
 
-        return get_string('templateresource', 'local_tdmmodnotify', $substitutions) . "\n";
+        return get_string('templateresource', 'local_uploadnotification', $substitutions) . "\n";
     }
 
     /**
-     * @override \local_tdmmodnotify_model
+     * @override \local_uploadnotification_model
      */
     public function model_accessors() {
         return array(
@@ -147,7 +147,7 @@ class local_tdmmodnotify_notification extends local_tdmmodnotify_model {
      *
      * @param stdClass $notificationdigest A notfication digest object from the DML API.
      *
-     * @return \local_tdmmodnotify_notification A notification object.
+     * @return \local_uploadnotification_notification A notification object.
      */
     public static function from_digest($notificationdigest) {
         return new static($notificationdigest->action,

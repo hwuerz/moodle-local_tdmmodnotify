@@ -16,11 +16,11 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * TDM: Module modification notification.
+ * Upload notification.
  *
- * @package   local_tdmmodnotify
- * @author    Luke Carrier <luke@tdm.co>
- * @copyright (c) 2014 The Development Manager Ltd
+ * @package   local_uploadnotification
+ * @author    Luke Carrier <luke@tdm.co>, Hendrik Wuerz <hendrikmartin.wuerz@stud.tu-darmstadt.de>
+ * @copyright (c) 2014 The Development Manager Ltd, 2017 Hendrik Wuerz
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -31,24 +31,24 @@ defined('MOODLE_INTERNAL') || die;
  *
  * @var integer
  */
-define('LOCAL_TDMMODNOTIFY_ACTION_CREATED', 1);
+define('LOCAL_UPLOADNOTIFICATION_ACTION_CREATED', 1);
 
 /**
  * Action: updated.
  *
  * @var integer
  */
-define('LOCAL_TDMMODNOTIFY_ACTION_UPDATED', 2);
+define('LOCAL_UPLOADNOTIFICATION_ACTION_UPDATED', 2);
 
 /**
  * Send scheduled notification emails.
  *
  * @return void
  */
-function local_tdmmodnotify_cron() {
-    $recipients  = new local_tdmmodnotify_recipient_iterator();
+function local_uploadnotification_cron() {
+    $recipients  = new local_uploadnotification_recipient_iterator();
     $supportuser = core_user::get_support_user();
-    $mailer      = new local_tdmmodnotify_mailer($recipients, $supportuser);
+    $mailer      = new local_uploadnotification_mailer($recipients, $supportuser);
 
     $mailer->execute();
 }

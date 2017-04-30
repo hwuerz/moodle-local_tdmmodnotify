@@ -16,11 +16,11 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * TDM: Module modification notification.
+ * Upload notification.
  *
- * @package   local_tdmmodnotify
- * @author    Luke Carrier <luke@tdm.co>
- * @copyright (c) 2014 The Development Manager Ltd
+ * @package   local_uploadnotification
+ * @author    Luke Carrier <luke@tdm.co>, Hendrik Wuerz <hendrikmartin.wuerz@stud.tu-darmstadt.de>
+ * @copyright (c) 2014 The Development Manager Ltd, 2017 Hendrik Wuerz
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -29,7 +29,7 @@ defined('MOODLE_INTERNAL') || die;
 /**
  * Recipient.
  */
-class local_tdmmodnotify_recipient extends local_tdmmodnotify_model {
+class local_uploadnotification_recipient extends local_uploadnotification_model {
     /**
      * User ID.
      *
@@ -54,7 +54,7 @@ class local_tdmmodnotify_recipient extends local_tdmmodnotify_model {
     /**
      * Notifications.
      *
-     * @var local_tdmmodnotify_notification[]
+     * @var local_uploadnotification_notification[]
      */
     protected $notifications;
 
@@ -64,7 +64,7 @@ class local_tdmmodnotify_recipient extends local_tdmmodnotify_model {
      * @param integer                           $userid        User ID.
      * @param string                            $userfirstname User forename.
      * @param string                            $userlastname  User surname.
-     * @param local_tdmmodnotify_notification[] $notifications Notifications.
+     * @param local_uploadnotification_notification[] $notifications Notifications.
      */
     public function __construct($userid, $userfirstname, $userlastname, $notifications) {
         $this->userid        = $userid;
@@ -101,13 +101,13 @@ class local_tdmmodnotify_recipient extends local_tdmmodnotify_model {
     public function delete() {
         global $DB;
 
-        $DB->delete_records('local_tdmmodnotify', array(
+        $DB->delete_records('local_uploadnotification', array(
             'userid' => $this->userid,
         ));
     }
 
     /**
-     * @override \local_tdmmodnotify_model
+     * @override \local_uploadnotification_model
      */
     public function model_accessors() {
         return array(
@@ -123,7 +123,7 @@ class local_tdmmodnotify_recipient extends local_tdmmodnotify_model {
      *
      * @param stdClass $notificationdigest A notfication digest object from the DML API.
      *
-     * @return \local_tdmmodnotify_recipient A recipient object.
+     * @return \local_uploadnotification_recipient A recipient object.
      */
     public static function from_digest($notificationdigest) {
         $notification  = current($notificationdigest);
@@ -133,7 +133,7 @@ class local_tdmmodnotify_recipient extends local_tdmmodnotify_model {
 
         $notifications = array();
         foreach ($notificationdigest as $notification) {
-            $notifications[] = local_tdmmodnotify_notification::from_digest($notification);
+            $notifications[] = local_uploadnotification_notification::from_digest($notification);
         }
 
         return new static($userid, $userfirstname, $userlastname, $notifications);

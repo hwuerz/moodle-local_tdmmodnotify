@@ -16,11 +16,11 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * TDM: Module modification notification.
+ * Upload notification.
  *
- * @package   local_tdmmodnotify
- * @author    Luke Carrier <luke@tdm.co>
- * @copyright (c) 2014 The Development Manager Ltd
+ * @package   local_uploadnotification
+ * @author    Luke Carrier <luke@tdm.co>, Hendrik Wuerz <hendrikmartin.wuerz@stud.tu-darmstadt.de>
+ * @copyright (c) 2014 The Development Manager Ltd, 2017 Hendrik Wuerz
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -29,7 +29,7 @@ defined('MOODLE_INTERNAL') || die;
 /**
  * Utility methods not covered by the data model.
  */
-class local_tdmmodnotify_util {
+class local_uploadnotification_util {
     /**
      * Given a course module ID, retrieve the ID of its parent section.
      *
@@ -69,7 +69,7 @@ SELECT
     m.name AS modulename,
     s.id AS coursesectionid, s.name AS coursesectionname,
     u.id AS userid, u.firstname AS userfirstname, u.lastname AS userlastname
-FROM {local_tdmmodnotify} n
+FROM {local_uploadnotification} n
 LEFT JOIN {course_sections} s
     ON s.id = n.sectionid
 LEFT JOIN {user} u
@@ -96,7 +96,7 @@ SQL;
 
         $sql = <<<SQL
 SELECT DISTINCT userid
-FROM {local_tdmmodnotify}
+FROM {local_uploadnotification}
 ORDER BY userid ASC
 SQL;
 

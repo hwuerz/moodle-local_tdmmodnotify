@@ -16,11 +16,11 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * TDM: Module modification notification.
+ * Upload notification.
  *
- * @package   local_tdmmodnotify
- * @author    Luke Carrier <luke@tdm.co>
- * @copyright (c) 2014 The Development Manager Ltd
+ * @package   local_uploadnotification
+ * @author    Luke Carrier <luke@tdm.co>, Hendrik Wuerz <hendrikmartin.wuerz@stud.tu-darmstadt.de>
+ * @copyright (c) 2014 The Development Manager Ltd, 2017 Hendrik Wuerz
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -29,11 +29,11 @@ defined('MOODLE_INTERNAL') || die;
 /**
  * Digest mailer.
  */
-class local_tdmmodnotify_mailer {
+class local_uploadnotification_mailer {
     /**
      * Array/iterator of recipients.
      *
-     * @var \local_tdmmodnotify_recipient[]|\local_tdmmodnotify_recipient_iterator
+     * @var \local_uploadnotification_recipient[]|\local_uploadnotification_recipient_iterator
      */
     protected $recipients;
 
@@ -47,7 +47,7 @@ class local_tdmmodnotify_mailer {
     /**
      * Initialiser.
      *
-     * @param \local_tdmmodnotify_recipient[]|\local_tdmmodnotify_recipient_iterator $recipients  Array/iterator of
+     * @param \local_uploadnotification_recipient[]|\local_uploadnotification_recipient_iterator $recipients  Array/iterator of
      *                                                                                            recipients.
      * @param stdClass                                                               $supportuser Support user record.
      */
@@ -59,7 +59,7 @@ class local_tdmmodnotify_mailer {
     /**
      * Delete scheduled notifications for a recipient.
      *
-     * @param \local_tdmmodnotify_recipient $recipient The recipient record.
+     * @param \local_uploadnotification_recipient $recipient The recipient record.
      *
      * @return void
      */
@@ -86,7 +86,7 @@ class local_tdmmodnotify_mailer {
     /**
      * Mail a single recipient.
      *
-     * @param \local_tdmmodnotify_recipient $recipient The recipient record.
+     * @param \local_uploadnotification_recipient $recipient The recipient record.
      *
      * @return void
      */
@@ -100,17 +100,17 @@ class local_tdmmodnotify_mailer {
         );
         $substitutions->notifications = $recipient->build_content($substitutions);
 
-        $message     = get_string('templatemessage', 'local_tdmmodnotify', $substitutions);
+        $message     = get_string('templatemessage', 'local_uploadnotification', $substitutions);
         $messagehtml = text_to_html($message, false, false, true);
 
         $message = (object) array(
-            'component' => 'local_tdmmodnotify',
+            'component' => 'local_uploadnotification',
             'name'      => 'digest',
 
             'userfrom' => core_user::get_noreply_user(),
             'userto'   => $recipientuser,
 
-            'subject'           => get_string('templatesubject', 'local_tdmmodnotify'),
+            'subject'           => get_string('templatesubject', 'local_uploadnotification'),
             'smallmessage'      => $message,
             'fullmessage'       => $message,
             'fullmessageformat' => FORMAT_PLAIN,

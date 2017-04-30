@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<XMLDB PATH="local/tdmmodnotify/db" VERSION="20140214" COMMENT="TDM: Module modification notification">
+<XMLDB PATH="local/uploadnotification/db" VERSION="20170430" COMMENT="Upload notification">
     <!--
-      == TDM: Module modification notification.
+      == Upload notification.
       ==
-      == @package   local_tdmmodnotify
-      == @author    Luke Carrier <luke@tdm.co>
-      == @copyright (c) 2014 The Development Manager Ltd
+      == @package   local_uploadnotification
+      == @author    Luke Carrier <luke@tdm.co>, Hendrik Wuerz <hendrikmartin.wuerz@stud.tu-darmstadt.de>
+      == @copyright (c) 2014 The Development Manager Ltd, 2017 Hendrik Wuerz
       == @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
       -->
     <TABLES>
-        <TABLE NAME="local_tdmmodnotify" COMMENT="Tracks notification messages">
+        <TABLE NAME="local_uploadnotification" COMMENT="Tracks notification messages">
             <FIELDS>
                 <FIELD NAME="id"             TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"  />
                 <FIELD NAME="action"         TYPE="int" LENGTH="1"  NOTNULL="true" SEQUENCE="false" />

@@ -16,24 +16,24 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * TDM: Module modification notification.
+ * Upload notification.
  *
- * @package   local_tdmmodnotify
- * @author    Luke Carrier <luke@tdm.co>
- * @copyright (c) 2014 The Development Manager Ltd
+ * @package   local_uploadnotification
+ * @author    Luke Carrier <luke@tdm.co>, Hendrik Wuerz <hendrikmartin.wuerz@stud.tu-darmstadt.de>
+ * @copyright (c) 2014 The Development Manager Ltd, 2017 Hendrik Wuerz
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die;
 
-require_once "{$CFG->dirroot}/local/tdmmodnotify/lib.php";
+require_once "{$CFG->dirroot}/local/uploadnotification/lib.php";
 
 /**
  * Event observer.
  *
  * Responds to course module events emitted by the Moodle event manager.
  */
-class local_tdmmodnotify_observer {
+class local_uploadnotification_observer {
     /**
      * Course module created.
      *
@@ -72,24 +72,24 @@ class local_tdmmodnotify_observer {
 
         switch ($event->action) {
             case 'created':
-                $action = LOCAL_TDMMODNOTIFY_ACTION_CREATED;
+                $action = LOCAL_UPLOADNOTIFICATION_ACTION_CREATED;
                 break;
 
             case 'updated':
-                $action = LOCAL_TDMMODNOTIFY_ACTION_UPDATED;
+                $action = LOCAL_UPLOADNOTIFICATION_ACTION_UPDATED;
                 break;
 
             default:
                 throw new coding_exception("Invalid event action '{$event->action}' (valid options: 'created', 'updated')");
         }
 
-        $coursesection = local_tdmmodnotify_util::get_coursemodule_section($event->objectid);
+        $coursesection = local_uploadnotification_util::get_coursemodule_section($event->objectid);
 
         $coursecontext = context_course::instance($event->courseid);
         $enrolledusers = get_enrolled_users($coursecontext);
 
         foreach ($enrolledusers as $enrolleduser) {
-            $DB->insert_record('local_tdmmodnotify', (object) array(
+            $DB->insert_record('local_uploadnotification', (object) array(
                 'action'         => $action,
                 'courseid'       => $event->courseid,
                 'coursemoduleid' => $event->objectid,
