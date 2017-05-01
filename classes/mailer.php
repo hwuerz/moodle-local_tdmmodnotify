@@ -103,19 +103,13 @@ class local_uploadnotification_mailer {
         $message     = get_string('templatemessage', 'local_uploadnotification', $substitutions);
         $messagehtml = text_to_html($message, false, false, true);
 
-        $message = (object) array(
-            'component' => 'local_uploadnotification',
-            'name'      => 'digest',
+        mtrace('send message to ' . $recipientuser->username . '<br>');
 
-            'userfrom' => core_user::get_noreply_user(),
-            'userto'   => $recipientuser,
-
-            'subject'           => get_string('templatesubject', 'local_uploadnotification'),
-            'smallmessage'      => $message,
-            'fullmessage'       => $message,
-            'fullmessageformat' => FORMAT_PLAIN,
-            'fullmessagehtml'   => $messagehtml,
-        );
-        message_send($message);
+        email_to_user($recipientuser,
+            core_user::get_noreply_user(),
+            get_string('templatesubject', 'local_uploadnotification'),
+            $message,
+            $messagehtml,
+            '', '', true);
     }
 }
