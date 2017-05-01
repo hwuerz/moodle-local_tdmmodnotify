@@ -38,7 +38,8 @@ The following activities resources have changed in courses you\'re enrolled in.
 {$a->notifications}
 
 {$a->signoff}';
-$string['templateresource'] = '* "{$a->modulename}" in "{$a->coursefullname}" was {$a->action}: {$a->url}';
+//$string['templateresource'] = '* "{$a->modulename}" in "{$a->coursefullname}" was {$a->action}: {$a->url}';
+$string['templateresource'] = '* "{$a->filename}" in "{$a->coursefullname}" was {$a->action}: {$a->url}';
 $string['actioncreated']    = 'created';
 $string['actionupdated']    = 'updated';
 

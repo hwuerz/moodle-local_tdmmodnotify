@@ -68,7 +68,8 @@ SELECT
     c.id AS courseid, c.fullname AS coursefullname,
     m.name AS modulename,
     s.id AS coursesectionid, s.name AS coursesectionname,
-    u.id AS userid, u.firstname AS userfirstname, u.lastname AS userlastname
+    u.id AS userid, u.firstname AS userfirstname, u.lastname AS userlastname,
+    r.name AS filename
 FROM {local_uploadnotification} n
 LEFT JOIN {course_sections} s
     ON s.id = n.sectionid
@@ -80,6 +81,8 @@ LEFT JOIN {course_modules} cm
     ON cm.id = n.coursemoduleid
 LEFT JOIN {modules} m
     ON m.id = cm.module
+LEFT JOIN {resource} r
+    ON cm.instance = r.id
 WHERE u.id = ?
 SQL;
 
