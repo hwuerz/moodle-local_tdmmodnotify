@@ -88,10 +88,6 @@ class local_uploadnotification_observer {
                 throw new coding_exception("Invalid event action '{$event->action}' (valid options: 'created', 'updated')");
         }
 
-        // Not needed any longer
-        $coursesection = -1;
-        //$coursesection = local_uploadnotification_util::get_coursemodule_section($event->objectid);
-
         $coursecontext = context_course::instance($event->courseid);
         $enrolledusers = get_enrolled_users($coursecontext);
 
@@ -106,8 +102,8 @@ class local_uploadnotification_observer {
                 'action'         => $action,
                 'courseid'       => $event->courseid,
                 'coursemoduleid' => $event->objectid,
-                'sectionid'      => $coursesection,
                 'userid'         => $enrolleduser->id,
+                'timestamp'      => time()
             ));
         }
     }

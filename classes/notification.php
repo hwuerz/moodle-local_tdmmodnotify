@@ -61,20 +61,6 @@ class local_uploadnotification_notification extends local_uploadnotification_mod
     protected $coursefullname;
 
     /**
-     * Parent section number (within the scope of the course).
-     *
-     * @var integer
-     */
-    protected $coursesectionid;
-
-    /**
-     * Course section name.
-     *
-     * @var string
-     */
-    protected $coursesectionname;
-
-    /**
      * Module name.
      *
      * @var string
@@ -102,20 +88,16 @@ class local_uploadnotification_notification extends local_uploadnotification_mod
      * @param integer $visible Whether this file is visible for the user or not.
      * @param integer $courseid Course ID.
      * @param string $coursefullname Course full name.
-     * @param integer $coursesectionid Parent section number (within the scope of the course).
-     * @param string $coursesectionname Course section name.
      * @param string $modulename Module name.
      * @param string $filename The name of the file
      * @param string $moodleid The ID of the file in coursemodules
      */
-    public function __construct($action, $visible, $courseid, $coursefullname, $coursesectionid, $coursesectionname, $modulename,
+    public function __construct($action, $visible, $courseid, $coursefullname, $modulename,
                                 $filename, $moodleid) {
         $this->action            = $action;
         $this->visible           = $visible;
         $this->courseid          = $courseid;
         $this->coursefullname    = $coursefullname;
-        $this->coursesectionid   = $coursesectionid;
-        $this->coursesectionname = $coursesectionname;
         $this->modulename        = $modulename;
         $this->filename          = $filename;
         $this->moodleid          = $moodleid;
@@ -172,8 +154,6 @@ class local_uploadnotification_notification extends local_uploadnotification_mod
             'visible',
             'courseid',
             'coursefullname',
-            'coursesectionid',
-            'coursesectionname',
             'modulename',
             'filename',
             'moodleid',
@@ -190,7 +170,6 @@ class local_uploadnotification_notification extends local_uploadnotification_mod
     public static function from_digest($notificationdigest) {
         return new static($notificationdigest->action, $notificationdigest->visible,
                           $notificationdigest->courseid, $notificationdigest->coursefullname,
-                          $notificationdigest->coursesectionid, $notificationdigest->coursesectionname,
                           $notificationdigest->modulename,
                           $notificationdigest->filename, $notificationdigest->moodleid);
     }

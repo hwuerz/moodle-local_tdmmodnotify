@@ -67,13 +67,10 @@ SELECT
     n.action AS action,
     c.id AS courseid, c.fullname AS coursefullname,
     m.name AS modulename,
-    s.id AS coursesectionid, s.name AS coursesectionname,
     u.id AS userid, u.firstname AS userfirstname, u.lastname AS userlastname,
     r.name AS filename,
     cm.visible AS visible
 FROM {local_uploadnotification} n
-LEFT JOIN {course_sections} s
-    ON s.id = n.sectionid
 LEFT JOIN {user} u
     ON u.id = n.userid
 LEFT JOIN {course} c
