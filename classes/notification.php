@@ -40,6 +40,13 @@ class local_uploadnotification_notification extends local_uploadnotification_mod
     protected $action;
     
     /**
+     * Whether this file is visible for the user (1) or not (0).
+     *
+     * @var integer
+     */
+    protected $visible;
+
+    /**
      * Course ID.
      *
      * @var integer
@@ -92,6 +99,7 @@ class local_uploadnotification_notification extends local_uploadnotification_mod
      * Initialiser.
      *
      * @param integer $action Action.
+     * @param integer $visible Whether this file is visible for the user or not.
      * @param integer $courseid Course ID.
      * @param string $coursefullname Course full name.
      * @param integer $coursesectionid Parent section number (within the scope of the course).
@@ -100,9 +108,10 @@ class local_uploadnotification_notification extends local_uploadnotification_mod
      * @param string $filename The name of the file
      * @param string $moodleid The ID of the file in coursemodules
      */
-    public function __construct($action, $courseid, $coursefullname, $coursesectionid, $coursesectionname, $modulename,
+    public function __construct($action, $visible, $courseid, $coursefullname, $coursesectionid, $coursesectionname, $modulename,
                                 $filename, $moodleid) {
         $this->action            = $action;
+        $this->visible           = $visible;
         $this->courseid          = $courseid;
         $this->coursefullname    = $coursefullname;
         $this->coursesectionid   = $coursesectionid;
@@ -160,6 +169,7 @@ class local_uploadnotification_notification extends local_uploadnotification_mod
     public function model_accessors() {
         return array(
             'action',
+            'visible',
             'courseid',
             'coursefullname',
             'coursesectionid',
@@ -178,7 +188,7 @@ class local_uploadnotification_notification extends local_uploadnotification_mod
      * @return \local_uploadnotification_notification A notification object.
      */
     public static function from_digest($notificationdigest) {
-        return new static($notificationdigest->action,
+        return new static($notificationdigest->action, $notificationdigest->visible,
                           $notificationdigest->courseid, $notificationdigest->coursefullname,
                           $notificationdigest->coursesectionid, $notificationdigest->coursesectionname,
                           $notificationdigest->modulename,

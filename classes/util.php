@@ -63,13 +63,15 @@ SQL;
 
         $sql = <<<SQL
 SELECT
+    n.id,
     cm.id AS moodleid,
     n.action AS action,
     c.id AS courseid, c.fullname AS coursefullname,
     m.name AS modulename,
     s.id AS coursesectionid, s.name AS coursesectionname,
     u.id AS userid, u.firstname AS userfirstname, u.lastname AS userlastname,
-    r.name AS filename
+    r.name AS filename,
+    cm.visible AS visible
 FROM {local_uploadnotification} n
 LEFT JOIN {course_sections} s
     ON s.id = n.sectionid

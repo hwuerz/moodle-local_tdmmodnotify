@@ -82,7 +82,10 @@ class local_uploadnotification_recipient extends local_uploadnotification_model 
      *                                must include a moodle_url object in its baseurl property else a fatal error will
      *                                be raised when building their content.
      *
-     * @return object {string text, string html} The notification content.
+     * @return object {string text, string html} | null
+     *      The notification content.
+     *      null if no content is available for this user. This can happen if the visibility of a stored file was
+     *      changed to hidden.
      */
     public function build_content($substitutions) {
         $format = (object) array(
@@ -90,9 +93,20 @@ class local_uploadnotification_recipient extends local_uploadnotification_model 
             'html' => ''
         );
         foreach ($this->notifications as $notification) {
+
+            // If this file is not visible for the user, do not include it in the report
+            if($notification->visible == 0) {
+                continue;
+            }
+
             $context = $notification->build_content($substitutions);
             $format->text .= $context->text;
             $format->html .= $context->html;
+        }
+
+        // There are no notifications at all --> do not send an email
+        if($format->text == '') {
+            return null;
         }
 
         $format->text = substr($format->text, 0, -1);

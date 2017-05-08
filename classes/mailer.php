@@ -79,7 +79,7 @@ class local_uploadnotification_mailer {
             mtrace("user#{$recipient->userid}");
 
             $this->mail($recipient);
-//            $this->delete_scheduled_notifications($recipient);
+            $this->delete_scheduled_notifications($recipient);
         }
     }
 
@@ -100,6 +100,13 @@ class local_uploadnotification_mailer {
             'baseurl_file'   => new moodle_url('/mod/resource/view.php'),
         );
         $notifications = $recipient->build_content($substitutions);
+
+        // There are no notifications available for the user.
+        // This can happen if the visibility of a stored file was changed to hidden.
+        // In this case no mail has to be delivered.
+        if(is_null($notifications)) {
+            return;
+        }
 
         $substitutions->notifications = $notifications->text;
         $message = get_string('templatemessage', 'local_uploadnotification', $substitutions);
