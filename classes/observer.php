@@ -70,6 +70,11 @@ class local_uploadnotification_observer {
     protected static function schedule_notification(\core\event\base $event) {
         global $DB;
 
+        // Only send mails for updated resources
+        if($event->other['modulename'] != 'resource') {
+            return;
+        }
+
         switch ($event->action) {
             case 'created':
                 $action = LOCAL_UPLOADNOTIFICATION_ACTION_CREATED;
@@ -83,12 +88,20 @@ class local_uploadnotification_observer {
                 throw new coding_exception("Invalid event action '{$event->action}' (valid options: 'created', 'updated')");
         }
 
-        $coursesection = local_uploadnotification_util::get_coursemodule_section($event->objectid);
+        // Not needed any longer
+        $coursesection = -1;
+        //$coursesection = local_uploadnotification_util::get_coursemodule_section($event->objectid);
 
         $coursecontext = context_course::instance($event->courseid);
         $enrolledusers = get_enrolled_users($coursecontext);
 
         foreach ($enrolledusers as $enrolleduser) {
+            // Delete entries for this user and file which are already stored in the database.
+            // This is needed to avoid duplicated entries on file updates.
+            $DB->delete_records('local_uploadnotification', array(
+                'coursemoduleid' => $event->objectid,
+                'userid' => $enrolleduser->id,
+            ));
             $DB->insert_record('local_uploadnotification', (object) array(
                 'action'         => $action,
                 'courseid'       => $event->courseid,

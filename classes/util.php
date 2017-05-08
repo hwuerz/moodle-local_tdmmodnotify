@@ -63,7 +63,6 @@ SQL;
 
         $sql = <<<SQL
 SELECT
-    n.id,
     cm.id AS moodleid,
     n.action AS action,
     c.id AS courseid, c.fullname AS coursefullname,
