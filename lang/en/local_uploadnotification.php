@@ -38,8 +38,16 @@ The following activities resources have changed in courses you\'re enrolled in.
 {$a->notifications}
 
 {$a->signoff}';
+$string['templatemessage_html'] = 'Hi {$a->firstname},<br><br>
+
+The following activities resources have changed in courses you\'re enrolled in.<br><br>
+
+{$a->notifications}<br><br>
+
+{$a->signoff}';
 //$string['templateresource'] = '* "{$a->modulename}" in "{$a->coursefullname}" was {$a->action}: {$a->url}';
-$string['templateresource'] = '* "{$a->filename}" in "{$a->coursefullname}" was {$a->action}: {$a->url}';
+$string['templateresource']      = '* "{$a->filename}" in "{$a->coursefullname}" ({$a->url_course}) was {$a->action}: {$a->url_file} ';
+$string['templateresource_html'] = '<li><a href="{$a->url_file}">{$a->filename}</a> in <a href="{$a->url_course}">{$a->coursefullname}</a> was {$a->action}</li>';
 $string['actioncreated']    = 'created';
 $string['actionupdated']    = 'updated';
 

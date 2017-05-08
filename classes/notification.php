@@ -82,6 +82,13 @@ class local_uploadnotification_notification extends local_uploadnotification_mod
     protected $filename;
 
     /**
+     * File ID in the coursemodules table.
+     *
+     * @var int
+     */
+    protected $moodleid;
+
+    /**
      * Initialiser.
      *
      * @param integer $action Action.
@@ -91,9 +98,10 @@ class local_uploadnotification_notification extends local_uploadnotification_mod
      * @param string $coursesectionname Course section name.
      * @param string $modulename Module name.
      * @param string $filename The name of the file
+     * @param string $moodleid The ID of the file in coursemodules
      */
     public function __construct($action, $courseid, $coursefullname, $coursesectionid, $coursesectionname, $modulename,
-                                $filename) {
+                                $filename, $moodleid) {
         $this->action            = $action;
         $this->courseid          = $courseid;
         $this->coursefullname    = $coursefullname;
@@ -101,6 +109,7 @@ class local_uploadnotification_notification extends local_uploadnotification_mod
         $this->coursesectionname = $coursesectionname;
         $this->modulename        = $modulename;
         $this->filename          = $filename;
+        $this->moodleid          = $moodleid;
     }
 
     /**
@@ -109,7 +118,7 @@ class local_uploadnotification_notification extends local_uploadnotification_mod
      * @param stdClass $substitutions The string substitions to be passed to the location API when generating the
      *                                content. This object must include a moodle_url object in its baseurl property,
      *                                else a fatal error will be raised.
-     * @return string The notification content.
+     * @return object {string text, string html}
      * @throws coding_exception
      */
     public function build_content($substitutions) {
@@ -126,16 +135,23 @@ class local_uploadnotification_notification extends local_uploadnotification_mod
                 throw new coding_exception("Invalid action '{$this->action}'");
         }
 
-        $substitutions->baseurl->param('id', $this->courseid);
-        $substitutions->baseurl->set_anchor("section-{$this->coursesectionid}");
-        $substitutions->url = $substitutions->baseurl->out();
+        $substitutions->baseurl_file->param('id', $this->moodleid);
+        $substitutions->url_file = $substitutions->baseurl_file->out();
+
+        $substitutions->baseurl_course->param('id', $this->courseid);
+        $substitutions->url_course = $substitutions->baseurl_course->out();
 
         foreach ($this->model_accessors() as $attribute) {
             $substitutions->{$attribute} = $this->{$attribute};
         }
         $substitutions->action = get_string("action{$action}", 'local_uploadnotification');
 
-        return get_string('templateresource', 'local_uploadnotification', $substitutions) . "\n";
+        $context = (object) array(
+            'text' => get_string('templateresource',      'local_uploadnotification', $substitutions) . "\n",
+            'html' => get_string('templateresource_html', 'local_uploadnotification', $substitutions) . "\n"
+        );
+
+        return $context;
     }
 
     /**
@@ -150,6 +166,7 @@ class local_uploadnotification_notification extends local_uploadnotification_mod
             'coursesectionname',
             'modulename',
             'filename',
+            'moodleid',
         );
     }
 
@@ -165,6 +182,6 @@ class local_uploadnotification_notification extends local_uploadnotification_mod
                           $notificationdigest->courseid, $notificationdigest->coursefullname,
                           $notificationdigest->coursesectionid, $notificationdigest->coursesectionname,
                           $notificationdigest->modulename,
-                          $notificationdigest->filename);
+                          $notificationdigest->filename, $notificationdigest->moodleid);
     }
 }

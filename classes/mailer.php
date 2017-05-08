@@ -79,7 +79,7 @@ class local_uploadnotification_mailer {
             mtrace("user#{$recipient->userid}");
 
             $this->mail($recipient);
-            $this->delete_scheduled_notifications($recipient);
+//            $this->delete_scheduled_notifications($recipient);
         }
     }
 
@@ -96,12 +96,16 @@ class local_uploadnotification_mailer {
         $substitutions = (object) array(
             'firstname' => $recipient->userfirstname,
             'signoff'   => generate_email_signoff(),
-            'baseurl'   => new moodle_url('/course/view.php'),
+            'baseurl_course'   => new moodle_url('/course/view.php'),
+            'baseurl_file'   => new moodle_url('/mod/resource/view.php'),
         );
-        $substitutions->notifications = $recipient->build_content($substitutions);
+        $notifications = $recipient->build_content($substitutions);
 
-        $message     = get_string('templatemessage', 'local_uploadnotification', $substitutions);
-        $messagehtml = text_to_html($message, false, false, true);
+        $substitutions->notifications = $notifications->text;
+        $message = get_string('templatemessage', 'local_uploadnotification', $substitutions);
+
+        $substitutions->notifications = $notifications->html;
+        $message_html = get_string('templatemessage_html', 'local_uploadnotification', $substitutions);
 
         mtrace('send message to ' . $recipientuser->username . '<br>');
 
@@ -109,7 +113,7 @@ class local_uploadnotification_mailer {
             core_user::get_noreply_user(),
             get_string('templatesubject', 'local_uploadnotification'),
             $message,
-            $messagehtml,
+            $message_html,
             '', '', true);
     }
 }

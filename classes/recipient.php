@@ -82,15 +82,23 @@ class local_uploadnotification_recipient extends local_uploadnotification_model 
      *                                must include a moodle_url object in its baseurl property else a fatal error will
      *                                be raised when building their content.
      *
-     * @return string The notification content.
+     * @return object {string text, string html} The notification content.
      */
     public function build_content($substitutions) {
-        $resourcelist = '';
+        $format = (object) array(
+            'text' => '',
+            'html' => ''
+        );
         foreach ($this->notifications as $notification) {
-            $resourcelist .= $notification->build_content($substitutions);
+            $context = $notification->build_content($substitutions);
+            $format->text .= $context->text;
+            $format->html .= $context->html;
         }
 
-        return substr($resourcelist, 0, -1);
+        $format->text = substr($format->text, 0, -1);
+        $format->html = substr($format->html, 0, -1);
+
+        return $format;
     }
 
     /**
