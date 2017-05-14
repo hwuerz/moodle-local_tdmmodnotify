@@ -27,11 +27,7 @@
 defined('MOODLE_INTERNAL') || die;
 
 if ($hassiteconfig) {
-    if ($CFG->branch >= 32) { // Moodle 3.2 and later.
-        $section = 'email';
-    } else { // Up to and including Moodle 3.1.x .
-        $section = 'server';
-    }
+    $section = 'localplugins';
     $ADMIN->add($section, new admin_externalpage('local_uploadnotification',
         'uploadnotification',
         new moodle_url('/local/uploadnotification/')

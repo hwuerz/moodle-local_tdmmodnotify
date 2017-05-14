@@ -30,6 +30,7 @@ require_once($CFG->libdir.'/adminlib.php');
 // Include our function library.
 $pluginname = 'uploadnotification';
 require_once($CFG->dirroot.'/local/'.$pluginname.'/lib.php');
+require_once($CFG->dirroot.'/local/'.$pluginname.'/classes/uploadnotification_form.php');
 
 // Globals.
 global $CFG, $OUTPUT, $USER, $SITE, $PAGE;
@@ -46,10 +47,8 @@ if (!is_siteadmin()) {
 
 // Heading ==========================================================.
 
-//$title = get_string('pluginname', 'local_'.$pluginname);
-$title = 'Title Hendrik';
-//$heading = get_string('heading', 'local_'.$pluginname);
-$heading = 'Heading Hendrik';
+$title = get_string('pluginname', 'local_'.$pluginname);
+$heading = get_string('heading', 'local_'.$pluginname);
 $context = context_system::instance();
 $url = new moodle_url('/local/'.$pluginname.'/');
 
@@ -62,9 +61,16 @@ admin_externalpage_setup('local_'.$pluginname); // Sets the navbar & expands nav
 
 echo $OUTPUT->header();
 
-echo 'Hallo Welt';
+$form = new uploadnotification_form(null, array('fromdefault' => null));
+$data = $form->get_data();
+if ($data) {
 
-local_uploadnotification_cron();
+    echo 'Hallo Welt<br>';
+
+    local_uploadnotification_cron();
+
+}
+$form->display();
 
 
 // Footing  =========================================================.
