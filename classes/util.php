@@ -30,26 +30,6 @@ defined('MOODLE_INTERNAL') || die;
  * Utility methods not covered by the data model.
  */
 class local_uploadnotification_util {
-    /**
-     * Given a course module ID, retrieve the ID of its parent section.
-     *
-     * @param integer $coursemoduleid The ID of the course module (CMID), as per the course_modules table.
-     *
-     * @return integer The ID of its parent section within the course.
-     */
-    public static function get_coursemodule_section($coursemoduleid) {
-        global $DB;
-
-        $sql = <<<SQL
-SELECT cs.section
-FROM {course_modules} cm
-LEFT JOIN {course_sections} cs
-    ON cs.id = cm.section
-WHERE cm.id = ?
-SQL;
-
-        return $DB->get_field_sql($sql, array($coursemoduleid), MUST_EXIST);
-    }
 
     /**
      * Get a notification digest for a user.
@@ -81,10 +61,10 @@ LEFT JOIN {modules} m
     ON m.id = cm.module
 LEFT JOIN {resource} r
     ON cm.instance = r.id
-WHERE u.id = ?
+WHERE u.id = ? AND n.timestamp < ?
 SQL;
 
-        return $DB->get_records_sql($sql, array($userid));
+       return $DB->get_records_sql($sql, array($userid, self::get_max_timestamp()));
     }
 
     /**
@@ -98,9 +78,22 @@ SQL;
         $sql = <<<SQL
 SELECT DISTINCT userid
 FROM {local_uploadnotification}
+WHERE timestamp < ?
 ORDER BY userid ASC
 SQL;
 
-        return $DB->get_fieldset_sql($sql);
+        return $DB->get_fieldset_sql($sql, array(self::get_max_timestamp()));
+    }
+
+    /**
+     * Get the maximum timestamp of records to be returned.
+     * Only get entries which are older than 5 minutes
+     * After a docent uploaded some material, he maybe wants to change some properties
+     * --> do not send mail with records newer than this timestamp
+     *
+     * @return int The max timestamp allowed
+     */
+    private static function get_max_timestamp() {
+        return time() - 5 * 60;
     }
 }

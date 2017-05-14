@@ -29,6 +29,9 @@ defined('MOODLE_INTERNAL') || die;
 // Module metadata
 $string['pluginname'] = 'Upload notification';
 
+// Settings
+$string['heading'] = 'Upload notification settings';
+
 // Created notification
 $string['templatesubject'] = 'Resource updates in your courses';
 $string['templatemessage'] = 'Hi {$a->firstname},
