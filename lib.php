@@ -58,3 +58,36 @@ function local_uploadnotification_cron() {
 
     $mailer->execute();
 }
+
+
+
+function local_uploadnotification_extend_settings_navigation($settingsnav, $context) {
+    global $CFG, $PAGE;
+
+    // Only add this settings item on non-site course pages.
+    if (!$PAGE->course or $PAGE->course->id == 1) {
+        return;
+    }
+
+    // Only let users with the appropriate capability see this settings item.
+    if (!has_capability('moodle/backup:backupcourse', context_course::instance($PAGE->course->id))) {
+        return;
+    }
+
+    if ($settingnode = $settingsnav->find('courseadmin', navigation_node::TYPE_COURSE)) {
+        $displayed_text = get_string('course_settings_link', 'local_uploadnotification');
+        $url = new moodle_url('/local/uploadnotification/course.php', array('id' => $PAGE->course->id));
+        $foonode = navigation_node::create(
+            $displayed_text,
+            $url,
+            navigation_node::NODETYPE_LEAF,
+            $displayed_text,
+            'uploadnotification_course',
+            new pix_icon('t/right', $displayed_text)
+        );
+        if ($PAGE->url->compare($url, URL_MATCH_BASE)) {
+            $foonode->make_active();
+        }
+        $settingnode->add_node($foonode);
+    }
+}

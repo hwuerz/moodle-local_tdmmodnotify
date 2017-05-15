@@ -63,3 +63,4 @@ $string['messageprovider:digest'] = 'Course modification digest notification';
 
 // Settings
 $string['setting_enable_plugin'] = 'Enable Mail delivery by this plugin';
+$string['course_settings_link'] = 'Uploadnotification';
