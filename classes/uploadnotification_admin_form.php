@@ -15,7 +15,7 @@
 // along with eMailTest.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Form to send pending upload notifications to students
+ * Settings form for admins
  *
  * @package   local_uploadnotification
  * @author    Hendrik Wuerz <hendrikmartin.wuerz@stud.tu-darmstadt.de>
@@ -27,9 +27,9 @@ defined('MOODLE_INTERNAL') || die;
 require_once($CFG->libdir.'/formslib.php');
 
 /**
- * Form manually execute the cron function for uploadnotification
+ * Settings form for moodle admins to customize uploadnotification
  */
-class uploadnotification_form extends moodleform {
+class uploadnotification_admin_form extends moodleform {
 
     /**
      * Define the form.
@@ -40,33 +40,25 @@ class uploadnotification_form extends moodleform {
 
         // Header.
 
-        $mform->addElement('html', '<h3>Send Mails</h3>');
-        $mform->addElement('html', '<p>Use this button for development, or if cron is not running.</p>');
-        $mform->addElement('html', '<p>Simply calls the cron method for uploadnotification.</p>');
+        $mform->addElement('html', '<h3>Settings</h3>');
+        $mform->addElement('html', '<p>Global Settings for uploadnotification</p>');
 
-        $buttonarray = array();
-        $buttonarray[] = $mform->createElement('submit', 'send', 'SENDEN');
-//        $buttonarray[] = $mform->createElement('cancel');
+        $mform->addElement('checkbox', 'enable', get_string('setting_enable_plugin', 'local_uploadnotification'));
+        $mform->setDefault('enable', get_config('uploadnotification', 'enabled'));
 
-        $mform->addGroup($buttonarray, 'buttonar', '', array(' '), false);
-        $mform->closeHeaderBefore('buttonar');
+        $this->add_action_buttons();
     }
 
     /**
      * Validate submitted form data
      *
-     * @param      array  $data   The data fields submitted from the form.
+     * @param      array  $data   The data fields submitted from the form. (not used)
      * @param      array  $files  Files submitted from the form (not used)
      *
      * @return     array  List of errors to be displayed on the form if validation fails.
      */
     public function validation($data, $files) {
         $errors = parent::validation($data, $files);
-
-//        if (empty($data['recipient'])) {
-//            $errors['recipient'] = get_string('err_email', 'form');
-//        }
-
         return $errors;
     }
 }

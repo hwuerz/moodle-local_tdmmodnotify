@@ -46,6 +46,12 @@ define('LOCAL_UPLOADNOTIFICATION_ACTION_UPDATED', 2);
  * @return void
  */
 function local_uploadnotification_cron() {
+
+    // Only send mails if a moodle admin has enabled this function
+    require_once(__DIR__.'/../../config.php');
+    $enabled = get_config('uploadnotification', 'enabled');
+    if(!$enabled) return;
+
     $recipients  = new local_uploadnotification_recipient_iterator();
     $supportuser = core_user::get_support_user();
     $mailer      = new local_uploadnotification_mailer($recipients, $supportuser);

@@ -68,6 +68,11 @@ class local_uploadnotification_observer {
      * @throws \coding_exception When given an invalid action.
      */
     protected static function schedule_notification(\core\event\base $event) {
+
+        // Do not record updates if the plugin is deactivated
+        $enabled = get_config('uploadnotification', 'enabled');
+        if(!$enabled) return;
+
         global $DB;
 
         // Only send mails for updated resources

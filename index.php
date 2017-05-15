@@ -25,15 +25,21 @@
 
 // Include config.php.
 require_once(__DIR__.'/../../config.php');
+
+// Globals.
+global $CFG;
+
 require_once($CFG->libdir.'/adminlib.php');
+
+// Globals.
+global $OUTPUT, $USER, $SITE, $PAGE;
 
 // Include our function library.
 $pluginname = 'uploadnotification';
 require_once($CFG->dirroot.'/local/'.$pluginname.'/lib.php');
-require_once($CFG->dirroot.'/local/'.$pluginname.'/classes/uploadnotification_form.php');
+require_once($CFG->dirroot.'/local/'.$pluginname.'/classes/uploadnotification_admin_form.php');
+require_once($CFG->dirroot.'/local/'.$pluginname.'/classes/uploadnotification_development_form.php');
 
-// Globals.
-global $CFG, $OUTPUT, $USER, $SITE, $PAGE;
 
 // Ensure only administrators have access.
 $homeurl = new moodle_url('/');
@@ -61,16 +67,22 @@ admin_externalpage_setup('local_'.$pluginname); // Sets the navbar & expands nav
 
 echo $OUTPUT->header();
 
-$form = new uploadnotification_form(null, array('fromdefault' => null));
-$data = $form->get_data();
+// Manually send mail
+$development_form = new uploadnotification_development_form();
+$data = $development_form->get_data();
 if ($data) {
-
-    echo 'Hallo Welt<br>';
-
     local_uploadnotification_cron();
-
 }
-$form->display();
+$development_form->display();
+
+// Display global config
+$admin_form = new uploadnotification_admin_form();
+$data = $admin_form->get_data();
+if ($data) {
+    $old_value = get_config('uploadnotification', 'enabled');
+    set_config('enabled', !$old_value, 'uploadnotification');
+}
+$admin_form->display();
 
 
 // Footing  =========================================================.
