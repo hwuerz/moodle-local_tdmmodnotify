@@ -64,7 +64,7 @@ if (!has_capability('moodle/backup:backupcourse', context_course::instance($cour
 echo $OUTPUT->header();
 
 // Display global config
-$course_form = new uploadnotification_course_form();
+$course_form = new uploadnotification_course_form(null, array('id'=>$course_id, 'fullname'=>$course->fullname));
 $data = $course_form->get_data();
 if ($data) {
     $old_value = get_config('uploadnotification', 'enabled');
