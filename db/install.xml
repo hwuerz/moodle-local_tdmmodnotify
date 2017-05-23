@@ -1,26 +1,30 @@
-<?xml version="1.0" encoding="utf-8" ?>
-<XMLDB PATH="local/uploadnotification/db" VERSION="20170430" COMMENT="Upload notification">
-    <!--
-      == Upload notification.
-      ==
-      == @package   local_uploadnotification
-      == @author    Luke Carrier <luke@tdm.co>, Hendrik Wuerz <hendrikmartin.wuerz@stud.tu-darmstadt.de>
-      == @copyright (c) 2014 The Development Manager Ltd, 2017 Hendrik Wuerz
-      == @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
-      -->
-    <TABLES>
-        <TABLE NAME="local_uploadnotification" COMMENT="Tracks notification messages">
-            <FIELDS>
-                <FIELD NAME="id"             TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"  />
-                <FIELD NAME="action"         TYPE="int" LENGTH="1"  NOTNULL="true" SEQUENCE="false" />
-                <FIELD NAME="courseid"       TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" />
-                <FIELD NAME="coursemoduleid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" />
-                <FIELD NAME="sectionid"      TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" />
-                <FIELD NAME="userid"         TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" />
-            </FIELDS>
-            <KEYS>
-                <KEY NAME="primary" TYPE="primary" FIELDS="id" />
-            </KEYS>
-        </TABLE>
-    </TABLES>
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="local/uploadnotification/db" VERSION="2017052300" COMMENT="Upload notification"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
+>
+  <TABLES>
+    <TABLE NAME="local_uploadnotification" COMMENT="Tracks notification messages">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="action" TYPE="int" LENGTH="1" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="coursemoduleid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="sectionid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="local_uploadnotification_cou" COMMENT="Activation settings for courses">
+      <FIELDS>
+        <FIELD NAME="courseid" TYPE="int" LENGTH="6" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="activated" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="courseid"/>
+      </KEYS>
+    </TABLE>
+  </TABLES>
 </XMLDB>
