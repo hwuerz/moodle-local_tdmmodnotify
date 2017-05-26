@@ -79,8 +79,7 @@ $development_form->display();
 $admin_form = new uploadnotification_admin_form();
 $data = $admin_form->get_data();
 if ($data) {
-    $old_value = get_config('uploadnotification', 'enabled');
-    set_config('enabled', !$old_value, 'uploadnotification');
+    set_config('enabled', $data->enable, 'uploadnotification');
 }
 $admin_form->display();
 
