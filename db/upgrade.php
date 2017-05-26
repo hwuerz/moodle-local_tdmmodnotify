@@ -73,5 +73,26 @@ function xmldb_local_uploadnotification_upgrade($oldversion) {
         // Uploadnotification savepoint reached.
         upgrade_plugin_savepoint(true, 2017052300, 'local', 'uploadnotification');
     }
+
+    if ($oldversion < 2017052600) {
+
+        // Define table local_uploadnotification_usr to be created.
+        $table = new xmldb_table('local_uploadnotification_usr');
+
+        // Adding fields to table local_uploadnotification_usr.
+        $table->add_field('userid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('activated', XMLDB_TYPE_INTEGER, '1', null, null, null, null);
+
+        // Adding keys to table local_uploadnotification_usr.
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('userid'));
+
+        // Conditionally launch create table for local_uploadnotification_usr.
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+        // Uploadnotification savepoint reached.
+        upgrade_plugin_savepoint(true, 2017052600, 'local', 'uploadnotification');
+    }
     return true;
 }

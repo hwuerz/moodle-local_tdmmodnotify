@@ -60,7 +60,8 @@ function local_uploadnotification_cron() {
 }
 
 
-
+// Inject link in course settings menu.
+// Provides options for docents to disable mail delivery in particular courses
 function local_uploadnotification_extend_settings_navigation($settingsnav, $context) {
     global $CFG, $PAGE;
 
@@ -90,4 +91,31 @@ function local_uploadnotification_extend_settings_navigation($settingsnav, $cont
         }
         $settingnode->add_node($foonode);
     }
+}
+
+
+// Inject link in course settings menu.
+// Provides options for docents to disable mail delivery in particular courses
+function local_uploadnotification_extend_navigation_user_settings(navigation_node $parentnode, stdClass $user, context_user $context, stdClass $course, context_course $coursecontext) {
+    global $CFG, $PAGE;
+
+    // Only add this settings item on non-site course pages.
+    if (!$user->id) {
+        return;
+    }
+
+    $displayed_text = get_string('course_settings_link', 'local_uploadnotification');
+    $url = new moodle_url('/local/uploadnotification/user.php');
+    $foonode = navigation_node::create(
+        $displayed_text,
+        $url,
+        navigation_node::NODETYPE_LEAF,
+        $displayed_text,
+        'uploadnotification_course',
+        new pix_icon('t/right', $displayed_text)
+    );
+    if ($PAGE->url->compare($url, URL_MATCH_BASE)) {
+        $foonode->make_active();
+    }
+    $parentnode->add_node($foonode);
 }
