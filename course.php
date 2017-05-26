@@ -67,8 +67,18 @@ echo $OUTPUT->header();
 $course_form = new uploadnotification_course_form(null, array('id'=>$course_id, 'fullname'=>$course->fullname));
 $data = $course_form->get_data();
 if ($data) {
-    $old_value = get_config('uploadnotification', 'enabled');
-    set_config('enabled', !$old_value, 'uploadnotification');
+
+    // Delete old settings
+    $course_selector = array('courseid'  => $course_id);
+    $DB->delete_records('local_uploadnotification_cou', $course_selector);
+
+    // Insert new settings
+    $record = array(
+        'courseid'  => $course_id,
+        'activated' => $data->enable ? 1 : 0
+    );
+    $sql = "INSERT INTO {local_uploadnotification_cou} (courseid, activated) VALUES (?, ?)";
+    $DB->execute($sql, $record);
 }
 $course_form->display();
 
