@@ -86,6 +86,25 @@ SQL;
     }
 
     /**
+     * Checks whether the mail delivery is enabled for the passed course.
+     *
+     * @param $courseid integer The ID of the course where material was uploaded
+     * @return boolean -1 for no preferences, 0 for 'disabled', 1 for 'activated'
+     */
+    public static function enabled_mail_in_course($courseid) {
+        global $DB;
+
+        $course_settings = $DB->get_record('local_uploadnotification_cou', array('courseid' => $courseid), 'activated', IGNORE_MISSING);
+
+        // If no record was found --> $course_settings is false
+        if(!$course_settings) {
+            return -1;
+        }
+        // Course has defined settings --> return them
+        return $course_settings->activated;
+    }
+
+    /**
      * Get the maximum timestamp of records to be returned.
      * Only get entries which are older than 5 minutes
      * After a docent uploaded some material, he maybe wants to change some properties
