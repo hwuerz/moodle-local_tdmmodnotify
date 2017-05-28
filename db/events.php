@@ -44,4 +44,13 @@ $observers = array(
         'callback'  => 'local_uploadnotification_observer::course_module_updated',
     ),
 
+    /*
+     * Course viewed
+     * Enable for debugging
+     *
+    array(
+        'eventname' => '\core\event\course_viewed',
+        'callback'  => 'local_uploadnotification_observer::schedule_notification',
+    ),*/
+
 );

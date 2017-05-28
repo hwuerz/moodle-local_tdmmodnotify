@@ -94,8 +94,8 @@ function local_uploadnotification_extend_settings_navigation($settingsnav, $cont
 }
 
 
-// Inject link in course settings menu.
-// Provides options for docents to disable mail delivery in particular courses
+// Inject link in user settings menu.
+// Provides options for students to disable mail delivery for themselves
 function local_uploadnotification_extend_navigation_user_settings(navigation_node $parentnode, stdClass $user, context_user $context, stdClass $course, context_course $coursecontext) {
     global $CFG, $PAGE;
 

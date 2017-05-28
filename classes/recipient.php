@@ -88,14 +88,28 @@ class local_uploadnotification_recipient extends local_uploadnotification_model 
      *      changed to hidden.
      */
     public function build_content($substitutions) {
+
+        global $DB;
+
         $format = (object) array(
             'text' => '',
             'html' => ''
         );
+
         foreach ($this->notifications as $notification) {
 
             // If this file is not visible for the user, do not include it in the report
+            // TODO: Redundant with uservisible check below. Remove variable from all scripts
             if($notification->visible == 0) {
+                continue;
+            }
+
+            // Check visibility for current user
+            // Handles restricted access like visibility for groups and timestamps
+            $course = $DB->get_record('course', array('id' => $notification->courseid));
+            $modinfo = get_fast_modinfo($course, $this->userid);
+            $cm = $modinfo->get_cm($notification->moodleid);
+            if (!$cm->uservisible) { // User can not access the activity.
                 continue;
             }
 
