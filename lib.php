@@ -65,6 +65,11 @@ function local_uploadnotification_cron() {
 function local_uploadnotification_extend_settings_navigation($settingsnav, $context) {
     global $CFG, $PAGE;
 
+    // Disable menu if admin has forbidden mail delivery
+    if(!get_config('uploadnotification', 'enabled')) {
+        return;
+    }
+
     // Only add this settings item on non-site course pages.
     if (!$PAGE->course or $PAGE->course->id == 1) {
         return;
@@ -98,6 +103,11 @@ function local_uploadnotification_extend_settings_navigation($settingsnav, $cont
 // Provides options for students to disable mail delivery for themselves
 function local_uploadnotification_extend_navigation_user_settings(navigation_node $parentnode, stdClass $user, context_user $context, stdClass $course, context_course $coursecontext) {
     global $CFG, $PAGE;
+
+    // Disable menu if admin has forbidden mail delivery
+    if(!get_config('uploadnotification', 'enabled')) {
+        return;
+    }
 
     // Only add this settings item on non-site course pages.
     if (!$user->id) {
