@@ -43,6 +43,7 @@ class local_uploadnotification_util {
 
         $sql = <<<SQL
 SELECT
+    n.id AS notificationid,
     cm.id AS moodleid,
     n.action AS action,
     c.id AS courseid, c.fullname AS coursefullname,

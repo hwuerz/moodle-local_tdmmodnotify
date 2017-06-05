@@ -176,9 +176,11 @@ class local_uploadnotification_recipient extends local_uploadnotification_model 
     public function delete() {
         global $DB;
 
-        $DB->delete_records('local_uploadnotification', array(
-            'userid' => $this->userid,
-        ));
+        foreach ($this->notifications as $notification) {
+            $DB->delete_records('local_uploadnotification', array(
+                'id' => $notification->notificationid,
+            ));
+        }
     }
 
     /**

@@ -30,6 +30,16 @@ defined('MOODLE_INTERNAL') || die;
  * Notification.
  */
 class local_uploadnotification_notification extends local_uploadnotification_model {
+
+    /**
+     * Notification ID.
+     *
+     * The ID of this notification
+     *
+     * @var integer
+     */
+    protected $notificationid;
+
     /**
      * Action.
      *
@@ -84,6 +94,7 @@ class local_uploadnotification_notification extends local_uploadnotification_mod
     /**
      * Initialiser.
      *
+     * @param integer $notificationid The ID of this notification.
      * @param integer $action Action.
      * @param integer $visible Whether this file is visible for the user or not.
      * @param integer $courseid Course ID.
@@ -92,8 +103,9 @@ class local_uploadnotification_notification extends local_uploadnotification_mod
      * @param string $filename The name of the file
      * @param string $moodleid The ID of the file in coursemodules
      */
-    public function __construct($action, $visible, $courseid, $coursefullname, $modulename,
+    public function __construct($notificationid, $action, $visible, $courseid, $coursefullname, $modulename,
                                 $filename, $moodleid) {
+        $this->notificationid    = $notificationid;
         $this->action            = $action;
         $this->visible           = $visible;
         $this->courseid          = $courseid;
@@ -150,6 +162,7 @@ class local_uploadnotification_notification extends local_uploadnotification_mod
      */
     public function model_accessors() {
         return array(
+            'notificationid',
             'action',
             'visible',
             'courseid',
@@ -168,7 +181,7 @@ class local_uploadnotification_notification extends local_uploadnotification_mod
      * @return \local_uploadnotification_notification A notification object.
      */
     public static function from_digest($notificationdigest) {
-        return new static($notificationdigest->action, $notificationdigest->visible,
+        return new static($notificationdigest->notificationid, $notificationdigest->action, $notificationdigest->visible,
                           $notificationdigest->courseid, $notificationdigest->coursefullname,
                           $notificationdigest->modulename,
                           $notificationdigest->filename, $notificationdigest->moodleid);
