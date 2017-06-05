@@ -63,23 +63,19 @@ if (!has_capability('moodle/backup:backupcourse', context_course::instance($cour
 
 echo $OUTPUT->header();
 
+// Get current settings for this course
+$current_preferences = local_uploadnotification_util::is_course_mail_enabled($course_id);
+
 // Display global config
-$course_form = new uploadnotification_course_form(null, array('id'=>$course_id, 'fullname'=>$course->fullname));
+$course_form = new uploadnotification_course_form(null, array(
+    'id' => $course_id,
+    'fullname' => $course->fullname,
+    'enable' => $current_preferences));
+
+// Evaluate form data
 $data = $course_form->get_data();
-if ($data) {
+if ($data) local_uploadnotification_util::set_course_mail_enabled($course_id, $data->enable);
 
-    // Delete old settings
-    $course_selector = array('courseid'  => $course_id);
-    $DB->delete_records('local_uploadnotification_cou', $course_selector);
-
-    // Insert new settings
-    $record = array(
-        'courseid'  => $course_id,
-        'activated' => $data->enable ? 1 : 0
-    );
-    $sql = "INSERT INTO {local_uploadnotification_cou} (courseid, activated) VALUES (?, ?)";
-    $DB->execute($sql, $record);
-}
 $course_form->display();
 
 

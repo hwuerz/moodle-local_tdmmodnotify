@@ -36,7 +36,7 @@ $PAGE->set_heading('My modules page heading');
 
 
 // Globals.
-global $CFG, $OUTPUT, $USER, $SITE, $PAGE;
+global $DB, $CFG, $OUTPUT, $USER, $SITE, $PAGE;
 
 // Include our function library.
 //$pluginname = 'uploadnotification';
@@ -54,21 +54,14 @@ if (!$USER->id) {
 echo $OUTPUT->header();
 
 // Display global config
-$user_form = new uploadnotification_user_form(null, array('id'=>$USER->id));
+$user_form = new uploadnotification_user_form(null, array(
+    'id' => $USER->id,
+    'enable' => local_uploadnotification_util::is_user_mail_enabled($USER->id)));
+
+// Evaluate form data
 $data = $user_form->get_data();
-if ($data) {
+if ($data) local_uploadnotification_util::set_user_mail_enabled($USER->id, $data->enable);
 
-    // Delete old settings
-    $DB->delete_records('local_uploadnotification_usr', array('userid'  => $USER->id));
-
-    // Insert new settings
-    $record = array(
-        'userid'  => $USER->id,
-        'activated' => $data->enable ? 1 : 0
-    );
-    $sql = "INSERT INTO {local_uploadnotification_usr} (userid, activated) VALUES (?, ?)";
-    $DB->execute($sql, $record);
-}
 $user_form->display();
 
 

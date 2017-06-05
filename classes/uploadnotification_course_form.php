@@ -47,8 +47,13 @@ class uploadnotification_course_form extends moodleform {
         $mform->addElement('html', '<h3>'.$this->_customdata['fullname'].'</h3>');
         $mform->addElement('html', '<p>Global Settings for uploadnotification</p>');
 
-        $mform->addElement('checkbox', 'enable', get_string('setting_enable_plugin', 'local_uploadnotification'));
-        $mform->setDefault('enable', get_config('uploadnotification', 'enabled'));
+        $preferences = array(
+            '-1' => get_string('settings_no_preferences', 'local_uploadnotification'),
+            '0' => get_string('settings_disable', 'local_uploadnotification'),
+            '1' => get_string('settings_enable', 'local_uploadnotification')
+        );
+        $mform->addElement('select', 'enable', get_string('setting_enable_plugin', 'local_uploadnotification'), $preferences);
+        $mform->setDefault('enable', $this->_customdata['enable']);
 
         $this->add_action_buttons();
     }

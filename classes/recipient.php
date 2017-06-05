@@ -97,7 +97,7 @@ class local_uploadnotification_recipient extends local_uploadnotification_model 
         );
 
         // Whether the user has requested mails
-        $user_settings = $this->requests_mails();
+        $user_settings = local_uploadnotification_util::is_user_mail_enabled($this->userid);
 
         if($user_settings != 0) { // User has not forbidden to send mails (-> no preferences or requested)
 
@@ -115,12 +115,13 @@ class local_uploadnotification_recipient extends local_uploadnotification_model 
                 // docent or student has requested it
                 // AND
                 // nobody (docent or student) has forbidden it
-                $course_settings = local_uploadnotification_util::enabled_mail_in_course($notification->courseid);
+                $course_settings = local_uploadnotification_util::is_course_mail_enabled($notification->courseid);
                 if($course_settings == 0) continue; // docent has disabled mail delivery for his course
                 if(!($user_settings == 1 || $course_settings == 1)) continue; // No one has requested mails
 
                 // Check visibility for current user
                 // Handles restricted access like visibility for groups and timestamps
+                // See https://docs.moodle.org/dev/Availability_API
                 $course = $DB->get_record('course', array('id' => $notification->courseid));
                 $modinfo = get_fast_modinfo($course, $this->userid);
                 $cm = $modinfo->get_cm($notification->moodleid);
@@ -143,29 +144,6 @@ class local_uploadnotification_recipient extends local_uploadnotification_model 
         $format->html = substr($format->html, 0, -1);
 
         return $format;
-    }
-
-    /**
-     * Checks whether the current user wants to receive email notifications.
-     * Returns:
-     * No preferences set:             -1
-     * Does not want to receive mails:  0
-     * Wants to receive mails:          1
-     */
-    private function requests_mails() {
-        global $DB;
-        $user_settings = $DB->get_record(
-            'local_uploadnotification_usr',
-            array('userid' => $this->userid),
-            'activated',
-            IGNORE_MISSING);
-        // If no record was found --> $user_settings is false
-        if(!$user_settings) {
-            return -1;
-        }
-        // User has defined settings --> return them
-        return $user_settings->activated;
-
     }
 
     /**

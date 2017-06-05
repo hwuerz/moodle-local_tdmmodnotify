@@ -90,19 +90,105 @@ SQL;
      * Checks whether the mail delivery is enabled for the passed course.
      *
      * @param $courseid integer The ID of the course where material was uploaded
-     * @return boolean -1 for no preferences, 0 for 'disabled', 1 for 'activated'
+     * @return int -1 for no preferences, 0 for 'disabled', 1 for 'activated'
      */
-    public static function enabled_mail_in_course($courseid) {
+    public static function is_course_mail_enabled($courseid) {
+        return self::is_mail_enabled('local_uploadnotification_cou', 'courseid', $courseid);
+    }
+
+    /**
+     * Stores the new preference for a course in the database.
+     *
+     * @param $courseid integer The ID of the course whose preference should be stored
+     * @param $preference integer The preference of the course
+     * @return bool Whether the update was successful or not
+     */
+    public static function set_course_mail_enabled($courseid, $preference) {
+        return self::set_mail_enabled('local_uploadnotification_cou', 'courseid', $courseid, $preference);
+    }
+
+    /**
+     * Checks whether the current user wants to receive email notifications.
+     *
+     * @param $userid integer The ID of the user whose preferences should be fetched
+     * @return int -1 for no preferences, 0 for 'disabled', 1 for 'activated'
+     */
+    public static function is_user_mail_enabled($userid) {
+        return self::is_mail_enabled('local_uploadnotification_usr', 'userid', $userid);
+    }
+
+    /**
+     * Stores the new preference for a user in the database.
+     *
+     * @param $userid integer The ID of the user whose preference should be stored
+     * @param $preference integer The preference of the user
+     * @return bool Whether the update was successful or not
+     */
+    public static function set_user_mail_enabled($userid, $preference) {
+        return self::set_mail_enabled('local_uploadnotification_usr', 'userid', $userid, $preference);
+    }
+
+    /**
+     * Checks whether the passed entry (course or user) wants to receive email notifications.
+     *
+     * @param $table string The DB table name where the preference should be fetched from
+     * @param $id_column_name string The name of the column where the id is stored
+     * @param $id integer The record id
+     * @return int -1 for no preferences, 0 for 'disabled', 1 for 'activated'
+     */
+    public static function is_mail_enabled($table, $id_column_name, $id) {
         global $DB;
+        $settings = $DB->get_record(
+            $table,
+            array($id_column_name => $id),
+            'activated',
+            IGNORE_MISSING);
 
-        $course_settings = $DB->get_record('local_uploadnotification_cou', array('courseid' => $courseid), 'activated', IGNORE_MISSING);
-
-        // If no record was found --> $course_settings is false
-        if(!$course_settings) {
+        // If no record was found --> $settings is false
+        if($settings === false) {
             return -1;
         }
-        // Course has defined settings --> return them
-        return $course_settings->activated;
+        // User has defined settings --> return them
+        return $settings->activated;
+    }
+
+    /**
+     * Stores the new preference in the passed table.
+     * @param $table string The DB table name where the preference should be stored
+     * @param $id_column_name string The name of the column where the id is stored
+     * @param $id integer The record id
+     * @param $preference integer The new preference
+     * @return bool Whether the update was successful or not
+     */
+    private static function set_mail_enabled($table, $id_column_name, $id, $preference) {
+        global $DB;
+
+        // Check for valid parameter
+        if(!self::is_valid_preference($preference)) return false;
+
+        // Delete old settings
+        $DB->delete_records($table, array($id_column_name  => $id));
+
+        // There is no preference --> do not store anything in database
+        if($preference < 0) return true;
+
+        // There is a preference --> store
+        $record = array(
+            $id_column_name  => $id,
+            'activated' => $preference
+        );
+        $sql = "INSERT INTO {".$table."} ($id_column_name, activated) VALUES (?, ?)";
+        $DB->execute($sql, $record);
+        return true;
+    }
+
+    /**
+     * Checks whether the passed preference is valid and can be stored in the database
+     * @param $preference int The preference to be checked
+     * @return bool True if valid, false otherwise
+     */
+    private static function is_valid_preference($preference) {
+        return $preference == -1 || $preference == 0 || $preference == 1;
     }
 
     /**
