@@ -40,14 +40,20 @@ The following activities resources have changed in courses you\'re enrolled in.
 
 {$a->notifications}
 
-{$a->signoff}';
+{$a->signoff}
+
+You are receiving this mail because you or a course admin has requested this information. You can edit your preferences under {$a->user_settings}';
 $string['templatemessage_html'] = 'Hi {$a->firstname},<br><br>
 
-The following activities resources have changed in courses you\'re enrolled in.<br><br>
+The following activities resources have changed in courses you\'re enrolled in.
 
-{$a->notifications}<br><br>
+<ul>
+{$a->notifications}
+</ul>
 
-{$a->signoff}';
+{$a->signoff}<br><br>
+
+You are receiving this mail because you or a course admin has requested this information. You can edit your preferences under your <a href="{$a->user_settings}">preferences</a>.';
 //$string['templateresource'] = '* "{$a->modulename}" in "{$a->coursefullname}" was {$a->action}: {$a->url}';
 $string['templateresource']      = '* "{$a->filename}" in "{$a->coursefullname}" ({$a->url_course}) was {$a->action}: {$a->url_file} ';
 $string['templateresource_html'] = '<li><a href="{$a->url_file}">{$a->filename}</a> in <a href="{$a->url_course}">{$a->coursefullname}</a> was {$a->action}</li>';

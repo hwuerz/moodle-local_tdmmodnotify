@@ -98,6 +98,7 @@ class local_uploadnotification_mailer {
             'signoff'   => generate_email_signoff(),
             'baseurl_course'   => new moodle_url('/course/view.php'),
             'baseurl_file'   => new moodle_url('/mod/resource/view.php'),
+            'user_settings'   => (new moodle_url('/local/uploadnotification/user.php'))->out(),
         );
         $notifications = $recipient->build_content($substitutions);
 
