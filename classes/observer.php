@@ -93,6 +93,24 @@ class local_uploadnotification_observer {
                 throw new coding_exception("Invalid event action '{$event->action}' (valid options: 'created', 'updated')");
         }
 
+        // Check for "visible from" condition
+        // A docent can define a date when the material becomes available for students.
+        // Do not check visibility for students before this date.
+        // If the dates becomes modified, an update event will be send and the record will be changed.
+        $timestamp = time();
+        $cm = $DB->get_record('course_modules', array('id' => $event->objectid), 'availability');
+        $availability = json_decode($cm->availability);
+        if(!is_null($availability)
+            && !is_null($availability->c)) { // This resource has visibility conditions
+            $conditions = $availability->c;
+            foreach ($conditions as $condition) {
+                // Check for a date condition with "visible after" definition
+                if($condition->type == 'date' && $condition->d == '>=' && $condition->t > $timestamp) {
+                    $timestamp = $condition->t;
+                }
+            }
+        }
+
         $coursecontext = context_course::instance($event->courseid);
         $enrolledusers = get_enrolled_users($coursecontext);
 
@@ -108,7 +126,7 @@ class local_uploadnotification_observer {
                 'courseid'       => $event->courseid,
                 'coursemoduleid' => $event->objectid,
                 'userid'         => $enrolleduser->id,
-                'timestamp'      => time()
+                'timestamp'      => $timestamp
             ));
         }
     }
