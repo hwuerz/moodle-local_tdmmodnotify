@@ -56,11 +56,15 @@ echo $OUTPUT->header();
 // Display global config
 $user_form = new uploadnotification_user_form(null, array(
     'id' => $USER->id,
-    'enable' => local_uploadnotification_util::is_user_mail_enabled($USER->id)));
+    'enable' => local_uploadnotification_util::is_user_mail_enabled($USER->id),
+    'attachment' => local_uploadnotification_util::is_user_attachment_enabled($USER->id)));
 
 // Evaluate form data
 $data = $user_form->get_data();
-if ($data) local_uploadnotification_util::set_user_mail_enabled($USER->id, $data->enable);
+if ($data) {
+    local_uploadnotification_util::set_user_mail_enabled($USER->id, $data->enable);
+    local_uploadnotification_util::set_user_attachment_enabled($USER->id, $data->attachment);
+}
 
 $user_form->display();
 

@@ -125,7 +125,106 @@ SQL;
      * @return bool Whether the update was successful or not
      */
     public static function set_user_mail_enabled($userid, $preference) {
-        return self::set_mail_enabled('local_uploadnotification_usr', 'userid', $userid, $preference);
+        global $DB;
+
+        // Check for valid parameter
+        if(!self::is_valid_preference($preference)) return false;
+
+        $settings = $DB->get_record(
+            'local_uploadnotification_usr',
+            array('userid' => $userid),
+            'userid, activated, attachment',
+            IGNORE_MISSING);
+
+        $record = array(
+            'userid'  => $userid,
+            'activated' => null,
+            'attachment' => -1
+        );
+
+        // If record was found
+        if($settings !== false) {
+            $record = array(
+                'userid'  => $settings->userid,
+                'activated' => $settings->activated,
+                'attachment' => $settings->attachment
+            );
+        }
+
+        $record['activated'] = $preference;
+
+        // Delete old settings
+        $DB->delete_records('local_uploadnotification_usr', array('userid'  => $userid));
+
+        $sql = "INSERT INTO {local_uploadnotification_usr} (userid, activated, attachment) VALUES (?, ?, ?)";
+        $DB->execute($sql, $record);
+        return true;
+    }
+
+    /**
+     * Checks whether the current user wants to receive attachments in email notifications.
+     *
+     * @param $userid integer The ID of the user whose preferences should be fetched
+     * @return int -1 for no preferences, 0 for 'disabled', 1 for 'activated'
+     */
+    public static function is_user_attachment_enabled($userid) {
+        global $DB;
+        $settings = $DB->get_record(
+            'local_uploadnotification_usr',
+            array('userid' => $userid),
+            'attachment',
+            IGNORE_MISSING);
+
+        // If no record was found --> $settings is false
+        if($settings === false) {
+            return -1;
+        }
+        // User has defined settings --> return them
+        return $settings->attachment;
+    }
+
+    /**
+     * Stores the new preference for a user in the database.
+     *
+     * @param $userid integer The ID of the user whose preference should be stored
+     * @param $preference integer The preference of the user
+     * @return bool Whether the update was successful or not
+     */
+    public static function set_user_attachment_enabled($userid, $preference) {
+        global $DB;
+
+        // Check for valid parameter
+        if(!self::is_valid_preference($preference)) return false;
+
+        $settings = $DB->get_record(
+            'local_uploadnotification_usr',
+            array('userid' => $userid),
+            'userid, activated, attachment',
+            IGNORE_MISSING);
+
+        $record = array(
+            'userid'  => $userid,
+            'activated' => -1,
+            'attachment' => null
+        );
+
+        // If record was found
+        if($settings !== false) {
+            $record = array(
+                'userid'  => $settings->userid,
+                'activated' => $settings->activated,
+                'attachment' => $settings->attachment
+            );
+        }
+
+        $record['attachment'] = $preference;
+
+        // Delete old settings
+        $DB->delete_records('local_uploadnotification_usr', array('userid'  => $userid));
+
+        $sql = "INSERT INTO {local_uploadnotification_usr} (userid, activated, attachment) VALUES (?, ?, ?)";
+        $DB->execute($sql, $record);
+        return true;
     }
 
     /**

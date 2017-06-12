@@ -99,6 +99,7 @@ class local_uploadnotification_recipient extends local_uploadnotification_model 
 
         // Whether the user has requested mails
         $user_settings = local_uploadnotification_util::is_user_mail_enabled($this->userid);
+        $user_settings_attachment = local_uploadnotification_util::is_user_attachment_enabled($this->userid);
 
         if($user_settings != 0) { // User has not forbidden to send mails (-> no preferences or requested)
 
@@ -133,7 +134,7 @@ class local_uploadnotification_recipient extends local_uploadnotification_model 
                 $context = $notification->build_content($substitutions);
                 $format->text .= $context->text;
                 $format->html .= $context->html;
-                $this->add_file_attachment($cm, $format, $user_settings, $course_settings);
+                $this->add_file_attachment($cm, $format, $user_settings, $user_settings_attachment);
             }
         }
 
@@ -151,7 +152,7 @@ class local_uploadnotification_recipient extends local_uploadnotification_model 
     /**
      *
      */
-    private function add_file_attachment($cm, $format, $user_settings, $course_settings) {
+    private function add_file_attachment($cm, $format, $user_settings, $user_settings_attachment) {
 
         global $DB;
         $fs = get_file_storage();
@@ -160,6 +161,11 @@ class local_uploadnotification_recipient extends local_uploadnotification_model 
         // Not if mail delivery was enabled by a docent
         if($user_settings != 1) {
             //echo "Block: no user settings";
+            return;
+        }
+
+        if($user_settings_attachment == 0) {
+            //echo "Block: user disabled attachments";
             return;
         }
 

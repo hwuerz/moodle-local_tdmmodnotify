@@ -1,8 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="local/uploadnotification/db" VERSION="2017052300" COMMENT="Upload notification"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
->
+<XMLDB xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" PATH="local/uploadnotification/db" VERSION="20170612" COMMENT="Upload notification" xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd">
   <TABLES>
     <TABLE NAME="local_uploadnotification" COMMENT="Tracks notification messages">
       <FIELDS>
@@ -30,6 +26,7 @@
       <FIELDS>
         <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
         <FIELD NAME="activated" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="attachment" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="userid"/>
