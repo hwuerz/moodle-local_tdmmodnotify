@@ -77,8 +77,12 @@ class local_uploadnotification_mailer {
     public function execute() {
         foreach ($this->recipients as $recipient) {
             mtrace("user#{$recipient->userid}");
-
             $this->mail($recipient);
+        }
+
+        // Records must be deleted AFTER all mails are send
+        // Script counts scheduled mails to calculate load for mail attachments
+        foreach ($this->recipients as $recipient) {
             $this->delete_scheduled_notifications($recipient);
         }
     }
@@ -117,11 +121,21 @@ class local_uploadnotification_mailer {
 
         mtrace('send message to ' . $recipientuser->username . '<br>');
 
+        $file_names = array_keys($notifications->attachments);
+        $file_paths = array_values($notifications->attachments);
+
+        // Workaround: Moodle can only send one attachment in one mail --> use only the first file
+        if(count($file_names) > 0) {
+            $file_names = $file_names[0];
+            $file_paths = $file_paths[0];
+        }
+
         email_to_user($recipientuser,
             core_user::get_noreply_user(),
             get_string('templatesubject', 'local_uploadnotification'),
             $message,
             $message_html,
-            '', '', true);
+            $file_paths, $file_names,
+            true);
     }
 }

@@ -80,6 +80,8 @@ $admin_form = new uploadnotification_admin_form();
 $data = $admin_form->get_data();
 if ($data) {
     set_config('enabled', $data->enable, 'uploadnotification');
+    set_config('max_filesize', $data->max_filesize, 'uploadnotification');
+    set_config('max_mails_for_resource', $data->max_mails_for_resource, 'uploadnotification');
 }
 $admin_form->display();
 

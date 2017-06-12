@@ -93,7 +93,8 @@ class local_uploadnotification_recipient extends local_uploadnotification_model 
 
         $format = (object) array(
             'text' => '',
-            'html' => ''
+            'html' => '',
+            'attachments' => array()
         );
 
         // Whether the user has requested mails
@@ -106,7 +107,7 @@ class local_uploadnotification_recipient extends local_uploadnotification_model 
 
                 // If this file is not visible for the user, do not include it in the report
                 // TODO: Redundant with uservisible check below. Remove variable from all scripts
-                if($notification->visible == 0) {
+                if ($notification->visible == 0) {
                     continue;
                 }
 
@@ -116,8 +117,8 @@ class local_uploadnotification_recipient extends local_uploadnotification_model 
                 // AND
                 // nobody (docent or student) has forbidden it
                 $course_settings = local_uploadnotification_util::is_course_mail_enabled($notification->courseid);
-                if($course_settings == 0) continue; // docent has disabled mail delivery for his course
-                if(!($user_settings == 1 || $course_settings == 1)) continue; // No one has requested mails
+                if ($course_settings == 0) continue; // docent has disabled mail delivery for his course
+                if (!($user_settings == 1 || $course_settings == 1)) continue; // No one has requested mails
 
                 // Check visibility for current user
                 // Handles restricted access like visibility for groups and timestamps
@@ -132,6 +133,7 @@ class local_uploadnotification_recipient extends local_uploadnotification_model 
                 $context = $notification->build_content($substitutions);
                 $format->text .= $context->text;
                 $format->html .= $context->html;
+                $this->add_file_attachment($cm, $format, $user_settings, $course_settings);
             }
         }
 
@@ -144,6 +146,66 @@ class local_uploadnotification_recipient extends local_uploadnotification_model 
         $format->html = substr($format->html, 0, -1);
 
         return $format;
+    }
+
+    /**
+     *
+     */
+    private function add_file_attachment($cm, $format, $user_settings, $course_settings) {
+
+        global $DB;
+        $fs = get_file_storage();
+
+        // Send files only if the user has requested updates
+        // Not if mail delivery was enabled by a docent
+        if($user_settings != 1) {
+            //echo "Block: no user settings";
+            return;
+        }
+
+        $context = context_module::instance($cm->id);
+        if ($cm->modname == 'resource') {
+            $files = $fs->get_area_files(
+                $context->id,
+                'mod_resource',
+                'content',
+                0,
+                'sortorder DESC, id ASC',
+                false);
+            $file = array_shift($files); //get only the first file
+
+            // Check whether this file is to large
+            $filesize = $file->get_filesize();
+            if($filesize > get_config('uploadnotification', 'max_filesize')) {
+                //echo "Block: file size";
+                return;
+            }
+
+            // Check whether there are to much subscriptions for this attachment
+            $sql = <<<SQL
+SELECT COUNT(n.id)
+FROM {local_uploadnotification} n
+INNER JOIN {local_uploadnotification_usr} u
+ON n.userid = u.userid
+WHERE u.activated = 1 AND n.coursemoduleid = ?
+SQL;
+            $count = $DB->count_records_sql($sql, array($cm->id));
+            if($count > get_config('uploadnotification', 'max_mails_for_resource')) {
+                //echo "Block: max requests ->".$count."<-";
+                return;
+            }
+
+            // Generate unique filename for this mail
+            $suffix = '';
+            $counter = 0;
+            while (array_key_exists($file->get_filename().$suffix, $format->attachments)) {
+                $counter++;
+                $suffix = $counter;
+            }
+            $file_path = $file->copy_content_to_temp();
+            $format->attachments[$file->get_filename().$suffix] = $file_path;
+            $format->attachments[$file->get_filename()] = $file_path;
+        }
     }
 
     /**

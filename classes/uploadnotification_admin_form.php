@@ -50,6 +50,12 @@ class uploadnotification_admin_form extends moodleform {
         $mform->addElement('select', 'enable', get_string('setting_enable_plugin', 'local_uploadnotification'), $preferences);
         $mform->setDefault('enable', get_config('uploadnotification', 'enabled'));
 
+        $mform->addElement('text', 'max_filesize', get_string('setting_max_filesize', 'local_uploadnotification'));
+        $mform->setDefault('max_filesize', get_config('uploadnotification', 'max_filesize'));
+
+        $mform->addElement('text', 'max_mails_for_resource', get_string('setting_max_mails_for_resource', 'local_uploadnotification'));
+        $mform->setDefault('max_mails_for_resource', get_config('uploadnotification', 'max_mails_for_resource'));
+
         $this->add_action_buttons();
     }
 
