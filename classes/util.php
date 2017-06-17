@@ -86,200 +86,6 @@ SQL;
         return $DB->get_fieldset_sql($sql, array(self::get_max_timestamp()));
     }
 
-    /**
-     * Checks whether the mail delivery is enabled for the passed course.
-     *
-     * @param $courseid integer The ID of the course where material was uploaded
-     * @return int -1 for no preferences, 0 for 'disabled', 1 for 'activated'
-     */
-    public static function is_course_mail_enabled($courseid) {
-        return self::is_mail_enabled('local_uploadnotification_cou', 'courseid', $courseid);
-    }
-
-    /**
-     * Stores the new preference for a course in the database.
-     *
-     * @param $courseid integer The ID of the course whose preference should be stored
-     * @param $preference integer The preference of the course
-     * @return bool Whether the update was successful or not
-     */
-    public static function set_course_mail_enabled($courseid, $preference) {
-        return self::set_mail_enabled('local_uploadnotification_cou', 'courseid', $courseid, $preference);
-    }
-
-    /**
-     * Checks whether the current user wants to receive email notifications.
-     *
-     * @param $userid integer The ID of the user whose preferences should be fetched
-     * @return int -1 for no preferences, 0 for 'disabled', 1 for 'activated'
-     */
-    public static function is_user_mail_enabled($userid) {
-        return self::is_mail_enabled('local_uploadnotification_usr', 'userid', $userid);
-    }
-
-    /**
-     * Stores the new preference for a user in the database.
-     *
-     * @param $userid integer The ID of the user whose preference should be stored
-     * @param $preference integer The preference of the user
-     * @return bool Whether the update was successful or not
-     */
-    public static function set_user_mail_enabled($userid, $preference) {
-        global $DB;
-
-        // Check for valid parameter
-        if(!self::is_valid_preference($preference)) return false;
-
-        $settings = $DB->get_record(
-            'local_uploadnotification_usr',
-            array('userid' => $userid),
-            'userid, activated, attachment',
-            IGNORE_MISSING);
-
-        $record = array(
-            'userid'  => $userid,
-            'activated' => null,
-            'attachment' => -1
-        );
-
-        // If record was found
-        if($settings !== false) {
-            $record = array(
-                'userid'  => $settings->userid,
-                'activated' => $settings->activated,
-                'attachment' => $settings->attachment
-            );
-        }
-
-        $record['activated'] = $preference;
-
-        // Delete old settings
-        $DB->delete_records('local_uploadnotification_usr', array('userid'  => $userid));
-
-        $sql = "INSERT INTO {local_uploadnotification_usr} (userid, activated, attachment) VALUES (?, ?, ?)";
-        $DB->execute($sql, $record);
-        return true;
-    }
-
-    /**
-     * Checks whether the current user wants to receive attachments in email notifications.
-     *
-     * @param $userid integer The ID of the user whose preferences should be fetched
-     * @return int -1 for no preferences, 0 for 'disabled', 1 for 'activated'
-     */
-    public static function is_user_attachment_enabled($userid) {
-        global $DB;
-        $settings = $DB->get_record(
-            'local_uploadnotification_usr',
-            array('userid' => $userid),
-            'attachment',
-            IGNORE_MISSING);
-
-        // If no record was found --> $settings is false
-        if($settings === false) {
-            return -1;
-        }
-        // User has defined settings --> return them
-        return $settings->attachment;
-    }
-
-    /**
-     * Stores the new preference for a user in the database.
-     *
-     * @param $userid integer The ID of the user whose preference should be stored
-     * @param $preference integer The preference of the user
-     * @return bool Whether the update was successful or not
-     */
-    public static function set_user_attachment_enabled($userid, $preference) {
-        global $DB;
-
-        // Check for valid parameter
-        if(!self::is_valid_preference($preference)) return false;
-
-        $settings = $DB->get_record(
-            'local_uploadnotification_usr',
-            array('userid' => $userid),
-            'userid, activated, attachment',
-            IGNORE_MISSING);
-
-        $record = array(
-            'userid'  => $userid,
-            'activated' => -1,
-            'attachment' => null
-        );
-
-        // If record was found
-        if($settings !== false) {
-            $record = array(
-                'userid'  => $settings->userid,
-                'activated' => $settings->activated,
-                'attachment' => $settings->attachment
-            );
-        }
-
-        $record['attachment'] = $preference;
-
-        // Delete old settings
-        $DB->delete_records('local_uploadnotification_usr', array('userid'  => $userid));
-
-        $sql = "INSERT INTO {local_uploadnotification_usr} (userid, activated, attachment) VALUES (?, ?, ?)";
-        $DB->execute($sql, $record);
-        return true;
-    }
-
-    /**
-     * Checks whether the passed entry (course or user) wants to receive email notifications.
-     *
-     * @param $table string The DB table name where the preference should be fetched from
-     * @param $id_column_name string The name of the column where the id is stored
-     * @param $id integer The record id
-     * @return int -1 for no preferences, 0 for 'disabled', 1 for 'activated'
-     */
-    public static function is_mail_enabled($table, $id_column_name, $id) {
-        global $DB;
-        $settings = $DB->get_record(
-            $table,
-            array($id_column_name => $id),
-            'activated',
-            IGNORE_MISSING);
-
-        // If no record was found --> $settings is false
-        if($settings === false) {
-            return -1;
-        }
-        // User has defined settings --> return them
-        return $settings->activated;
-    }
-
-    /**
-     * Stores the new preference in the passed table.
-     * @param $table string The DB table name where the preference should be stored
-     * @param $id_column_name string The name of the column where the id is stored
-     * @param $id integer The record id
-     * @param $preference integer The new preference
-     * @return bool Whether the update was successful or not
-     */
-    private static function set_mail_enabled($table, $id_column_name, $id, $preference) {
-        global $DB;
-
-        // Check for valid parameter
-        if(!self::is_valid_preference($preference)) return false;
-
-        // Delete old settings
-        $DB->delete_records($table, array($id_column_name  => $id));
-
-        // There is no preference --> do not store anything in database
-        if($preference < 0) return true;
-
-        // There is a preference --> store
-        $record = array(
-            $id_column_name  => $id,
-            'activated' => $preference
-        );
-        $sql = "INSERT INTO {".$table."} ($id_column_name, activated) VALUES (?, ?)";
-        $DB->execute($sql, $record);
-        return true;
-    }
 
     /**
      * Checks whether the passed preference is valid and can be stored in the database
@@ -289,6 +95,19 @@ SQL;
     private static function is_valid_preference($preference) {
         return $preference == -1 || $preference == 0 || $preference == 1;
     }
+
+    /**
+     * Checks whether the passed preference is valid and can be stored in the database
+     * If it is not, an exception will be thrown
+     * @param $preference int The preference to be checked
+     * @throws InvalidArgumentException If the preference is invalid
+     */
+    public static function require_valid_preference($preference) {
+        if(!self::is_valid_preference($preference)) {
+            throw new InvalidArgumentException("Only valid preferences are accepted. Use -1 for no preference, 0 for deactivated and 1 for activated");
+        }
+    }
+
 
     /**
      * Get the maximum timestamp of records to be returned.

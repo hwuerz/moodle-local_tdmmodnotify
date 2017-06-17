@@ -1,18 +1,18 @@
 <?php
-// This file is part of uploadnotification for Moodle - http://moodle.org/
+// This file is part of uploadnotification plugin for Moodle - http://moodle.org/
 //
-// eMailTest is free software: you can redistribute it and/or modify
+// uploadnotification is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
-// eMailTest is distributed in the hope that it will be useful,
+// uploadnotification is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with eMailTest.  If not, see <http://www.gnu.org/licenses/>.
+// along with uploadnotification.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
  * Settings form for admins
@@ -29,7 +29,7 @@ require_once($CFG->libdir.'/formslib.php');
 /**
  * Settings form for moodle admins to customize uploadnotification
  */
-class uploadnotification_course_form extends moodleform {
+class uploadnotification_admin_form extends moodleform {
 
     /**
      * Define the form.
@@ -40,20 +40,23 @@ class uploadnotification_course_form extends moodleform {
 
         // Header.
 
-        $mform->addElement('hidden', 'id', '');
-        $mform->setType('id', PARAM_INT);
-        $mform->setDefault('id', $this->_customdata['id']);
-
-        $mform->addElement('html', '<h3>'.$this->_customdata['fullname'].'</h3>');
+        $mform->addElement('html', '<h3>Settings</h3>');
         $mform->addElement('html', '<p>Global Settings for uploadnotification</p>');
 
         $preferences = array(
-            '-1' => get_string('settings_no_preferences', 'local_uploadnotification'),
             '0' => get_string('settings_disable', 'local_uploadnotification'),
             '1' => get_string('settings_enable', 'local_uploadnotification')
         );
         $mform->addElement('select', 'enable', get_string('setting_enable_plugin', 'local_uploadnotification'), $preferences);
-        $mform->setDefault('enable', $this->_customdata['enable']);
+        $mform->setDefault('enable', get_config('uploadnotification', 'enabled'));
+
+        $mform->addElement('text', 'max_filesize', get_string('setting_max_filesize', 'local_uploadnotification'));
+        $mform->setType('max_filesize', PARAM_INT);
+        $mform->setDefault('max_filesize', get_config('uploadnotification', 'max_filesize'));
+
+        $mform->addElement('text', 'max_mails_for_resource', get_string('setting_max_mails_for_resource', 'local_uploadnotification'));
+        $mform->setType('max_mails_for_resource', PARAM_INT);
+        $mform->setDefault('max_mails_for_resource', get_config('uploadnotification', 'max_mails_for_resource'));
 
         $this->add_action_buttons();
     }

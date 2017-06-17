@@ -1,18 +1,18 @@
 <?php
 // This file is part of uploadnotification for Moodle - http://moodle.org/
 //
-// eMailTest is free software: you can redistribute it and/or modify
+// uploadnotification is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
-// eMailTest is distributed in the hope that it will be useful,
+// uploadnotification is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with eMailTest.  If not, see <http://www.gnu.org/licenses/>.
+// along with uploadnotification.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
  * Settings form for admins
@@ -29,7 +29,7 @@ require_once($CFG->libdir.'/formslib.php');
 /**
  * Settings form for moodle admins to customize uploadnotification
  */
-class uploadnotification_user_form extends moodleform {
+class uploadnotification_course_form extends moodleform {
 
     /**
      * Define the form.
@@ -44,8 +44,8 @@ class uploadnotification_user_form extends moodleform {
         $mform->setType('id', PARAM_INT);
         $mform->setDefault('id', $this->_customdata['id']);
 
-        $mform->addElement('html', '<h3>Uploadnotification</h3>');
-        $mform->addElement('html', '<p>Do you want to receive notifications when new material was uploaded to a course?</p>');
+        $mform->addElement('html', '<h3>'.$this->_customdata['fullname'].'</h3>');
+        $mform->addElement('html', '<p>Global Settings for uploadnotification</p>');
 
         $preferences = array(
             '-1' => get_string('settings_no_preferences', 'local_uploadnotification'),
@@ -54,9 +54,6 @@ class uploadnotification_user_form extends moodleform {
         );
         $mform->addElement('select', 'enable', get_string('setting_enable_plugin', 'local_uploadnotification'), $preferences);
         $mform->setDefault('enable', $this->_customdata['enable']);
-
-        $mform->addElement('select', 'attachment', get_string('setting_receive_attachments', 'local_uploadnotification'), $preferences);
-        $mform->setDefault('attachment', $this->_customdata['attachment']);
 
         $this->add_action_buttons();
     }

@@ -23,31 +23,25 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once('../../config.php');
 $pluginname = 'uploadnotification';
+require_once(dirname(__FILE__).'/../../config.php');
+
+// Include function library.
+require_once(dirname(__FILE__).'/classes/forms/uploadnotification_course_form.php');
+require_once(dirname(__FILE__).'/classes/models/course_settings_model.php');
+
+// Globals.
+global $DB, $CFG, $OUTPUT, $USER, $SITE, $PAGE;
+
+
 $course_id = required_param('id', PARAM_INT);
 $course = $DB->get_record('course', array('id' => $course_id), '*', MUST_EXIST);
-
 require_login($course, true);
+
 $PAGE->set_url("/mod/$pluginname/course.php", array('id' => $course_id));
 $PAGE->set_title('My modules page title');
 $PAGE->set_heading('My modules page heading');
 
-
-
-// Globals.
-global $CFG;
-
-//require_once($CFG->libdir.'/adminlib.php');
-
-// Globals.
-global $OUTPUT, $USER, $SITE, $PAGE;
-
-// Include our function library.
-//$pluginname = 'uploadnotification';
-require_once($CFG->dirroot.'/local/'.$pluginname.'/classes/uploadnotification_course_form.php');
-
-//$course_id = required_param('id', PARAM_INT);
 $homeurl = new moodle_url('/');
 require_login();
 
@@ -63,18 +57,20 @@ if (!has_capability('moodle/backup:backupcourse', context_course::instance($cour
 
 echo $OUTPUT->header();
 
-// Get current settings for this course
-$current_preferences = local_uploadnotification_util::is_course_mail_enabled($course_id);
+$settings = new course_settings_model($course_id);
 
 // Display global config
 $course_form = new uploadnotification_course_form(null, array(
     'id' => $course_id,
     'fullname' => $course->fullname,
-    'enable' => $current_preferences));
+    'enable' => $settings->is_mail_enabled()));
 
 // Evaluate form data
 $data = $course_form->get_data();
-if ($data) local_uploadnotification_util::set_course_mail_enabled($course_id, $data->enable);
+if ($data) {
+    $settings->set_mail_enabled($data->enable);
+    $settings->save();
+}
 
 $course_form->display();
 
