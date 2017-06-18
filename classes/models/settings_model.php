@@ -19,9 +19,10 @@ abstract class settings_model {
     protected $settings;
 
     /**
-     * All attributes of the settings
-     * These names must me identically with the attributes in the database table
-     * @return array of strings
+     * All attributes with their default settings.
+     * These keys must me identically with the attributes in the database table.
+     * If get_id_attribute() is not overwritten, the first key has to be the primary key in the database.
+     * @return array Key is attribute name, Value is default Value
      */
     abstract protected function get_attributes();
 
@@ -30,7 +31,7 @@ abstract class settings_model {
      * @return string
      */
     protected function get_id_attribute() {
-        return $this->get_attributes()[0];
+        return array_keys($this->get_attributes())[0];
     }
 
     /**
@@ -51,15 +52,16 @@ abstract class settings_model {
         $settings = $DB->get_record(
             $this->get_table_name(),
             array($this->get_id_attribute() => $id),
-            implode(', ', $this->get_attributes()),
+            implode(', ', array_keys($this->get_attributes())),
             IGNORE_MISSING);
 
         // There are no settings stored --> build default settings
         if($settings === false) {
             $settings = new stdClass();
-            foreach ($this->get_attributes() as $attribute) {
-                $settings->{$attribute} = -1;
+            foreach (array_keys($this->get_attributes()) as $attribute) {
+                $settings->{$attribute} = $this->get_attributes()[$attribute];
             }
+            $settings->{$this->get_id_attribute()} = $id;
         }
 
         // Store settings in this object
@@ -72,7 +74,7 @@ abstract class settings_model {
      * @throws InvalidArgumentException If the attribute is not defined in these settings
      */
     private function require_valid_attribute($attribute) {
-        if(!in_array($attribute, $this->get_attributes())) {
+        if(!in_array($attribute, array_keys($this->get_attributes()))) {
             throw new InvalidArgumentException('Attribute is not available in these settings');
         }
     }
@@ -95,10 +97,21 @@ abstract class settings_model {
      * @param $preference integer The new preference. Must be -1, 0 or 1
      * @throws InvalidArgumentException If the preference or attribute is invalid
      */
-    protected function set($attribute, $preference) {
-        $this->require_valid_attribute($attribute);
+    protected function setPreference($attribute, $preference) {
         local_uploadnotification_util::require_valid_preference($preference);
-        $this->settings->{$attribute} = $preference;
+        $this->set($attribute, $preference);
+    }
+
+    /**
+     * Stores the new value under the passed attribute.
+     * Does not update the database until save id called
+     * @param $attribute string The attribute which should be set
+     * @param $value mixed The new value of the attribute
+     * @throws InvalidArgumentException If the attribute is invalid
+     */
+    protected function set($attribute, $value) {
+        $this->require_valid_attribute($attribute);
+        $this->settings->{$attribute} = $value;
     }
 
     /**

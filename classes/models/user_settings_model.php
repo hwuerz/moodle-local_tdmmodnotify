@@ -19,7 +19,7 @@ class user_settings_model extends settings_model {
      * The first name must be the primary key
      * @var array string
      */
-    private $attributes = array('userid', 'activated', 'attachment');
+    private $attributes = array('userid' => -1, 'activated' => -1, 'max_filesize' => 0);
 
     /**
      * user_settings_model constructor.
@@ -62,27 +62,27 @@ class user_settings_model extends settings_model {
      * @throws InvalidArgumentException If the preference is invalid
      */
     public function set_mail_enabled($preference) {
-        $this->set('activated', $preference);
+        $this->setPreference('activated', $preference);
     }
 
     /**
-     * Checks whether the user wants to receive email attachments.
-     * @return integer -1 for no preferences, 0 for 'disabled', 1 for 'activated'
+     * Checks whether the user wants to receive email attachments and which is the maximum filesize for them
+     * @return integer max filesize in byte
      */
-    public function is_attachment_enabled() {
-        return $this->get('attachment');
+    public function get_max_filesize() {
+        return $this->get('max_filesize');
     }
 
     /**
-     * Stores the new preference.
+     * Stores the new filesize.
      * Does not update the database until save id called
-     * @param $preference integer The new preference. Must be -1, 0 or 1
+     * @param $filesize integer The new filesize in byte. Must be greater or equals zero
      * @throws InvalidArgumentException If the preference is invalid
      */
-    public function set_attachment_enabled($preference) {
-        if(!in_array($preference, array(0, 1))) {
-            throw new InvalidArgumentException('A user can only enable attachments (1) or not (0)');
+    public function set_max_filesize($filesize) {
+        if(!is_int($filesize) || $filesize < 0) {
+            throw new InvalidArgumentException('The filesize must be greater or equals zero');
         }
-        $this->set('attachment', $preference);
+        $this->set('max_filesize', $filesize);
     }
 }

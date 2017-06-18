@@ -54,13 +54,13 @@ $settings = new user_settings_model($USER->id);
 $user_form = new uploadnotification_user_form(null, array(
     'id' => $USER->id,
     'enable' => $settings->is_mail_enabled(),
-    'attachment' => $settings->is_attachment_enabled()));
+    'max_filesize' => $settings->get_max_filesize()));
 
 // Evaluate form data
 $data = $user_form->get_data();
 if ($data) {
     $settings->set_mail_enabled($data->enable);
-    $settings->set_attachment_enabled($data->attachment);
+    $settings->set_max_filesize($data->max_filesize);
     $settings->save();
 }
 

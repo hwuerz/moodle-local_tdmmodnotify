@@ -37,5 +37,5 @@ $plugin->maturity = MATURITY_ALPHA;
 $plugin->cron = $CFG->debugdeveloper ? 1 : 86400;
 
 // Version format:  YYYYMMDDXX
-$plugin->version  = 2017061802;
+$plugin->version  = 2017061900;
 $plugin->requires = 2013111800;

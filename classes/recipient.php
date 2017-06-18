@@ -158,10 +158,12 @@ class local_uploadnotification_recipient extends local_uploadnotification_model 
         global $DB;
         $fs = get_file_storage();
 
-        // TODO Add admin check
+        // If the admin has attachments disabled --> do not send them
+        $max_filesize = get_config('uploadnotification', 'max_filesize');
+        if($max_filesize !== false && $max_filesize == 0) return;
 
         // If the user has not requested attachments --> do not send them
-        if($user_settings->is_attachment_enabled() != 1) return;
+        if($user_settings->get_max_filesize() == 0) return;
 
         // If the course admin has forbidden attachments --> do not send them
         if($course_settings->is_attachment_enabled() == 0) return;
@@ -180,9 +182,8 @@ class local_uploadnotification_recipient extends local_uploadnotification_model 
 
             // Check whether this file is to large
             $filesize = $file->get_filesize();
-            // TODO add user file size check
-            if($filesize > get_config('uploadnotification', 'max_filesize')) {
-                //echo "Block: file size";
+            if($filesize > get_config('uploadnotification', 'max_filesize')
+                || $filesize > $user_settings->get_max_filesize()) {
                 return;
             }
 
