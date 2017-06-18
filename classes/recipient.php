@@ -26,6 +26,11 @@
 
 defined('MOODLE_INTERNAL') || die;
 
+// Include function library.
+require_once(dirname(__FILE__).'/models/course_settings_model.php');
+require_once(dirname(__FILE__).'/models/user_settings_model.php');
+
+
 /**
  * Recipient.
  */
@@ -98,28 +103,21 @@ class local_uploadnotification_recipient extends local_uploadnotification_model 
         );
 
         // Whether the user has requested mails
-        $user_settings = local_uploadnotification_util::is_user_mail_enabled($this->userid);
-        $user_settings_attachment = local_uploadnotification_util::is_user_attachment_enabled($this->userid);
+        $user_settings = new user_settings_model($this->userid);
 
-        if($user_settings != 0) { // User has not forbidden to send mails (-> no preferences or requested)
+        if($user_settings->is_mail_enabled() != 0) { // User has not forbidden to send mails (-> no preferences or requested)
 
             // Loop each notification (= file were changes are detected)
             foreach ($this->notifications as $notification) {
-
-                // If this file is not visible for the user, do not include it in the report
-                // TODO: Redundant with uservisible check below. Remove variable from all scripts
-                if ($notification->visible == 0) {
-                    continue;
-                }
 
                 // Should a mail be send?
                 // General rule: A mail will be send if
                 // docent or student has requested it
                 // AND
                 // nobody (docent or student) has forbidden it
-                $course_settings = local_uploadnotification_util::is_course_mail_enabled($notification->courseid);
-                if ($course_settings == 0) continue; // docent has disabled mail delivery for his course
-                if (!($user_settings == 1 || $course_settings == 1)) continue; // No one has requested mails
+                $course_settings = new course_settings_model($notification->courseid);
+                if ($course_settings->is_mail_enabled() == 0) continue; // docent has disabled mail delivery for his course
+                if (!($user_settings->is_mail_enabled() == 1 || $course_settings->is_mail_enabled() == 1)) continue; // No one has requested mails
 
                 // Check visibility for current user
                 // Handles restricted access like visibility for groups and timestamps
@@ -134,7 +132,7 @@ class local_uploadnotification_recipient extends local_uploadnotification_model 
                 $context = $notification->build_content($substitutions);
                 $format->text .= $context->text;
                 $format->html .= $context->html;
-                $this->add_file_attachment($cm, $format, $user_settings, $user_settings_attachment);
+                $this->add_file_attachment($cm, $format, $user_settings, $course_settings);
             }
         }
 
@@ -150,24 +148,24 @@ class local_uploadnotification_recipient extends local_uploadnotification_model 
     }
 
     /**
-     *
+     * @param $cm
+     * @param $format
+     * @param $user_settings user_settings_model
+     * @param $course_settings course_settings_model
      */
-    private function add_file_attachment($cm, $format, $user_settings, $user_settings_attachment) {
+    private function add_file_attachment($cm, $format, $user_settings, $course_settings) {
 
         global $DB;
         $fs = get_file_storage();
 
-        // Send files only if the user has requested updates
-        // Not if mail delivery was enabled by a docent
-        if($user_settings != 1) {
-            //echo "Block: no user settings";
-            return;
-        }
+        // TODO Add admin check
 
-        if($user_settings_attachment == 0) {
-            //echo "Block: user disabled attachments";
-            return;
-        }
+        // If the user has not requested attachments --> do not send them
+        if($user_settings->is_attachment_enabled() != 1) return;
+
+        // If the course admin has forbidden attachments --> do not send them
+        if($course_settings->is_attachment_enabled() == 0) return;
+
 
         $context = context_module::instance($cm->id);
         if ($cm->modname == 'resource') {
@@ -182,12 +180,14 @@ class local_uploadnotification_recipient extends local_uploadnotification_model 
 
             // Check whether this file is to large
             $filesize = $file->get_filesize();
+            // TODO add user file size check
             if($filesize > get_config('uploadnotification', 'max_filesize')) {
                 //echo "Block: file size";
                 return;
             }
 
             // Check whether there are to much subscriptions for this attachment
+            // TODO optimize: which users request attachments
             $sql = <<<SQL
 SELECT COUNT(n.id)
 FROM {local_uploadnotification} n

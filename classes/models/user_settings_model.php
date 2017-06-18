@@ -80,6 +80,9 @@ class user_settings_model extends settings_model {
      * @throws InvalidArgumentException If the preference is invalid
      */
     public function set_attachment_enabled($preference) {
+        if(!in_array($preference, array(0, 1))) {
+            throw new InvalidArgumentException('A user can only enable attachments (1) or not (0)');
+        }
         $this->set('attachment', $preference);
     }
 }

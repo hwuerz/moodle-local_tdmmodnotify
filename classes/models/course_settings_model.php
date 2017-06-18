@@ -19,7 +19,7 @@ class course_settings_model extends settings_model {
      * The first name must be the primary key
      * @var array string
      */
-    private $attributes = array('courseid', 'activated');
+    private $attributes = array('courseid', 'activated', 'attachment');
 
     /**
      * course_settings_model constructor.
@@ -63,5 +63,26 @@ class course_settings_model extends settings_model {
      */
     public function set_mail_enabled($preference) {
         $this->set('activated', $preference);
+    }
+
+    /**
+     * Checks whether attachments could be send in this course.
+     * @return integer -1 for no preferences, 0 for 'disabled', 1 for 'activated'
+     */
+    public function is_attachment_enabled() {
+        return $this->get('attachment');
+    }
+
+    /**
+     * Stores the new preference.
+     * Does not update the database until save id called
+     * @param $preference integer The new preference. Must be -1 or 0
+     * @throws InvalidArgumentException If the preference is invalid
+     */
+    public function set_attachment_enabled($preference) {
+        if(!in_array($preference, array(-1, 0))) {
+            throw new InvalidArgumentException('A course admin can only allow attachments (-1) or not (0)');
+        }
+        $this->set('attachment', $preference);
     }
 }

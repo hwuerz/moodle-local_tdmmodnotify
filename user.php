@@ -34,12 +34,12 @@ require_once(dirname(__FILE__).'/classes/models/user_settings_model.php');
 global $DB, $CFG, $OUTPUT, $USER, $SITE, $PAGE;
 
 //require_login($course, true);
+$PAGE->set_context(context_user::instance($USER->id));
 $PAGE->set_url("/mod/$pluginname/user.php");//, array('id' => $course_id));
-$PAGE->set_title('My modules page title');
-$PAGE->set_heading('My modules page heading');
+$PAGE->set_title('Uploadnotification Settings');
+$PAGE->set_heading('Uploadnotification Settings');
 
 $homeurl = new moodle_url('/');
-require_login();
 
 // Only add settings item on non-site course pages.
 if (!$USER->id) {

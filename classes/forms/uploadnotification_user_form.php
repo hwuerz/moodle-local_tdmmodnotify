@@ -55,7 +55,11 @@ class uploadnotification_user_form extends moodleform {
         $mform->addElement('select', 'enable', get_string('setting_enable_plugin', 'local_uploadnotification'), $preferences);
         $mform->setDefault('enable', $this->_customdata['enable']);
 
-        $mform->addElement('select', 'attachment', get_string('setting_receive_attachments', 'local_uploadnotification'), $preferences);
+        $preferences_attachment = array(
+            '0' => get_string('settings_disable', 'local_uploadnotification'),
+            '1' => get_string('settings_enable', 'local_uploadnotification')
+        );
+        $mform->addElement('select', 'attachment', get_string('setting_receive_attachments', 'local_uploadnotification'), $preferences_attachment);
         $mform->setDefault('attachment', $this->_customdata['attachment']);
 
         $this->add_action_buttons();

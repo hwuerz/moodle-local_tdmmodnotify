@@ -39,8 +39,8 @@ $course = $DB->get_record('course', array('id' => $course_id), '*', MUST_EXIST);
 require_login($course, true);
 
 $PAGE->set_url("/mod/$pluginname/course.php", array('id' => $course_id));
-$PAGE->set_title('My modules page title');
-$PAGE->set_heading('My modules page heading');
+$PAGE->set_title('Uploadnotification Settings');
+$PAGE->set_heading('Uploadnotification Settings');
 
 $homeurl = new moodle_url('/');
 require_login();
@@ -63,12 +63,14 @@ $settings = new course_settings_model($course_id);
 $course_form = new uploadnotification_course_form(null, array(
     'id' => $course_id,
     'fullname' => $course->fullname,
-    'enable' => $settings->is_mail_enabled()));
+    'enable' => $settings->is_mail_enabled(),
+    'attachment' => $settings->is_attachment_enabled()));
 
 // Evaluate form data
 $data = $course_form->get_data();
 if ($data) {
     $settings->set_mail_enabled($data->enable);
+    $settings->set_attachment_enabled($data->attachment);
     $settings->save();
 }
 

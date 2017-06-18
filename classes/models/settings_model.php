@@ -58,7 +58,7 @@ abstract class settings_model {
         if($settings === false) {
             $settings = new stdClass();
             foreach ($this->get_attributes() as $attribute) {
-                $settings[$attribute] = -1;
+                $settings->{$attribute} = -1;
             }
         }
 

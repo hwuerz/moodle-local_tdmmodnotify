@@ -23,27 +23,22 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-// Include config.php.
-require_once(__DIR__.'/../../config.php');
-
 // Globals.
-global $CFG;
+global $CFG, $OUTPUT, $USER, $SITE, $PAGE;
+$pluginname = 'uploadnotification';
 
+// Include config.php.
+require_once(dirname(__FILE__).'/../../config.php');
 require_once($CFG->libdir.'/adminlib.php');
 
-// Globals.
-global $OUTPUT, $USER, $SITE, $PAGE;
-
-// Include our function library.
-$pluginname = 'uploadnotification';
+// Include function library.
 require_once($CFG->dirroot.'/local/'.$pluginname.'/lib.php');
-require_once($CFG->dirroot.'/local/'.$pluginname.'/classes/uploadnotification_admin_form.php');
-require_once($CFG->dirroot.'/local/'.$pluginname.'/classes/uploadnotification_development_form.php');
+require_once(dirname(__FILE__).'/classes/forms/uploadnotification_admin_form.php');
+require_once(dirname(__FILE__).'/classes/forms/uploadnotification_development_form.php');
 
 
 // Ensure only administrators have access.
 $homeurl = new moodle_url('/');
-require_login();
 if (!is_siteadmin()) {
     redirect($homeurl, "This feature is only available for site administrators.", 5);
 }

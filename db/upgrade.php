@@ -110,5 +110,20 @@ function xmldb_local_uploadnotification_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2017061300, 'local', 'uploadnotification');
     }
 
+    if ($oldversion < 2017061800) {
+
+        // Define field attachement to be added to local_uploadnotification_cou.
+        $table = new xmldb_table('local_uploadnotification_cou');
+        $field = new xmldb_field('attachment', XMLDB_TYPE_INTEGER, '1', null, null, null, null, 'activated');
+
+        // Conditionally launch add field attachement.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Uploadnotification savepoint reached.
+        upgrade_plugin_savepoint(true, 2017061800, 'local', 'uploadnotification');
+    }
+
     return true;
 }
