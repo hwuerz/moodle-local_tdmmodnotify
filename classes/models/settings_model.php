@@ -10,7 +10,7 @@ if (!defined('MOODLE_INTERNAL')) {
  * Date: 17.06.2017
  * Time: 16:53
  */
-abstract class settings_model {
+abstract class local_uploadnotification_settings_model {
 
     /**
      * All settings

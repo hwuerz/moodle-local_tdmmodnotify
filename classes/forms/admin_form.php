@@ -29,13 +29,12 @@ require_once($CFG->libdir.'/formslib.php');
 /**
  * Settings form for moodle admins to customize uploadnotification
  */
-class uploadnotification_admin_form extends moodleform {
+class local_uploadnotification_admin_form extends moodleform {
 
     /**
      * Define the form.
      */
     public function definition() {
-        global $USER, $CFG;
         $mform = $this->_form;
 
         // Header.

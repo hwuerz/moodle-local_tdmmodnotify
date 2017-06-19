@@ -27,7 +27,7 @@ $pluginname = 'uploadnotification';
 require_once(dirname(__FILE__).'/../../config.php');
 
 // Include function library.
-require_once(dirname(__FILE__).'/classes/forms/uploadnotification_course_form.php');
+require_once(dirname(__FILE__).'/classes/forms/course_form.php');
 require_once(dirname(__FILE__).'/classes/models/course_settings_model.php');
 
 // Globals.
@@ -57,10 +57,10 @@ if (!has_capability('moodle/backup:backupcourse', context_course::instance($cour
 
 echo $OUTPUT->header();
 
-$settings = new course_settings_model($course_id);
+$settings = new local_uploadnotification_course_settings_model($course_id);
 
 // Display global config
-$course_form = new uploadnotification_course_form(null, array(
+$course_form = new local_uploadnotification_course_form(null, array(
     'id' => $course_id,
     'fullname' => $course->fullname,
     'enable' => $settings->is_mail_enabled(),

@@ -47,7 +47,7 @@ class local_uploadnotification_mailer {
 
     /**
      * The manager for the file attachments to avoid duplicated files for every user
-     * @var attachment_optimizer
+     * @var local_uploadnotification_attachment_optimizer
      */
     private $attachment_optimizer;
 
@@ -82,7 +82,7 @@ class local_uploadnotification_mailer {
      * @return void
      */
     public function execute() {
-        $this->attachment_optimizer = new attachment_optimizer();
+        $this->attachment_optimizer = new local_uploadnotification_attachment_optimizer();
 
         foreach ($this->recipients as $recipient) {
             mtrace("user#{$recipient->userid}");

@@ -96,8 +96,8 @@ class local_uploadnotification_recipient extends local_uploadnotification_model 
      *                                must include a moodle_url object in its baseurl property else a fatal error will
      *                                be raised when building their content.
      *
-     * @param $attachment_optimizer attachment_optimizer The manager for all mail attachments
-     * @return mail_wrapper[] An array of all mails which should be send to this user.
+     * @param $attachment_optimizer local_uploadnotification_attachment_optimizer The manager for all mail attachments
+     * @return local_uploadnotification_mail_wrapper[] An array of all mails which should be send to this user.
      *                        The array can be empty if no content is available for this user. This can happen if the
      *                        visibility of a stored file was changed to hidden.
      */
@@ -105,12 +105,12 @@ class local_uploadnotification_recipient extends local_uploadnotification_model 
         global $DB;
 
         // Whether the user has requested mails
-        $user_settings = new user_settings_model($this->userid);
+        $user_settings = new local_uploadnotification_user_settings_model($this->userid);
         if($user_settings->is_mail_enabled() == 0) return array();
 
         // User has not forbidden to send mails (-> no preferences or requested)
 
-        /** @var mail_wrapper[] $attachment_mails*/
+        /** @var local_uploadnotification_mail_wrapper[] $attachment_mails*/
         $attachment_mails = array();
         $text_mail = false;
 
@@ -122,7 +122,7 @@ class local_uploadnotification_recipient extends local_uploadnotification_model 
             // docent or student has requested it
             // AND
             // nobody (docent or student) has forbidden it
-            $course_settings = new course_settings_model($notification->courseid);
+            $course_settings = new local_uploadnotification_course_settings_model($notification->courseid);
             if ($course_settings->is_mail_enabled() == 0) continue; // docent has disabled mail delivery for his course
             if (!($user_settings->is_mail_enabled() == 1 || $course_settings->is_mail_enabled() == 1)) continue; // No one has requested mails
 
@@ -142,11 +142,11 @@ class local_uploadnotification_recipient extends local_uploadnotification_model 
             // Check whether this notification will lead to an attachment
             $attachment = $this->add_file_attachment($cm, $user_settings, $course_settings, $attachment_optimizer);
             if($attachment === false) { // No attachment --> this notification can be written in the text mail
-                if(empty($text_mail)) $text_mail = new mail_wrapper($this->user);
+                if(empty($text_mail)) $text_mail = new local_uploadnotification_mail_wrapper($this->user);
                 $text_mail->add_content($content->text, $content->html);
 
             } else { // Each attachment will lead in a single mail
-                $mail = new mail_wrapper($this->user);
+                $mail = new local_uploadnotification_mail_wrapper($this->user);
                 $mail->add_content($content->text, $content->html);
                 $mail->set_attachment($attachment->file_name, $attachment->file_path);
                 $attachment_mails[] = $mail;
@@ -160,9 +160,9 @@ class local_uploadnotification_recipient extends local_uploadnotification_model 
 
     /**
      * @param $cm cm_info The course module record
-     * @param $user_settings user_settings_model
-     * @param $course_settings course_settings_model
-     * @param $attachment_optimizer attachment_optimizer
+     * @param $user_settings local_uploadnotification_user_settings_model
+     * @param $course_settings local_uploadnotification_course_settings_model
+     * @param $attachment_optimizer local_uploadnotification_attachment_optimizer
      * @return attachment_optimizer_file|bool
      */
     private function add_file_attachment($cm, $user_settings, $course_settings, $attachment_optimizer) {

@@ -30,7 +30,7 @@ defined('MOODLE_INTERNAL') || die;
 /**
  * A wrapper for notification mails.
  */
-class mail_wrapper {
+class local_uploadnotification_mail_wrapper {
 
     /**
      * @var stdClass The user object, who should receive the mail

@@ -32,9 +32,9 @@ require_once(dirname(__FILE__).'/../../config.php');
 require_once($CFG->libdir.'/adminlib.php');
 
 // Include function library.
-require_once($CFG->dirroot.'/local/'.$pluginname.'/lib.php');
-require_once(dirname(__FILE__).'/classes/forms/uploadnotification_admin_form.php');
-require_once(dirname(__FILE__).'/classes/forms/uploadnotification_development_form.php');
+require_once(dirname(__FILE__).'/lib.php');
+require_once(dirname(__FILE__).'/classes/forms/admin_form.php');
+require_once(dirname(__FILE__).'/classes/forms/development_form.php');
 
 
 // Ensure only administrators have access.
@@ -63,7 +63,7 @@ admin_externalpage_setup('local_'.$pluginname); // Sets the navbar & expands nav
 echo $OUTPUT->header();
 
 // Manually send mail
-$development_form = new uploadnotification_development_form();
+$development_form = new local_uploadnotification_development_form();
 $data = $development_form->get_data();
 if ($data) {
     local_uploadnotification_cron();
@@ -71,7 +71,7 @@ if ($data) {
 $development_form->display();
 
 // Display global config
-$admin_form = new uploadnotification_admin_form();
+$admin_form = new local_uploadnotification_admin_form();
 $data = $admin_form->get_data();
 if ($data) {
     set_config('enabled', $data->enable, 'uploadnotification');

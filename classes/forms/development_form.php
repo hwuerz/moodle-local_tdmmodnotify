@@ -15,7 +15,7 @@
 // along with uploadnotification.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Settings form for admins
+ * Form to send pending upload notifications to students
  *
  * @package   local_uploadnotification
  * @author    Hendrik Wuerz <hendrikmartin.wuerz@stud.tu-darmstadt.de>
@@ -27,51 +27,45 @@ defined('MOODLE_INTERNAL') || die;
 require_once($CFG->libdir.'/formslib.php');
 
 /**
- * Settings form for moodle admins to customize uploadnotification
+ * Form manually execute the cron function for uploadnotification
  */
-class uploadnotification_user_form extends moodleform {
+class local_uploadnotification_development_form extends moodleform {
 
     /**
      * Define the form.
      */
     public function definition() {
-        global $USER, $CFG;
         $mform = $this->_form;
 
         // Header.
 
-        $mform->addElement('hidden', 'id', '');
-        $mform->setType('id', PARAM_INT);
-        $mform->setDefault('id', $this->_customdata['id']);
+        $mform->addElement('html', '<h3>Send Mails</h3>');
+        $mform->addElement('html', '<p>Use this button for development, or if cron is not running.</p>');
+        $mform->addElement('html', '<p>Simply calls the cron method for uploadnotification.</p>');
 
-        $mform->addElement('html', '<h3>Uploadnotification</h3>');
-        $mform->addElement('html', '<p>Do you want to receive notifications when new material was uploaded to a course?</p>');
+        $buttonarray = array();
+        $buttonarray[] = $mform->createElement('submit', 'send', 'SENDEN');
+//        $buttonarray[] = $mform->createElement('cancel');
 
-        $preferences = array(
-            '-1' => get_string('settings_no_preferences', 'local_uploadnotification'),
-            '0' => get_string('settings_disable', 'local_uploadnotification'),
-            '1' => get_string('settings_enable', 'local_uploadnotification')
-        );
-        $mform->addElement('select', 'enable', get_string('setting_enable_plugin', 'local_uploadnotification'), $preferences);
-        $mform->setDefault('enable', $this->_customdata['enable']);
-
-        $mform->addElement('text', 'max_filesize', get_string('setting_max_filesize', 'local_uploadnotification'));
-        $mform->setType('max_filesize', PARAM_INT);
-        $mform->setDefault('max_filesize', $this->_customdata['max_filesize']);
-
-        $this->add_action_buttons();
+        $mform->addGroup($buttonarray, 'buttonar', '', array(' '), false);
+        $mform->closeHeaderBefore('buttonar');
     }
 
     /**
      * Validate submitted form data
      *
-     * @param      array  $data   The data fields submitted from the form. (not used)
+     * @param      array  $data   The data fields submitted from the form.
      * @param      array  $files  Files submitted from the form (not used)
      *
      * @return     array  List of errors to be displayed on the form if validation fails.
      */
     public function validation($data, $files) {
         $errors = parent::validation($data, $files);
+
+//        if (empty($data['recipient'])) {
+//            $errors['recipient'] = get_string('err_email', 'form');
+//        }
+
         return $errors;
     }
 }

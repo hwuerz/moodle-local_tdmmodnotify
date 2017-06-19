@@ -30,7 +30,7 @@ defined('MOODLE_INTERNAL') || die;
 /**
  * Manages mail attachments
  */
-class attachment_optimizer {
+class local_uploadnotification_attachment_optimizer {
 
     /**
      * @var attachment_optimizer_file[] All known files

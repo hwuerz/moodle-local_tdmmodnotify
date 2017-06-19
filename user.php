@@ -27,7 +27,7 @@ $pluginname = 'uploadnotification';
 require_once(dirname(__FILE__).'/../../config.php');
 
 // Include function library.
-require_once(dirname(__FILE__).'/classes/forms/uploadnotification_user_form.php');
+require_once(dirname(__FILE__) . '/classes/forms/user_form.php');
 require_once(dirname(__FILE__).'/classes/models/user_settings_model.php');
 
 // Globals.
@@ -48,10 +48,10 @@ if (!$USER->id) {
 
 echo $OUTPUT->header();
 
-$settings = new user_settings_model($USER->id);
+$settings = new local_uploadnotification_user_settings_model($USER->id);
 
 // Display global config
-$user_form = new uploadnotification_user_form(null, array(
+$user_form = new local_uploadnotification_user_form(null, array(
     'id' => $USER->id,
     'enable' => $settings->is_mail_enabled(),
     'max_filesize' => $settings->get_max_filesize()));

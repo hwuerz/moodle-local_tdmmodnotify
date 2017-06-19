@@ -11,7 +11,7 @@ require_once(dirname(__FILE__).'/settings_model.php');
  * Date: 17.06.2017
  * Time: 16:53
  */
-class course_settings_model extends settings_model {
+class local_uploadnotification_course_settings_model extends local_uploadnotification_settings_model {
 
     /**
      * All attributes of the course settings

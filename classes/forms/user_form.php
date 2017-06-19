@@ -29,7 +29,7 @@ require_once($CFG->libdir.'/formslib.php');
 /**
  * Settings form for moodle admins to customize uploadnotification
  */
-class uploadnotification_course_form extends moodleform {
+class local_uploadnotification_user_form extends moodleform {
 
     /**
      * Define the form.
@@ -43,8 +43,8 @@ class uploadnotification_course_form extends moodleform {
         $mform->setType('id', PARAM_INT);
         $mform->setDefault('id', $this->_customdata['id']);
 
-        $mform->addElement('html', '<h3>'.$this->_customdata['fullname'].'</h3>');
-        $mform->addElement('html', '<p>Global Settings for uploadnotification</p>');
+        $mform->addElement('html', '<h3>Uploadnotification</h3>');
+        $mform->addElement('html', '<p>Do you want to receive notifications when new material was uploaded to a course?</p>');
 
         $preferences = array(
             '-1' => get_string('settings_no_preferences', 'local_uploadnotification'),
@@ -54,12 +54,9 @@ class uploadnotification_course_form extends moodleform {
         $mform->addElement('select', 'enable', get_string('setting_enable_plugin', 'local_uploadnotification'), $preferences);
         $mform->setDefault('enable', $this->_customdata['enable']);
 
-        $preferences_attachment = array(
-            '-1' => get_string('settings_allow', 'local_uploadnotification'),
-            '0' => get_string('settings_disable', 'local_uploadnotification')
-        );
-        $mform->addElement('select', 'attachment', get_string('setting_receive_attachments', 'local_uploadnotification'), $preferences_attachment);
-        $mform->setDefault('attachment', $this->_customdata['attachment']);
+        $mform->addElement('text', 'max_filesize', get_string('setting_max_filesize', 'local_uploadnotification'));
+        $mform->setType('max_filesize', PARAM_INT);
+        $mform->setDefault('max_filesize', $this->_customdata['max_filesize']);
 
         $this->add_action_buttons();
     }
