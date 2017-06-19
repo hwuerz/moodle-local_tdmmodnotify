@@ -29,6 +29,7 @@ defined('MOODLE_INTERNAL') || die;
 // Include function library.
 require_once(dirname(__FILE__).'/models/course_settings_model.php');
 require_once(dirname(__FILE__).'/models/user_settings_model.php');
+require_once(dirname(__FILE__).'/mail_wrapper.php');
 
 
 /**
@@ -57,6 +58,13 @@ class local_uploadnotification_recipient extends local_uploadnotification_model 
     protected $userlastname;
 
     /**
+     * User Object.
+     *
+     * @var stdClass
+     */
+    protected $user;
+
+    /**
      * Notifications.
      *
      * @var local_uploadnotification_notification[]
@@ -75,6 +83,7 @@ class local_uploadnotification_recipient extends local_uploadnotification_model 
         $this->userid        = $userid;
         $this->userfirstname = $userfirstname;
         $this->userlastname  = $userlastname;
+        $this->user          = core_user::get_user($this->userid);
 
         $this->notifications = $notifications;
     }
@@ -87,132 +96,105 @@ class local_uploadnotification_recipient extends local_uploadnotification_model 
      *                                must include a moodle_url object in its baseurl property else a fatal error will
      *                                be raised when building their content.
      *
-     * @return object {string text, string html} | null
-     *      The notification content.
-     *      null if no content is available for this user. This can happen if the visibility of a stored file was
-     *      changed to hidden.
+     * @param $attachment_optimizer attachment_optimizer The manager for all mail attachments
+     * @return mail_wrapper[] An array of all mails which should be send to this user.
+     *                        The array can be empty if no content is available for this user. This can happen if the
+     *                        visibility of a stored file was changed to hidden.
      */
-    public function build_content($substitutions) {
-
+    public function build_content($substitutions, $attachment_optimizer) {
         global $DB;
-
-        $format = (object) array(
-            'text' => '',
-            'html' => '',
-            'attachments' => array()
-        );
 
         // Whether the user has requested mails
         $user_settings = new user_settings_model($this->userid);
+        if($user_settings->is_mail_enabled() == 0) return array();
 
-        if($user_settings->is_mail_enabled() != 0) { // User has not forbidden to send mails (-> no preferences or requested)
+        // User has not forbidden to send mails (-> no preferences or requested)
 
-            // Loop each notification (= file were changes are detected)
-            foreach ($this->notifications as $notification) {
+        /** @var mail_wrapper[] $attachment_mails*/
+        $attachment_mails = array();
+        $text_mail = false;
 
-                // Should a mail be send?
-                // General rule: A mail will be send if
-                // docent or student has requested it
-                // AND
-                // nobody (docent or student) has forbidden it
-                $course_settings = new course_settings_model($notification->courseid);
-                if ($course_settings->is_mail_enabled() == 0) continue; // docent has disabled mail delivery for his course
-                if (!($user_settings->is_mail_enabled() == 1 || $course_settings->is_mail_enabled() == 1)) continue; // No one has requested mails
+        // Loop each notification (= file were changes are detected)
+        foreach ($this->notifications as $notification) {
 
-                // Check visibility for current user
-                // Handles restricted access like visibility for groups and timestamps
-                // See https://docs.moodle.org/dev/Availability_API
-                $course = $DB->get_record('course', array('id' => $notification->courseid));
-                $modinfo = get_fast_modinfo($course, $this->userid);
-                $cm = $modinfo->get_cm($notification->moodleid);
-                if (!$cm->uservisible) { // User can not access the activity.
-                    continue;
-                }
+            // Should a mail be send?
+            // General rule: A mail will be send if
+            // docent or student has requested it
+            // AND
+            // nobody (docent or student) has forbidden it
+            $course_settings = new course_settings_model($notification->courseid);
+            if ($course_settings->is_mail_enabled() == 0) continue; // docent has disabled mail delivery for his course
+            if (!($user_settings->is_mail_enabled() == 1 || $course_settings->is_mail_enabled() == 1)) continue; // No one has requested mails
 
-                $context = $notification->build_content($substitutions);
-                $format->text .= $context->text;
-                $format->html .= $context->html;
-                $this->add_file_attachment($cm, $format, $user_settings, $course_settings);
+            // Check visibility for current user
+            // Handles restricted access like visibility for groups and timestamps
+            // See https://docs.moodle.org/dev/Availability_API
+            $course = $DB->get_record('course', array('id' => $notification->courseid));
+            $modinfo = get_fast_modinfo($course, $this->userid);
+            $cm = $modinfo->get_cm($notification->moodleid);
+            if (!$cm->uservisible) { // User can not access the activity.
+                continue;
+            }
+
+            // Generate the text which informs the user about the file
+            $content = $notification->build_content($substitutions);
+
+            // Check whether this notification will lead to an attachment
+            $attachment = $this->add_file_attachment($cm, $user_settings, $course_settings, $attachment_optimizer);
+            if($attachment === false) { // No attachment --> this notification can be written in the text mail
+                if(empty($text_mail)) $text_mail = new mail_wrapper($this->user);
+                $text_mail->add_content($content->text, $content->html);
+
+            } else { // Each attachment will lead in a single mail
+                $mail = new mail_wrapper($this->user);
+                $mail->add_content($content->text, $content->html);
+                $mail->set_attachment($attachment->file_name, $attachment->file_path);
+                $attachment_mails[] = $mail;
             }
         }
 
-        // There are no notifications at all --> do not send an email
-        if($format->text == '') {
-            return null;
-        }
-
-        $format->text = substr($format->text, 0, -1);
-        $format->html = substr($format->html, 0, -1);
-
-        return $format;
+        // Add the plain text mail to the array
+        if(!empty($text_mail)) $attachment_mails[] = $text_mail;
+        return $attachment_mails;
     }
 
     /**
-     * @param $cm
-     * @param $format
+     * @param $cm cm_info The course module record
      * @param $user_settings user_settings_model
      * @param $course_settings course_settings_model
+     * @param $attachment_optimizer attachment_optimizer
+     * @return attachment_optimizer_file|bool
      */
-    private function add_file_attachment($cm, $format, $user_settings, $course_settings) {
-
-        global $DB;
-        $fs = get_file_storage();
+    private function add_file_attachment($cm, $user_settings, $course_settings, $attachment_optimizer) {
 
         // If the admin has attachments disabled --> do not send them
         $max_filesize = get_config('uploadnotification', 'max_filesize');
-        if($max_filesize !== false && $max_filesize == 0) return;
+        if($max_filesize !== false && $max_filesize == 0) return false;
 
         // If the user has not requested attachments --> do not send them
-        if($user_settings->get_max_filesize() == 0) return;
+        if($user_settings->get_max_filesize() == 0) return false;
 
         // If the course admin has forbidden attachments --> do not send them
-        if($course_settings->is_attachment_enabled() == 0) return;
+        if($course_settings->is_attachment_enabled() == 0) return false;
 
+        // File might be interesting --> fetch it
+        $file = $attachment_optimizer->require_file($cm);
 
-        $context = context_module::instance($cm->id);
-        if ($cm->modname == 'resource') {
-            $files = $fs->get_area_files(
-                $context->id,
-                'mod_resource',
-                'content',
-                0,
-                'sortorder DESC, id ASC',
-                false);
-            $file = array_shift($files); //get only the first file
+        // The file could not be fetched for any reason
+        if($file === false) return false;
 
-            // Check whether this file is to large
-            $filesize = $file->get_filesize();
-            if($filesize > get_config('uploadnotification', 'max_filesize')
-                || $filesize > $user_settings->get_max_filesize()) {
-                return;
-            }
-
-            // Check whether there are to much subscriptions for this attachment
-            // TODO optimize: which users request attachments
-            $sql = <<<SQL
-SELECT COUNT(n.id)
-FROM {local_uploadnotification} n
-INNER JOIN {local_uploadnotification_usr} u
-ON n.userid = u.userid
-WHERE u.activated = 1 AND n.coursemoduleid = ?
-SQL;
-            $count = $DB->count_records_sql($sql, array($cm->id));
-            if($count > get_config('uploadnotification', 'max_mails_for_resource')) {
-                //echo "Block: max requests ->".$count."<-";
-                return;
-            }
-
-            // Generate unique filename for this mail
-            $suffix = '';
-            $counter = 0;
-            while (array_key_exists($file->get_filename().$suffix, $format->attachments)) {
-                $counter++;
-                $suffix = $counter;
-            }
-            $file_path = $file->copy_content_to_temp();
-            $format->attachments[$file->get_filename().$suffix] = $file_path;
-            $format->attachments[$file->get_filename()] = $file_path;
+        // Check filesize
+        if($file->filesize > get_config('uploadnotification', 'max_filesize')
+            || $file->filesize > $user_settings->get_max_filesize()) {
+            return false;
         }
+
+        // Check number of receiving users
+        if($file->requesting_users > get_config('uploadnotification', 'max_mails_for_resource')) {
+            return false;
+        }
+
+        return $file;
     }
 
     /**

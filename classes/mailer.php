@@ -25,6 +25,7 @@
  */
 
 defined('MOODLE_INTERNAL') || die;
+require_once(dirname(__FILE__).'/attachment_optimizer.php');
 
 /**
  * Digest mailer.
@@ -43,6 +44,12 @@ class local_uploadnotification_mailer {
      * @var stdClass
      */
     protected $supportuser;
+
+    /**
+     * The manager for the file attachments to avoid duplicated files for every user
+     * @var attachment_optimizer
+     */
+    private $attachment_optimizer;
 
     /**
      * Initialiser.
@@ -75,6 +82,8 @@ class local_uploadnotification_mailer {
      * @return void
      */
     public function execute() {
+        $this->attachment_optimizer = new attachment_optimizer();
+
         foreach ($this->recipients as $recipient) {
             mtrace("user#{$recipient->userid}");
             $this->mail($recipient);
@@ -85,6 +94,8 @@ class local_uploadnotification_mailer {
         foreach ($this->recipients as $recipient) {
             $this->delete_scheduled_notifications($recipient);
         }
+
+        $this->attachment_optimizer->delete_all_tmp_copies();
     }
 
     /**
@@ -95,7 +106,6 @@ class local_uploadnotification_mailer {
      * @return void
      */
     protected function mail($recipient) {
-        $recipientuser = core_user::get_user($recipient->userid);
 
         $substitutions = (object) array(
             'firstname' => $recipient->userfirstname,
@@ -104,38 +114,14 @@ class local_uploadnotification_mailer {
             'baseurl_file'   => new moodle_url('/mod/resource/view.php'),
             'user_settings'   => (new moodle_url('/local/uploadnotification/user.php'))->out(),
         );
-        $notifications = $recipient->build_content($substitutions);
+        $mail_wrappers = $recipient->build_content($substitutions, $this->attachment_optimizer);
 
-        // There are no notifications available for the user.
+        // Iterate over all mails for the user
+        // It is possible that there are no notifications available for the user.
         // This can happen if the visibility of a stored file was changed to hidden.
         // In this case no mail has to be delivered.
-        if(is_null($notifications)) {
-            return;
+        foreach ($mail_wrappers as $mail_wrapper) {
+            $mail_wrapper->send($substitutions);
         }
-
-        $substitutions->notifications = $notifications->text;
-        $message = get_string('templatemessage', 'local_uploadnotification', $substitutions);
-
-        $substitutions->notifications = $notifications->html;
-        $message_html = get_string('templatemessage_html', 'local_uploadnotification', $substitutions);
-
-        mtrace('send message to ' . $recipientuser->username . '<br>');
-
-        $file_names = array_keys($notifications->attachments);
-        $file_paths = array_values($notifications->attachments);
-
-        // Workaround: Moodle can only send one attachment in one mail --> use only the first file
-        if(count($file_names) > 0) {
-            $file_names = $file_names[0];
-            $file_paths = $file_paths[0];
-        }
-
-        email_to_user($recipientuser,
-            core_user::get_noreply_user(),
-            get_string('templatesubject', 'local_uploadnotification'),
-            $message,
-            $message_html,
-            $file_paths, $file_names,
-            true);
     }
 }
