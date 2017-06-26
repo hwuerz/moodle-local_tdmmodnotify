@@ -1,18 +1,18 @@
 <?php
-// This file is part of MailTest for Moodle - http://moodle.org/
+// This file is part of UploadNotification plugin for Moodle - http://moodle.org/
 //
-// MailTest is free software: you can redistribute it and/or modify
+// UploadNotification is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
-// MailTest is distributed in the hope that it will be useful,
+// UploadNotification is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with MailTest.  If not, see <http://www.gnu.org/licenses/>.
+// along with UploadNotification.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
  * Upload notification.
@@ -23,18 +23,23 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+// Include config.php.
+require_once(dirname(__FILE__).'/../../config.php');
+
 // Globals.
 global $CFG, $OUTPUT, $USER, $SITE, $PAGE;
 $pluginname = 'uploadnotification';
 
-// Include config.php.
-require_once(dirname(__FILE__).'/../../config.php');
+// @codingStandardsIgnoreStart PhpStorm only supports /** */ annotation
+/** @noinspection PhpIncludeInspection */
 require_once($CFG->libdir.'/adminlib.php');
+// @codingStandardsIgnoreEnd
 
 // Include function library.
 require_once(dirname(__FILE__).'/lib.php');
 require_once(dirname(__FILE__).'/classes/forms/admin_form.php');
 require_once(dirname(__FILE__).'/classes/forms/development_form.php');
+
 
 
 // Ensure only administrators have access.

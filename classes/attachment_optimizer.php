@@ -1,19 +1,18 @@
 <?php
-
-// This file is part of Moodle - http://moodle.org/
+// This file is part of UploadNotification plugin for Moodle - http://moodle.org/
 //
-// Moodle is free software: you can redistribute it and/or modify
+// UploadNotification is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
-// Moodle is distributed in the hope that it will be useful,
+// UploadNotification is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// along with UploadNotification.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
  * Upload notification.
@@ -46,7 +45,7 @@ class local_uploadnotification_attachment_optimizer {
     public function require_file($cm) {
 
         // Check whether this file is already known
-        if(in_array($cm->id, array_keys($this->files))) {
+        if (in_array($cm->id, array_keys($this->files))) {
             return $this->files[$cm->id];
         }
 
@@ -57,7 +56,7 @@ class local_uploadnotification_attachment_optimizer {
             return false;
         }
 
-        // get the file
+        // Get the file
         $fs = get_file_storage();
         $context = context_module::instance($cm->id);
         $area_files = $fs->get_area_files(
@@ -67,7 +66,7 @@ class local_uploadnotification_attachment_optimizer {
             0,
             'sortorder DESC, id ASC',
             false);
-        $resource_file = array_shift($area_files); //get only the first file
+        $resource_file = array_shift($area_files); // Get only the first file
 
         // Fill cache object
         $file = new attachment_optimizer_file();
@@ -90,6 +89,7 @@ class local_uploadnotification_attachment_optimizer {
     private function calculate_requesting_users($cm_id) {
         global $DB;
         // TODO optimize: which users request attachments
+
         $sql = <<<SQL
 SELECT COUNT(n.id)
 FROM {local_uploadnotification} n
@@ -97,6 +97,7 @@ INNER JOIN {local_uploadnotification_usr} u
 ON n.userid = u.userid
 WHERE u.activated = 1 AND n.coursemoduleid = ?
 SQL;
+
         $count = $DB->count_records_sql($sql, array($cm_id));
         return $count;
     }

@@ -1,8 +1,20 @@
 <?php
+// This file is part of UploadNotification plugin for Moodle - http://moodle.org/
+//
+// UploadNotification is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// UploadNotification is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with UploadNotification.  If not, see <http://www.gnu.org/licenses/>.
 
-if (!defined('MOODLE_INTERNAL')) {
-    die('Direct access to this script is forbidden.'); // It must be included from a Moodle page
-}
+defined('MOODLE_INTERNAL') || die;
 
 /**
  * Created by PhpStorm.
@@ -56,7 +68,7 @@ abstract class local_uploadnotification_settings_model {
             IGNORE_MISSING);
 
         // There are no settings stored --> build default settings
-        if($settings === false) {
+        if ($settings === false) {
             $settings = new stdClass();
             foreach (array_keys($this->get_attributes()) as $attribute) {
                 $settings->{$attribute} = $this->get_attributes()[$attribute];
@@ -74,7 +86,7 @@ abstract class local_uploadnotification_settings_model {
      * @throws InvalidArgumentException If the attribute is not defined in these settings
      */
     private function require_valid_attribute($attribute) {
-        if(!in_array($attribute, array_keys($this->get_attributes()))) {
+        if (!in_array($attribute, array_keys($this->get_attributes()))) {
             throw new InvalidArgumentException('Attribute is not available in these settings');
         }
     }
@@ -97,7 +109,7 @@ abstract class local_uploadnotification_settings_model {
      * @param $preference integer The new preference. Must be -1, 0 or 1
      * @throws InvalidArgumentException If the preference or attribute is invalid
      */
-    protected function setPreference($attribute, $preference) {
+    protected function set_preference($attribute, $preference) {
         local_uploadnotification_util::require_valid_preference($preference);
         $this->set($attribute, $preference);
     }
@@ -123,10 +135,12 @@ abstract class local_uploadnotification_settings_model {
         $settings = (array) $this->settings;
 
         $sql = "REPLACE INTO {".$this->get_table_name()."} ("
-            .implode(', ', array_keys($settings)). // all attributes
+            .implode(', ', array_keys($settings)). // All attributes
         ") VALUES ("
             .implode(', ', // Add a '?' for each settings attribute
-                array_map(function($a) {return '?';}, $settings)).
+                array_map(function($a) {
+                    return '?';
+                }, $settings)).
             ")";
         $DB->execute($sql, $settings);
     }

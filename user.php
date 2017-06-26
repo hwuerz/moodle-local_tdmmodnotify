@@ -1,18 +1,18 @@
 <?php
-// This file is part of uploadnotification for Moodle - http://moodle.org/
+// This file is part of UploadNotification plugin for Moodle - http://moodle.org/
 //
-// uploadnotification is free software: you can redistribute it and/or modify
+// UploadNotification is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
-// uploadnotification is distributed in the hope that it will be useful,
+// UploadNotification is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with uploadnotification.  If not, see <http://www.gnu.org/licenses/>.
+// along with UploadNotification.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
  * Upload notification.
@@ -23,7 +23,6 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$pluginname = 'uploadnotification';
 require_once(dirname(__FILE__).'/../../config.php');
 
 // Include function library.
@@ -32,16 +31,17 @@ require_once(dirname(__FILE__).'/classes/models/user_settings_model.php');
 
 // Globals.
 global $DB, $CFG, $OUTPUT, $USER, $SITE, $PAGE;
+$pluginname = 'uploadnotification';
 
-//require_login($course, true);
 $PAGE->set_context(context_user::instance($USER->id));
-$PAGE->set_url("/mod/$pluginname/user.php");//, array('id' => $course_id));
+$PAGE->set_url("/mod/$pluginname/user.php");
 $PAGE->set_title('Uploadnotification Settings');
 $PAGE->set_heading('Uploadnotification Settings');
 
 $homeurl = new moodle_url('/');
 
 // Only add settings item on non-site course pages.
+require_login();
 if (!$USER->id) {
     redirect($homeurl, "This feature is only available for valid users.", 5);
 }

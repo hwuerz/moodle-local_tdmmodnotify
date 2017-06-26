@@ -1,19 +1,18 @@
 <?php
-
-// This file is part of Moodle - http://moodle.org/
+// This file is part of UploadNotification plugin for Moodle - http://moodle.org/
 //
-// Moodle is free software: you can redistribute it and/or modify
+// UploadNotification is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
-// Moodle is distributed in the hope that it will be useful,
+// UploadNotification is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// along with UploadNotification.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
  * Upload notification.
@@ -48,7 +47,7 @@ class local_uploadnotification_notification extends local_uploadnotification_mod
      * @var integer
      */
     protected $action;
-    
+
     /**
      * Whether this file is visible for the user (1) or not (0).
      *
@@ -113,6 +112,62 @@ class local_uploadnotification_notification extends local_uploadnotification_mod
         $this->modulename        = $modulename;
         $this->filename          = $filename;
         $this->moodleid          = $moodleid;
+    }
+
+    /**
+     * @return int
+     */
+    public function get_notificationid() {
+        return $this->notificationid;
+    }
+
+    /**
+     * @return int
+     */
+    public function get_action() {
+        return $this->action;
+    }
+
+    /**
+     * @return int
+     */
+    public function get_visible() {
+        return $this->visible;
+    }
+
+    /**
+     * @return int
+     */
+    public function get_courseid() {
+        return $this->courseid;
+    }
+
+    /**
+     * @return string
+     */
+    public function get_coursefullname() {
+        return $this->coursefullname;
+    }
+
+    /**
+     * @return string
+     */
+    public function get_modulename() {
+        return $this->modulename;
+    }
+
+    /**
+     * @return string
+     */
+    public function get_filename() {
+        return $this->filename;
+    }
+
+    /**
+     * @return int
+     */
+    public function get_moodleid() {
+        return $this->moodleid;
     }
 
     /**

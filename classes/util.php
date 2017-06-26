@@ -1,19 +1,18 @@
 <?php
-
-// This file is part of Moodle - http://moodle.org/
+// This file is part of UploadNotification plugin for Moodle - http://moodle.org/
 //
-// Moodle is free software: you can redistribute it and/or modify
+// UploadNotification is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
-// Moodle is distributed in the hope that it will be useful,
+// UploadNotification is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// along with UploadNotification.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
  * Upload notification.
@@ -65,7 +64,7 @@ LEFT JOIN {resource} r
 WHERE u.id = ? AND n.timestamp < ?
 SQL;
 
-       return $DB->get_records_sql($sql, array($userid, self::get_max_timestamp()));
+        return $DB->get_records_sql($sql, array($userid, self::get_max_timestamp()));
     }
 
     /**
@@ -103,8 +102,9 @@ SQL;
      * @throws InvalidArgumentException If the preference is invalid
      */
     public static function require_valid_preference($preference) {
-        if(!self::is_valid_preference($preference)) {
-            throw new InvalidArgumentException("Only valid preferences are accepted. Use -1 for no preference, 0 for deactivated and 1 for activated");
+        if (!self::is_valid_preference($preference)) {
+            throw new InvalidArgumentException(
+                "Only valid preferences are accepted. Use -1 for no preference, 0 for deactivated and 1 for activated");
         }
     }
 

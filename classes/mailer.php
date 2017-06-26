@@ -1,20 +1,18 @@
 <?php
-
-// This file is part of Moodle - http://moodle.org/
+// This file is part of UploadNotification plugin for Moodle - http://moodle.org/
 //
-// Moodle is free software: you can redistribute it and/or modify
+// UploadNotification is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
-// Moodle is distributed in the hope that it will be useful,
+// UploadNotification is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
-
+// along with UploadNotification.  If not, see <http://www.gnu.org/licenses/>.
 /**
  * Upload notification.
  *
@@ -85,7 +83,7 @@ class local_uploadnotification_mailer {
         $this->attachment_optimizer = new local_uploadnotification_attachment_optimizer();
 
         foreach ($this->recipients as $recipient) {
-            mtrace("user#{$recipient->userid}");
+            mtrace("user#{$recipient->get_userid()}");
             $this->mail($recipient);
         }
 
@@ -108,7 +106,7 @@ class local_uploadnotification_mailer {
     protected function mail($recipient) {
 
         $substitutions = (object) array(
-            'firstname' => $recipient->userfirstname,
+            'firstname' => $recipient->get_userfirstname(),
             'signoff'   => generate_email_signoff(),
             'baseurl_course'   => new moodle_url('/course/view.php'),
             'baseurl_file'   => new moodle_url('/mod/resource/view.php'),

@@ -1,21 +1,21 @@
 <?php
-// This file is part of uploadnotification for Moodle - http://moodle.org/
+// This file is part of UploadNotification plugin for Moodle - http://moodle.org/
 //
-// uploadnotification is free software: you can redistribute it and/or modify
+// UploadNotification is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
-// uploadnotification is distributed in the hope that it will be useful,
+// UploadNotification is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with uploadnotification.  If not, see <http://www.gnu.org/licenses/>.
+// along with UploadNotification.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Settings form for admins
+ * Settings form for course admins
  *
  * @package   local_uploadnotification
  * @author    Hendrik Wuerz <hendrikmartin.wuerz@stud.tu-darmstadt.de>
@@ -24,7 +24,12 @@
  */
 
 defined('MOODLE_INTERNAL') || die;
+global $CFG;
+
+// @codingStandardsIgnoreStart PhpStorm only supports /** */ annotation
+/** @noinspection PhpIncludeInspection */
 require_once($CFG->libdir.'/formslib.php');
+// @codingStandardsIgnoreEnd
 
 /**
  * Settings form for moodle admins to customize uploadnotification
@@ -58,7 +63,8 @@ class local_uploadnotification_course_form extends moodleform {
             '-1' => get_string('settings_allow', 'local_uploadnotification'),
             '0' => get_string('settings_disable', 'local_uploadnotification')
         );
-        $mform->addElement('select', 'attachment', get_string('setting_receive_attachments', 'local_uploadnotification'), $preferences_attachment);
+        $mform->addElement('select', 'attachment', get_string('setting_receive_attachments', 'local_uploadnotification'),
+            $preferences_attachment);
         $mform->setDefault('attachment', $this->_customdata['attachment']);
 
         $this->add_action_buttons();

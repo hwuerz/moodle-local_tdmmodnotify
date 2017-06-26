@@ -1,8 +1,20 @@
 <?php
+// This file is part of UploadNotification plugin for Moodle - http://moodle.org/
+//
+// UploadNotification is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// UploadNotification is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with UploadNotification.  If not, see <http://www.gnu.org/licenses/>.
 
-if (!defined('MOODLE_INTERNAL')) {
-    die('Direct access to this script is forbidden.'); // It must be included from a Moodle page
-}
+defined('MOODLE_INTERNAL') || die;
 require_once(dirname(__FILE__).'/settings_model.php');
 
 /**
@@ -26,9 +38,11 @@ class local_uploadnotification_course_settings_model extends local_uploadnotific
      * Get all settings for the course with the passed ID
      * @param integer $courseid
      */
+    // @codingStandardsIgnoreStart CodeSniffer detects constructor as useless but it is required to make class accessible
     public function __construct($courseid) {
         parent::__construct($courseid);
     }
+    // @codingStandardsIgnoreEnd
 
     /**
      * All attributes of the course settings
@@ -62,7 +76,7 @@ class local_uploadnotification_course_settings_model extends local_uploadnotific
      * @throws InvalidArgumentException If the preference is invalid
      */
     public function set_mail_enabled($preference) {
-        $this->setPreference('activated', $preference);
+        $this->set_preference('activated', $preference);
     }
 
     /**
@@ -80,9 +94,9 @@ class local_uploadnotification_course_settings_model extends local_uploadnotific
      * @throws InvalidArgumentException If the preference is invalid
      */
     public function set_attachment_enabled($preference) {
-        if(!in_array($preference, array(-1, 0))) {
+        if (!in_array($preference, array(-1, 0))) {
             throw new InvalidArgumentException('A course admin can only allow attachments (-1) or not (0)');
         }
-        $this->setPreference('attachment', $preference);
+        $this->set_preference('attachment', $preference);
     }
 }

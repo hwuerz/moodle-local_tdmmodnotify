@@ -1,19 +1,18 @@
 <?php
-
-// This file is part of Moodle - http://moodle.org/
+// This file is part of UploadNotification plugin for Moodle - http://moodle.org/
 //
-// Moodle is free software: you can redistribute it and/or modify
+// UploadNotification is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
-// Moodle is distributed in the hope that it will be useful,
+// UploadNotification is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// along with UploadNotification.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
  * Upload notification.
@@ -89,6 +88,34 @@ class local_uploadnotification_recipient extends local_uploadnotification_model 
     }
 
     /**
+     * @return int
+     */
+    public function get_userid() {
+        return $this->userid;
+    }
+
+    /**
+     * @return string
+     */
+    public function get_userfirstname() {
+        return $this->userfirstname;
+    }
+
+    /**
+     * @return string
+     */
+    public function get_userlastname() {
+        return $this->userlastname;
+    }
+
+    /**
+     * @return local_uploadnotification_notification[]
+     */
+    public function get_notifications() {
+        return $this->notifications;
+    }
+
+    /**
      * Build the notification content.
      *
      * @param stdClass $substitutions The string substitions to be passed to the location API when generating the
@@ -104,11 +131,13 @@ class local_uploadnotification_recipient extends local_uploadnotification_model 
     public function build_content($substitutions, $attachment_optimizer) {
         global $DB;
 
-        // Whether the user has requested mails
+        // Whether the user has requested mails.
         $user_settings = new local_uploadnotification_user_settings_model($this->userid);
-        if($user_settings->is_mail_enabled() == 0) return array();
+        if ($user_settings->is_mail_enabled() == 0) {
+            return array();
+        }
 
-        // User has not forbidden to send mails (-> no preferences or requested)
+        // User has not forbidden to send mails (-> no preferences or requested).
 
         /** @var local_uploadnotification_mail_wrapper[] $attachment_mails*/
         $attachment_mails = array();
@@ -120,18 +149,26 @@ class local_uploadnotification_recipient extends local_uploadnotification_model 
             // Should a mail be send?
             // General rule: A mail will be send if
             // docent or student has requested it
-            // AND
+            // AS WELL AS
             // nobody (docent or student) has forbidden it
-            $course_settings = new local_uploadnotification_course_settings_model($notification->courseid);
-            if ($course_settings->is_mail_enabled() == 0) continue; // docent has disabled mail delivery for his course
-            if (!($user_settings->is_mail_enabled() == 1 || $course_settings->is_mail_enabled() == 1)) continue; // No one has requested mails
+            $course_settings = new local_uploadnotification_course_settings_model($notification->get_courseid());
+
+            // Docent has disabled mail delivery for his course
+            if ($course_settings->is_mail_enabled() == 0) {
+                continue;
+            }
+
+            // No one has requested mails
+            if (!($user_settings->is_mail_enabled() == 1 || $course_settings->is_mail_enabled() == 1)) {
+                continue;
+            }
 
             // Check visibility for current user
             // Handles restricted access like visibility for groups and timestamps
             // See https://docs.moodle.org/dev/Availability_API
-            $course = $DB->get_record('course', array('id' => $notification->courseid));
+            $course = $DB->get_record('course', array('id' => $notification->get_courseid()));
             $modinfo = get_fast_modinfo($course, $this->userid);
-            $cm = $modinfo->get_cm($notification->moodleid);
+            $cm = $modinfo->get_cm($notification->get_moodleid());
             if (!$cm->uservisible) { // User can not access the activity.
                 continue;
             }
@@ -141,8 +178,10 @@ class local_uploadnotification_recipient extends local_uploadnotification_model 
 
             // Check whether this notification will lead to an attachment
             $attachment = $this->add_file_attachment($cm, $user_settings, $course_settings, $attachment_optimizer);
-            if($attachment === false) { // No attachment --> this notification can be written in the text mail
-                if(empty($text_mail)) $text_mail = new local_uploadnotification_mail_wrapper($this->user);
+            if ($attachment === false) { // No attachment --> this notification can be written in the text mail
+                if (empty($text_mail)) {
+                    $text_mail = new local_uploadnotification_mail_wrapper($this->user);
+                }
                 $text_mail->add_content($content->text, $content->html);
 
             } else { // Each attachment will lead in a single mail
@@ -154,7 +193,9 @@ class local_uploadnotification_recipient extends local_uploadnotification_model 
         }
 
         // Add the plain text mail to the array
-        if(!empty($text_mail)) $attachment_mails[] = $text_mail;
+        if (!empty($text_mail)) {
+            $attachment_mails[] = $text_mail;
+        }
         return $attachment_mails;
     }
 
@@ -169,28 +210,36 @@ class local_uploadnotification_recipient extends local_uploadnotification_model 
 
         // If the admin has attachments disabled --> do not send them
         $max_filesize = get_config('uploadnotification', 'max_filesize');
-        if($max_filesize !== false && $max_filesize == 0) return false;
+        if ($max_filesize !== false && $max_filesize == 0) {
+            return false;
+        }
 
         // If the user has not requested attachments --> do not send them
-        if($user_settings->get_max_filesize() == 0) return false;
+        if ($user_settings->get_max_filesize() == 0) {
+            return false;
+        }
 
         // If the course admin has forbidden attachments --> do not send them
-        if($course_settings->is_attachment_enabled() == 0) return false;
+        if ($course_settings->is_attachment_enabled() == 0) {
+            return false;
+        }
 
         // File might be interesting --> fetch it
         $file = $attachment_optimizer->require_file($cm);
 
         // The file could not be fetched for any reason
-        if($file === false) return false;
+        if ($file === false) {
+            return false;
+        }
 
         // Check filesize
-        if($file->filesize > get_config('uploadnotification', 'max_filesize')
+        if ($file->filesize > get_config('uploadnotification', 'max_filesize')
             || $file->filesize > $user_settings->get_max_filesize()) {
             return false;
         }
 
         // Check number of receiving users
-        if($file->requesting_users > get_config('uploadnotification', 'max_mails_for_resource')) {
+        if ($file->requesting_users > get_config('uploadnotification', 'max_mails_for_resource')) {
             return false;
         }
 
@@ -207,7 +256,7 @@ class local_uploadnotification_recipient extends local_uploadnotification_model 
 
         foreach ($this->notifications as $notification) {
             $DB->delete_records('local_uploadnotification', array(
-                'id' => $notification->notificationid,
+                'id' => $notification->get_notificationid(),
             ));
         }
     }
@@ -227,7 +276,7 @@ class local_uploadnotification_recipient extends local_uploadnotification_model 
     /**
      * Build a recipient object and child notification objects from a digest.
      *
-     * @param stdClass $notificationdigest A notfication digest object from the DML API.
+     * @param stdClass[] $notificationdigest A notfication digest object from the DML API.
      *
      * @return \local_uploadnotification_recipient A recipient object.
      */

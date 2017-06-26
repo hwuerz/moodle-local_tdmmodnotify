@@ -1,19 +1,18 @@
 <?php
-
-// This file is part of Moodle - http://moodle.org/
+// This file is part of UploadNotification plugin for Moodle - http://moodle.org/
 //
-// Moodle is free software: you can redistribute it and/or modify
+// UploadNotification is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
-// Moodle is distributed in the hope that it will be useful,
+// UploadNotification is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// along with UploadNotification.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
  * Upload notification.
@@ -26,7 +25,7 @@
 
 defined('MOODLE_INTERNAL') || die;
 
-require_once "{$CFG->dirroot}/local/uploadnotification/lib.php";
+require_once(dirname(__FILE__).'/../lib.php');
 
 /**
  * Event observer.
@@ -71,12 +70,14 @@ class local_uploadnotification_observer {
 
         // Do not record updates if the plugin is deactivated
         $enabled = get_config('uploadnotification', 'enabled');
-        if(!$enabled) return;
+        if (!$enabled) {
+            return;
+        }
 
         global $DB;
 
         // Only send mails for updated resources
-        if($event->other['modulename'] != 'resource') {
+        if ($event->other['modulename'] != 'resource') {
             return;
         }
 
@@ -100,12 +101,12 @@ class local_uploadnotification_observer {
         $timestamp = time();
         $cm = $DB->get_record('course_modules', array('id' => $event->objectid), 'availability');
         $availability = json_decode($cm->availability);
-        if(!is_null($availability)
+        if (!is_null($availability)
             && !is_null($availability->c)) { // This resource has visibility conditions
             $conditions = $availability->c;
             foreach ($conditions as $condition) {
                 // Check for a date condition with "visible after" definition
-                if($condition->type == 'date' && $condition->d == '>=' && $condition->t > $timestamp) {
+                if ($condition->type == 'date' && $condition->d == '>=' && $condition->t > $timestamp) {
                     $timestamp = $condition->t;
                 }
             }

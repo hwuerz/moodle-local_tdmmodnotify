@@ -1,18 +1,18 @@
 <?php
-// This file is part of uploadnotification plugin for Moodle - http://moodle.org/
+// This file is part of UploadNotification plugin for Moodle - http://moodle.org/
 //
-// uploadnotification is free software: you can redistribute it and/or modify
+// UploadNotification is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
-// uploadnotification is distributed in the hope that it will be useful,
+// UploadNotification is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with uploadnotification.  If not, see <http://www.gnu.org/licenses/>.
+// along with UploadNotification.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
  * Settings form for admins
@@ -24,7 +24,12 @@
  */
 
 defined('MOODLE_INTERNAL') || die;
+global $CFG;
+
+// @codingStandardsIgnoreStart PhpStorm only supports /** */ annotation
+/** @noinspection PhpIncludeInspection */
 require_once($CFG->libdir.'/formslib.php');
+// @codingStandardsIgnoreEnd
 
 /**
  * Settings form for moodle admins to customize uploadnotification
@@ -53,7 +58,8 @@ class local_uploadnotification_admin_form extends moodleform {
         $mform->setType('max_filesize', PARAM_INT);
         $mform->setDefault('max_filesize', get_config('uploadnotification', 'max_filesize'));
 
-        $mform->addElement('text', 'max_mails_for_resource', get_string('setting_max_mails_for_resource', 'local_uploadnotification'));
+        $mform->addElement('text', 'max_mails_for_resource',
+            get_string('setting_max_mails_for_resource', 'local_uploadnotification'));
         $mform->setType('max_mails_for_resource', PARAM_INT);
         $mform->setDefault('max_mails_for_resource', get_config('uploadnotification', 'max_mails_for_resource'));
 
