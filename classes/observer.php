@@ -26,6 +26,7 @@
 defined('MOODLE_INTERNAL') || die;
 
 require_once(dirname(__FILE__).'/../lib.php');
+require_once(dirname(__FILE__).'/changelog/update_detector.php');
 
 /**
  * Event observer.
@@ -99,7 +100,7 @@ class local_uploadnotification_observer {
         // Do not check visibility for students before this date.
         // If the dates becomes modified, an update event will be send and the record will be changed.
         $timestamp = time();
-        $cm = $DB->get_record('course_modules', array('id' => $event->objectid), 'availability');
+        $cm = $DB->get_record('course_modules', array('id' => $event->objectid));
         $availability = json_decode($cm->availability);
         if (!is_null($availability)
             && !is_null($availability->c)) { // This resource has visibility conditions
