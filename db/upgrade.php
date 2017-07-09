@@ -147,5 +147,31 @@ function xmldb_local_uploadnotification_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2017061900, 'local', 'uploadnotification');
     }
 
+    if ($oldversion < 2017070900) {
+
+        // Define table local_uploadnotification_del to be created.
+        $table = new xmldb_table('local_uploadnotification_del');
+
+        // Adding fields to table local_uploadnotification_del.
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('course', XMLDB_TYPE_INTEGER, '6', null, null, null, null);
+        $table->add_field('context', XMLDB_TYPE_INTEGER, '6', null, null, null, null);
+        $table->add_field('section', XMLDB_TYPE_INTEGER, '6', null, null, null, null);
+        $table->add_field('name', XMLDB_TYPE_CHAR, '400', null, null, null, null);
+        $table->add_field('timestamp', XMLDB_TYPE_INTEGER, '11', null, null, null, null);
+
+        // Adding keys to table local_uploadnotification_del.
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+
+        // Conditionally launch create table for local_uploadnotification_del.
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+        // Uploadnotification savepoint reached.
+        upgrade_plugin_savepoint(true, 2017070900, 'local', 'uploadnotification');
+    }
+
+
     return true;
 }
