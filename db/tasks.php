@@ -18,27 +18,20 @@
  * Upload notification.
  *
  * @package   local_uploadnotification
- * @author    Luke Carrier <luke@tdm.co>, Hendrik Wuerz <hendrikmartin.wuerz@stud.tu-darmstadt.de>
- * @copyright (c) 2014 The Development Manager Ltd, 2017 Hendrik Wuerz
+ * @author    Hendrik Wuerz <hendrikmartin.wuerz@stud.tu-darmstadt.de>
+ * @copyright (c) 2017 Hendrik Wuerz
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die;
 
-global $CFG;
-
-$plugin->component = 'local_uploadnotification';
-
-$plugin->release  = '0.2.0';
-$plugin->maturity = MATURITY_ALPHA;
-
-// Emails are sent daily unless we're in debug mode
-// TODO: Add internal checks:
-// Notification does not need to be checked often,
-// deleted files should be checked often
-$plugin->cron = $CFG->debugdeveloper ? 1 : 86400;
-$plugin->cron = 1;
-
-// Version format:  YYYYMMDDXX
-$plugin->version  = 2017070717;
-$plugin->requires = 2013111800;
+$tasks = array(
+    array(
+        'classname' => 'local_uploadnotification\task\clean_deletion_backup',
+        'blocking' => 0,
+        'minute' => '*',
+        'hour' => '*',
+        'day' => '*',
+        'dayofweek' => '*',
+        'month' => '*'
+    )
+);

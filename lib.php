@@ -25,19 +25,8 @@
 
 defined('MOODLE_INTERNAL') || die;
 
-/**
- * Action: created.
- *
- * @var integer
- */
-define('LOCAL_UPLOADNOTIFICATION_ACTION_CREATED', 1);
+require_once(dirname(__FILE__).'/definitions.php');
 
-/**
- * Action: updated.
- *
- * @var integer
- */
-define('LOCAL_UPLOADNOTIFICATION_ACTION_UPDATED', 2);
 
 /**
  * Send scheduled notification emails.
@@ -52,6 +41,7 @@ function local_uploadnotification_cron() {
         return;
     }
 
+    // Send mails
     $recipients  = new local_uploadnotification_recipient_iterator();
     $supportuser = core_user::get_support_user();
     $mailer      = new local_uploadnotification_mailer($recipients, $supportuser);
@@ -59,7 +49,15 @@ function local_uploadnotification_cron() {
     $mailer->execute();
 }
 
-
+/**
+ * Hook called before we delete a course module.
+ *
+ * @param \stdClass $cm The course module record.
+ */
+function local_uploadnotification_pre_course_module_delete($cm) {
+    require_once(dirname(__FILE__).'/classes/changelog/deletion_hock.php');
+    local_uploadnotification_deletion_hock::course_module_delete($cm);
+}
 
 /**
  * Inject a link in course settings menu.

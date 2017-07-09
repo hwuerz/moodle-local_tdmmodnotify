@@ -40,7 +40,7 @@ class local_uploadnotification_observer {
      *
      * @return void
      */
-    public static function course_module_created(\core\event\course_module_created $event) {
+    public static function course_module_created($event) {
         static::schedule_notification($event);
     }
 
@@ -51,7 +51,7 @@ class local_uploadnotification_observer {
      *
      * @return void
      */
-    public static function course_module_updated(\core\event\course_module_updated $event) {
+    public static function course_module_updated($event) {
         static::schedule_notification($event);
     }
 

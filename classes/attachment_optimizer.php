@@ -32,7 +32,7 @@ defined('MOODLE_INTERNAL') || die;
 class local_uploadnotification_attachment_optimizer {
 
     /**
-     * @var attachment_optimizer_file[] All known files
+     * @var local_uploadnotification_attachment_optimizer_file[] All known files
      * Key: course_module id
      * Value: attachment_optimizer_file object
      */
@@ -40,7 +40,7 @@ class local_uploadnotification_attachment_optimizer {
 
     /**
      * @param $cm cm_info The course module record. Must contain the id and the modname.
-     * @return attachment_optimizer_file|bool
+     * @return local_uploadnotification_attachment_optimizer_file|bool
      */
     public function require_file($cm) {
 
@@ -69,7 +69,7 @@ class local_uploadnotification_attachment_optimizer {
         $resource_file = array_shift($area_files); // Get only the first file
 
         // Fill cache object
-        $file = new attachment_optimizer_file();
+        $file = new local_uploadnotification_attachment_optimizer_file();
         $file->file_name = $resource_file->get_filename();
         $file->file_path = $resource_file->copy_content_to_temp();
         $file->filesize = $resource_file->get_filesize();
@@ -114,7 +114,7 @@ SQL;
     }
 }
 
-class attachment_optimizer_file {
+class local_uploadnotification_attachment_optimizer_file {
 
     public $file_name;
 

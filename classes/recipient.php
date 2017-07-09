@@ -26,9 +26,9 @@
 defined('MOODLE_INTERNAL') || die;
 
 // Include function library.
-require_once(dirname(__FILE__).'/models/course_settings_model.php');
-require_once(dirname(__FILE__).'/models/user_settings_model.php');
-require_once(dirname(__FILE__).'/mail_wrapper.php');
+require_once(dirname(__FILE__) . '/models/course_settings_model.php');
+require_once(dirname(__FILE__) . '/models/user_settings_model.php');
+require_once(dirname(__FILE__) . '/mail_wrapper.php');
 
 
 /**
@@ -73,16 +73,16 @@ class local_uploadnotification_recipient extends local_uploadnotification_model 
     /**
      * Initialiser.
      *
-     * @param integer                           $userid        User ID.
-     * @param string                            $userfirstname User forename.
-     * @param string                            $userlastname  User surname.
+     * @param integer $userid User ID.
+     * @param string $userfirstname User forename.
+     * @param string $userlastname User surname.
      * @param local_uploadnotification_notification[] $notifications Notifications.
      */
     public function __construct($userid, $userfirstname, $userlastname, $notifications) {
-        $this->userid        = $userid;
+        $this->userid = $userid;
         $this->userfirstname = $userfirstname;
-        $this->userlastname  = $userlastname;
-        $this->user          = core_user::get_user($this->userid);
+        $this->userlastname = $userlastname;
+        $this->user = core_user::get_user($this->userid);
 
         $this->notifications = $notifications;
     }
@@ -139,56 +139,62 @@ class local_uploadnotification_recipient extends local_uploadnotification_model 
 
         // User has not forbidden to send mails (-> no preferences or requested).
 
-        /** @var local_uploadnotification_mail_wrapper[] $attachment_mails*/
+        /** @var local_uploadnotification_mail_wrapper[] $attachment_mails */
         $attachment_mails = array();
         $text_mail = false;
 
         // Loop each notification (= file were changes are detected)
         foreach ($this->notifications as $notification) {
+            try { // Maybe there is any error while creating the notification
 
-            // Should a mail be send?
-            // General rule: A mail will be send if
-            // docent or student has requested it
-            // AS WELL AS
-            // nobody (docent or student) has forbidden it
-            $course_settings = new local_uploadnotification_course_settings_model($notification->get_courseid());
 
-            // Docent has disabled mail delivery for his course
-            if ($course_settings->is_mail_enabled() == 0) {
-                continue;
-            }
+                // Should a mail be send?
+                // General rule: A mail will be send if
+                // docent or student has requested it
+                // AS WELL AS
+                // nobody (docent or student) has forbidden it
+                $course_settings = new local_uploadnotification_course_settings_model($notification->get_courseid());
 
-            // No one has requested mails
-            if (!($user_settings->is_mail_enabled() == 1 || $course_settings->is_mail_enabled() == 1)) {
-                continue;
-            }
-
-            // Check visibility for current user
-            // Handles restricted access like visibility for groups and timestamps
-            // See https://docs.moodle.org/dev/Availability_API
-            $course = $DB->get_record('course', array('id' => $notification->get_courseid()));
-            $modinfo = get_fast_modinfo($course, $this->userid);
-            $cm = $modinfo->get_cm($notification->get_moodleid());
-            if (!$cm->uservisible) { // User can not access the activity.
-                continue;
-            }
-
-            // Generate the text which informs the user about the file
-            $content = $notification->build_content($substitutions);
-
-            // Check whether this notification will lead to an attachment
-            $attachment = $this->add_file_attachment($cm, $user_settings, $course_settings, $attachment_optimizer);
-            if ($attachment === false) { // No attachment --> this notification can be written in the text mail
-                if (empty($text_mail)) {
-                    $text_mail = new local_uploadnotification_mail_wrapper($this->user);
+                // Docent has disabled mail delivery for his course
+                if ($course_settings->is_mail_enabled() == 0) {
+                    continue;
                 }
-                $text_mail->add_content($content->text, $content->html);
 
-            } else { // Each attachment will lead in a single mail
-                $mail = new local_uploadnotification_mail_wrapper($this->user);
-                $mail->add_content($content->text, $content->html);
-                $mail->set_attachment($attachment->file_name, $attachment->file_path);
-                $attachment_mails[] = $mail;
+                // No one has requested mails
+                if (!($user_settings->is_mail_enabled() == 1 || $course_settings->is_mail_enabled() == 1)) {
+                    continue;
+                }
+
+                // Check visibility for current user
+                // Handles restricted access like visibility for groups and timestamps
+                // See https://docs.moodle.org/dev/Availability_API
+                $course = $DB->get_record('course', array('id' => $notification->get_courseid()));
+                $modinfo = get_fast_modinfo($course, $this->userid);
+                $cm = $modinfo->get_cm($notification->get_moodleid());
+                if (!$cm->uservisible) { // User can not access the activity.
+                    continue;
+                }
+
+                // Generate the text which informs the user about the file
+                $content = $notification->build_content($substitutions);
+
+                // Check whether this notification will lead to an attachment
+                $attachment = $this->add_file_attachment($cm, $user_settings, $course_settings, $attachment_optimizer);
+                if ($attachment === false) { // No attachment --> this notification can be written in the text mail
+                    if (empty($text_mail)) {
+                        $text_mail = new local_uploadnotification_mail_wrapper($this->user);
+                    }
+                    $text_mail->add_content($content->text, $content->html);
+
+                } else { // Each attachment will lead in a single mail
+                    $mail = new local_uploadnotification_mail_wrapper($this->user);
+                    $mail->add_content($content->text, $content->html);
+                    $mail->set_attachment($attachment->file_name, $attachment->file_path);
+                    $attachment_mails[] = $mail;
+                }
+
+            } catch (Exception $exception) { // If any error occurs with this notification --> skip it
+                continue;
             }
         }
 
@@ -204,7 +210,7 @@ class local_uploadnotification_recipient extends local_uploadnotification_model 
      * @param $user_settings local_uploadnotification_user_settings_model
      * @param $course_settings local_uploadnotification_course_settings_model
      * @param $attachment_optimizer local_uploadnotification_attachment_optimizer
-     * @return attachment_optimizer_file|bool
+     * @return bool|local_uploadnotification_attachment_optimizer_file
      */
     private function add_file_attachment($cm, $user_settings, $course_settings, $attachment_optimizer) {
 
@@ -234,7 +240,8 @@ class local_uploadnotification_recipient extends local_uploadnotification_model 
 
         // Check filesize
         if ($file->filesize > get_config('uploadnotification', 'max_filesize')
-            || $file->filesize > $user_settings->get_max_filesize()) {
+            || $file->filesize > $user_settings->get_max_filesize()
+        ) {
             return false;
         }
 
@@ -281,10 +288,10 @@ class local_uploadnotification_recipient extends local_uploadnotification_model 
      * @return \local_uploadnotification_recipient A recipient object.
      */
     public static function from_digest($notificationdigest) {
-        $notification  = current($notificationdigest);
-        $userid        = $notification->userid;
+        $notification = current($notificationdigest);
+        $userid = $notification->userid;
         $userfirstname = $notification->userfirstname;
-        $userlastname  = $notification->userlastname;
+        $userlastname = $notification->userlastname;
 
         $notifications = array();
         foreach ($notificationdigest as $notification) {

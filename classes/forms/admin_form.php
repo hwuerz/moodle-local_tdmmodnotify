@@ -28,7 +28,7 @@ global $CFG;
 
 // @codingStandardsIgnoreStart PhpStorm only supports /** */ annotation
 /** @noinspection PhpIncludeInspection */
-require_once($CFG->libdir.'/formslib.php');
+require_once($CFG->libdir . '/formslib.php');
 // @codingStandardsIgnoreEnd
 
 /**
@@ -63,16 +63,21 @@ class local_uploadnotification_admin_form extends moodleform {
         $mform->setType('max_mails_for_resource', PARAM_INT);
         $mform->setDefault('max_mails_for_resource', get_config('uploadnotification', 'max_mails_for_resource'));
 
+        $mform->addElement('select', 'changelog_enabled',
+            get_string('setting_enable_changelog', 'local_uploadnotification'), $preferences);
+        $mform->setDefault('changelog_enabled',
+            get_config('uploadnotification', 'changelog_enabled'));
+
         $this->add_action_buttons();
     }
 
     /**
      * Validate submitted form data
      *
-     * @param      array  $data   The data fields submitted from the form. (not used)
-     * @param      array  $files  Files submitted from the form (not used)
+     * @param array $data The data fields submitted from the form. (not used)
+     * @param array $files Files submitted from the form (not used)
      *
-     * @return     array  List of errors to be displayed on the form if validation fails.
+     * @return array List of errors to be displayed on the form if validation fails.
      */
     public function validation($data, $files) {
         $errors = parent::validation($data, $files);

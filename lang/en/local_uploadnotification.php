@@ -69,9 +69,12 @@ $string['messageprovider:digest'] = 'Course modification digest notification';
 $string['setting_enable_plugin'] = 'Enable Mail delivery by this plugin';
 $string['setting_max_filesize'] = 'Maximum filesize of mail attachments (in bytes)';
 $string['setting_max_mails_for_resource'] = 'Maximum amount of mails with the same attachment';
+$string['setting_enable_changelog'] = 'Enable Changelog generation by this plugin';
 $string['setting_receive_attachments'] = 'Send email attachments';
 $string['settings_no_preferences'] = 'No preferences';
 $string['settings_allow'] = 'Allow';
 $string['settings_enable'] = 'Enable';
 $string['settings_disable'] = 'Disable';
 $string['course_settings_link'] = 'Uploadnotification';
+
+$string['deletion_backup_clean_task'] = 'Clean old deletion backups';

@@ -82,6 +82,7 @@ if ($data) {
     set_config('enabled', $data->enable, 'uploadnotification');
     set_config('max_filesize', $data->max_filesize, 'uploadnotification');
     set_config('max_mails_for_resource', $data->max_mails_for_resource, 'uploadnotification');
+    set_config('changelog_enabled', $data->changelog_enabled, 'uploadnotification');
 }
 $admin_form->display();
 

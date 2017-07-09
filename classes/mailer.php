@@ -23,7 +23,7 @@
  */
 
 defined('MOODLE_INTERNAL') || die;
-require_once(dirname(__FILE__).'/attachment_optimizer.php');
+require_once(dirname(__FILE__) . '/attachment_optimizer.php');
 
 /**
  * Digest mailer.
@@ -52,12 +52,12 @@ class local_uploadnotification_mailer {
     /**
      * Initialiser.
      *
-     * @param \local_uploadnotification_recipient[]|\local_uploadnotification_recipient_iterator $recipients  Array/iterator of
+     * @param \local_uploadnotification_recipient[]|\local_uploadnotification_recipient_iterator $recipients Array/iterator of
      *                                                                                            recipients.
-     * @param stdClass                                                               $supportuser Support user record.
+     * @param stdClass $supportuser Support user record.
      */
     public function __construct($recipients, $supportuser) {
-        $this->recipients  = $recipients;
+        $this->recipients = $recipients;
         $this->supportuser = $supportuser;
     }
 
@@ -105,12 +105,12 @@ class local_uploadnotification_mailer {
      */
     protected function mail($recipient) {
 
-        $substitutions = (object) array(
+        $substitutions = (object)array(
             'firstname' => $recipient->get_userfirstname(),
-            'signoff'   => generate_email_signoff(),
-            'baseurl_course'   => new moodle_url('/course/view.php'),
-            'baseurl_file'   => new moodle_url('/mod/resource/view.php'),
-            'user_settings'   => (new moodle_url('/local/uploadnotification/user.php'))->out(),
+            'signoff' => generate_email_signoff(),
+            'baseurl_course' => new moodle_url('/course/view.php'),
+            'baseurl_file' => new moodle_url('/mod/resource/view.php'),
+            'user_settings' => (new moodle_url('/local/uploadnotification/user.php'))->out(),
         );
         $mail_wrappers = $recipient->build_content($substitutions, $this->attachment_optimizer);
 
