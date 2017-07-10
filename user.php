@@ -23,18 +23,18 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once(dirname(__FILE__).'/../../config.php');
+require_once(dirname(__FILE__) . '/../../config.php');
 
 // Include function library.
+require_once(dirname(__FILE__) . '/definitions.php');
 require_once(dirname(__FILE__) . '/classes/forms/user_form.php');
-require_once(dirname(__FILE__).'/classes/models/user_settings_model.php');
+require_once(dirname(__FILE__) . '/classes/models/user_settings_model.php');
 
 // Globals.
 global $DB, $CFG, $OUTPUT, $USER, $SITE, $PAGE;
-$pluginname = 'uploadnotification';
 
 $PAGE->set_context(context_user::instance($USER->id));
-$PAGE->set_url("/mod/$pluginname/user.php");
+$PAGE->set_url("/mod/".LOCAL_UPLOADNOTIFICATION_NAME."/user.php");
 $PAGE->set_title('Uploadnotification Settings');
 $PAGE->set_heading('Uploadnotification Settings');
 

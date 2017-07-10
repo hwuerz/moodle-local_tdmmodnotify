@@ -31,6 +31,8 @@ global $CFG;
 require_once($CFG->libdir . '/formslib.php');
 // @codingStandardsIgnoreEnd
 
+require_once(dirname(__FILE__) . '/../../definitions.php');
+
 /**
  * Settings form for moodle admins to customize uploadnotification
  */
@@ -52,14 +54,16 @@ class local_uploadnotification_user_form extends moodleform {
         $mform->addElement('html', '<p>Do you want to receive notifications when new material was uploaded to a course?</p>');
 
         $preferences = array(
-            '-1' => get_string('settings_no_preferences', 'local_uploadnotification'),
-            '0' => get_string('settings_disable', 'local_uploadnotification'),
-            '1' => get_string('settings_enable', 'local_uploadnotification')
+            '-1' => get_string('settings_no_preferences', LOCAL_UPLOADNOTIFICATION_FULL_NAME),
+            '0' => get_string('settings_disable', LOCAL_UPLOADNOTIFICATION_FULL_NAME),
+            '1' => get_string('settings_enable', LOCAL_UPLOADNOTIFICATION_FULL_NAME)
         );
-        $mform->addElement('select', 'enable', get_string('setting_enable_plugin', 'local_uploadnotification'), $preferences);
+        $mform->addElement('select', 'enable', get_string('setting_enable_plugin',
+            LOCAL_UPLOADNOTIFICATION_FULL_NAME), $preferences);
         $mform->setDefault('enable', $this->_customdata['enable']);
 
-        $mform->addElement('text', 'max_filesize', get_string('setting_max_filesize', 'local_uploadnotification'));
+        $mform->addElement('text', 'max_filesize', get_string('setting_max_filesize',
+            LOCAL_UPLOADNOTIFICATION_FULL_NAME));
         $mform->setType('max_filesize', PARAM_INT);
         $mform->setDefault('max_filesize', $this->_customdata['max_filesize'] / 1024);
 
@@ -77,12 +81,12 @@ class local_uploadnotification_user_form extends moodleform {
     public function validation($data, $files) {
         $errors = parent::validation($data, $files);
         if ($data['max_filesize'] < 0) {
-            $errors['max_filesize'] = get_string('setting_not_negative', 'local_uploadnotification');
+            $errors['max_filesize'] = get_string('setting_not_negative', LOCAL_UPLOADNOTIFICATION_FULL_NAME);
         }
-        $max_admin_filesize = get_config('uploadnotification', 'max_filesize') / 1024;
+        $max_admin_filesize = get_config(LOCAL_UPLOADNOTIFICATION_FULL_NAME, 'max_filesize') / 1024;
         if ($data['max_filesize'] > $max_admin_filesize) {
             $errors['max_filesize'] = get_string('setting_max_filesize_not_more_than_admin',
-                'local_uploadnotification', $max_admin_filesize);
+                LOCAL_UPLOADNOTIFICATION_FULL_NAME, $max_admin_filesize);
         }
         return $errors;
     }

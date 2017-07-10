@@ -40,5 +40,5 @@ $plugin->cron = $CFG->debugdeveloper ? 1 : 86400;
 $plugin->cron = 1;
 
 // Version format:  YYYYMMDDXX
-$plugin->version  = 2017071005;
+$plugin->version  = 2017071007;
 $plugin->requires = 2013111800;

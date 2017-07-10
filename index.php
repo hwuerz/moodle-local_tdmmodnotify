@@ -24,22 +24,21 @@
  */
 
 // Include config.php.
-require_once(dirname(__FILE__).'/../../config.php');
+require_once(dirname(__FILE__) . '/../../config.php');
 
 // Globals.
 global $CFG, $OUTPUT, $USER, $SITE, $PAGE;
-$pluginname = 'uploadnotification';
 
 // @codingStandardsIgnoreStart PhpStorm only supports /** */ annotation
 /** @noinspection PhpIncludeInspection */
-require_once($CFG->libdir.'/adminlib.php');
+require_once($CFG->libdir . '/adminlib.php');
 // @codingStandardsIgnoreEnd
 
 // Include function library.
-require_once(dirname(__FILE__).'/lib.php');
-require_once(dirname(__FILE__).'/classes/forms/admin_form.php');
-require_once(dirname(__FILE__).'/classes/forms/development_form.php');
-
+require_once(dirname(__FILE__) . '/definitions.php');
+require_once(dirname(__FILE__) . '/lib.php');
+require_once(dirname(__FILE__) . '/classes/forms/admin_form.php');
+require_once(dirname(__FILE__) . '/classes/forms/development_form.php');
 
 
 // Ensure only administrators have access.
@@ -53,17 +52,17 @@ if (!is_siteadmin()) {
 
 // Heading ==========================================================.
 
-$title = get_string('pluginname', 'local_'.$pluginname);
-$heading = get_string('heading', 'local_'.$pluginname);
+$title = get_string('pluginname', LOCAL_UPLOADNOTIFICATION_FULL_NAME);
+$heading = get_string('heading', LOCAL_UPLOADNOTIFICATION_FULL_NAME);
 $context = context_system::instance();
-$url = new moodle_url('/local/'.$pluginname.'/');
+$url = new moodle_url('/local/' . LOCAL_UPLOADNOTIFICATION_NAME . '/');
 
 $PAGE->set_pagelayout('admin');
 $PAGE->set_url($url);
 $PAGE->set_context($context);
 $PAGE->set_title($title);
 $PAGE->set_heading($heading);
-admin_externalpage_setup('local_'.$pluginname); // Sets the navbar & expands navmenu.
+admin_externalpage_setup(LOCAL_UPLOADNOTIFICATION_FULL_NAME); // Sets the navbar & expands navmenu.
 
 echo $OUTPUT->header();
 
@@ -79,10 +78,10 @@ $development_form->display();
 $admin_form = new local_uploadnotification_admin_form();
 $data = $admin_form->get_data();
 if ($data) {
-    set_config('enabled', $data->enable, 'uploadnotification');
-    set_config('max_filesize', $data->max_filesize * 1024, 'uploadnotification');
-    set_config('max_mails_for_resource', $data->max_mails_for_resource, 'uploadnotification');
-    set_config('changelog_enabled', $data->changelog_enabled, 'uploadnotification');
+    set_config('enabled', $data->enable, LOCAL_UPLOADNOTIFICATION_FULL_NAME);
+    set_config('max_filesize', $data->max_filesize * 1024, LOCAL_UPLOADNOTIFICATION_FULL_NAME);
+    set_config('max_mails_for_resource', $data->max_mails_for_resource, LOCAL_UPLOADNOTIFICATION_FULL_NAME);
+    set_config('changelog_enabled', $data->changelog_enabled, LOCAL_UPLOADNOTIFICATION_FULL_NAME);
 }
 $admin_form->display();
 

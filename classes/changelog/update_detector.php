@@ -25,6 +25,8 @@
 
 defined('MOODLE_INTERNAL') || die;
 
+require_once(dirname(__FILE__) . '/../../definitions.php');
+
 /**
  * Checks whether a course module is an update of an old, deleted module.
  */
@@ -152,7 +154,7 @@ class local_uploadnotification_update_detector {
             $fs = get_file_storage();
             $area_files = $fs->get_area_files(
                 $candidate->context,
-                LOCAL_UPLOADNOTIFICATION_UNIQUE_PREFIX,
+                LOCAL_UPLOADNOTIFICATION_FULL_NAME,
                 LOCAL_UPLOADNOTIFICATION_RECENT_DELETIONS_FILEAREA,
                 $candidate->id,
                 'sortorder DESC, id ASC',

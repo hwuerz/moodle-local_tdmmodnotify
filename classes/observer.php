@@ -25,6 +25,7 @@
 
 defined('MOODLE_INTERNAL') || die;
 
+require_once(dirname(__FILE__) . '/../definitions.php');
 require_once(dirname(__FILE__) . '/../lib.php');
 require_once(dirname(__FILE__) . '/changelog/update_detector.php');
 
@@ -70,7 +71,7 @@ class local_uploadnotification_observer {
     protected static function schedule_notification(\core\event\base $event) {
 
         // Do not record updates if the plugin is deactivated
-        $enabled = get_config('uploadnotification', 'enabled');
+        $enabled = get_config(LOCAL_UPLOADNOTIFICATION_FULL_NAME, 'enabled');
         if (!$enabled) {
             return;
         }
@@ -113,7 +114,7 @@ class local_uploadnotification_observer {
         }
 
         // Generate changelog if the admin has enabled the feature
-        if (get_config('uploadnotification', 'changelog_enabled')) {
+        if (get_config(LOCAL_UPLOADNOTIFICATION_FULL_NAME, 'changelog_enabled')) {
             $detector = new local_uploadnotification_update_detector($cm);
             $predecessor = $detector->is_update();
             if ($predecessor != false) { // A predecessor was found

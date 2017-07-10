@@ -25,7 +25,7 @@
 
 defined('MOODLE_INTERNAL') || die;
 
-require_once(dirname(__FILE__).'/../../definitions.php');
+require_once(dirname(__FILE__) . '/../../definitions.php');
 
 /**
  * Event observer.
@@ -48,7 +48,7 @@ class local_uploadnotification_deletion_hock {
     public static function course_module_delete($cm) {
 
         // Only store this file if the plugin is enabled
-        $enabled = get_config('uploadnotification', 'changelog_enabled');
+        $enabled = get_config(LOCAL_UPLOADNOTIFICATION_FULL_NAME, 'changelog_enabled');
         if (!$enabled) {
             return;
         }
@@ -104,7 +104,7 @@ class local_uploadnotification_deletion_hock {
         // Create a copy of the file and store is under the given ID
         $file_info = array(
             'contextid' => $context,
-            'component' => LOCAL_UPLOADNOTIFICATION_UNIQUE_PREFIX,
+            'component' => LOCAL_UPLOADNOTIFICATION_FULL_NAME,
             'filearea' => LOCAL_UPLOADNOTIFICATION_RECENT_DELETIONS_FILEAREA,
             'itemid' => $id);
         try {
@@ -122,7 +122,7 @@ class local_uploadnotification_deletion_hock {
         global $DB;
 
         // The DB query to select the files which should be deleted
-        $select = 'timestamp < '.time() - 60 * 60;
+        $select = 'timestamp < ' . time() - 60 * 60;
 
         // Get the references to the files
         $candidates_stored = $DB->get_records_select(self::DELETED_FILE_TABLE, $select);
@@ -133,7 +133,7 @@ class local_uploadnotification_deletion_hock {
             // Get the file for the candidate
             $files = $fs->get_area_files(
                 $candidate->context,
-                LOCAL_UPLOADNOTIFICATION_UNIQUE_PREFIX,
+                LOCAL_UPLOADNOTIFICATION_FULL_NAME,
                 LOCAL_UPLOADNOTIFICATION_RECENT_DELETIONS_FILEAREA,
                 $candidate->id
             );

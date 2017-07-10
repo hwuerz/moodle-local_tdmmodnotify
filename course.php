@@ -23,22 +23,22 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once(dirname(__FILE__).'/../../config.php');
+require_once(dirname(__FILE__) . '/../../config.php');
 
 // Include function library.
-require_once(dirname(__FILE__).'/classes/forms/course_form.php');
-require_once(dirname(__FILE__).'/classes/models/course_settings_model.php');
+require_once(dirname(__FILE__) . '/definitions.php');
+require_once(dirname(__FILE__) . '/classes/forms/course_form.php');
+require_once(dirname(__FILE__) . '/classes/models/course_settings_model.php');
 
 // Globals.
 global $DB, $CFG, $OUTPUT, $USER, $SITE, $PAGE;
-$pluginname = 'uploadnotification';
 
 
 $course_id = required_param('id', PARAM_INT);
 $course = $DB->get_record('course', array('id' => $course_id), '*', MUST_EXIST);
 require_login($course, true);
 
-$PAGE->set_url("/mod/$pluginname/course.php", array('id' => $course_id));
+$PAGE->set_url("/mod/" . LOCAL_UPLOADNOTIFICATION_NAME . "/course.php", array('id' => $course_id));
 $PAGE->set_title('Uploadnotification Settings');
 $PAGE->set_heading('Uploadnotification Settings');
 

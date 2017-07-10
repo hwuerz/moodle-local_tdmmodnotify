@@ -26,6 +26,7 @@
 defined('MOODLE_INTERNAL') || die;
 
 // Include function library.
+require_once(dirname(__FILE__) . '/../definitions.php');
 require_once(dirname(__FILE__) . '/models/course_settings_model.php');
 require_once(dirname(__FILE__) . '/models/user_settings_model.php');
 require_once(dirname(__FILE__) . '/mail_wrapper.php');
@@ -215,7 +216,7 @@ class local_uploadnotification_recipient extends local_uploadnotification_model 
     private function add_file_attachment($cm, $user_settings, $course_settings, $attachment_optimizer) {
 
         // If the admin has attachments disabled --> do not send them
-        $max_filesize = get_config('uploadnotification', 'max_filesize');
+        $max_filesize = get_config(LOCAL_UPLOADNOTIFICATION_FULL_NAME, 'max_filesize');
         if ($max_filesize !== false && $max_filesize == 0) {
             return false;
         }
@@ -239,14 +240,14 @@ class local_uploadnotification_recipient extends local_uploadnotification_model 
         }
 
         // Check filesize
-        if ($file->filesize > get_config('uploadnotification', 'max_filesize')
+        if ($file->filesize > get_config(LOCAL_UPLOADNOTIFICATION_FULL_NAME, 'max_filesize')
             || $file->filesize > $user_settings->get_max_filesize()
         ) {
             return false;
         }
 
         // Check number of receiving users
-        if ($file->requesting_users > get_config('uploadnotification', 'max_mails_for_resource')) {
+        if ($file->requesting_users > get_config(LOCAL_UPLOADNOTIFICATION_FULL_NAME, 'max_mails_for_resource')) {
             return false;
         }
 

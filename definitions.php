@@ -26,6 +26,15 @@
 defined('MOODLE_INTERNAL') || die;
 
 /**
+ * The name of the plugin.
+ * Can be used if a name must be unique globally.
+ *
+ * @var string
+ */
+define('LOCAL_UPLOADNOTIFICATION_NAME', 'uploadnotification');
+define('LOCAL_UPLOADNOTIFICATION_FULL_NAME', 'local_uploadnotification');
+
+/**
  * Action: created.
  *
  * @var integer
@@ -38,13 +47,6 @@ define('LOCAL_UPLOADNOTIFICATION_ACTION_CREATED', 1);
  * @var integer
  */
 define('LOCAL_UPLOADNOTIFICATION_ACTION_UPDATED', 2);
-
-/**
- * An identifier which can be used if a key must be unique globally.
- *
- * @var string
- */
-define('LOCAL_UPLOADNOTIFICATION_UNIQUE_PREFIX', 'local_uploadnotification');
 
 /**
  * An identifier which can be used if a key must be unique globally.

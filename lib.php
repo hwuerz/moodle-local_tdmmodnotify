@@ -36,7 +36,7 @@ require_once(dirname(__FILE__).'/definitions.php');
 function local_uploadnotification_cron() {
 
     // Only send mails if a moodle admin has enabled this function
-    $enabled = get_config('uploadnotification', 'enabled');
+    $enabled = get_config(LOCAL_UPLOADNOTIFICATION_FULL_NAME, 'enabled');
     if (!$enabled) {
         return;
     }
@@ -69,7 +69,7 @@ function local_uploadnotification_extend_settings_navigation($settingsnav, $cont
     global $PAGE;
 
     // Disable menu if admin has forbidden mail delivery
-    if (!get_config('uploadnotification', 'enabled')) {
+    if (!get_config(LOCAL_UPLOADNOTIFICATION_FULL_NAME, 'enabled')) {
         return;
     }
 
@@ -109,7 +109,7 @@ function local_uploadnotification_extend_navigation_user_settings
     global $PAGE;
 
     // Disable menu if admin has forbidden mail delivery
-    if (!get_config('uploadnotification', 'enabled')) {
+    if (!get_config(LOCAL_UPLOADNOTIFICATION_FULL_NAME, 'enabled')) {
         return;
     }
 

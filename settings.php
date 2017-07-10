@@ -25,10 +25,12 @@
 
 defined('MOODLE_INTERNAL') || die;
 
+require_once(dirname(__FILE__) . '/definitions.php');
+
 if ($hassiteconfig) {
     $section = 'localplugins';
-    $ADMIN->add($section, new admin_externalpage('local_uploadnotification',
-        'uploadnotification',
+    $ADMIN->add($section, new admin_externalpage(LOCAL_UPLOADNOTIFICATION_FULL_NAME,
+        LOCAL_UPLOADNOTIFICATION_NAME,
         new moodle_url('/local/uploadnotification/')
     ));
 }
