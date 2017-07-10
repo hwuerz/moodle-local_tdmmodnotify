@@ -25,8 +25,8 @@
 
 defined('MOODLE_INTERNAL') || die;
 
-require_once(dirname(__FILE__).'/../lib.php');
-require_once(dirname(__FILE__).'/changelog/update_detector.php');
+require_once(dirname(__FILE__) . '/../lib.php');
+require_once(dirname(__FILE__) . '/changelog/update_detector.php');
 
 /**
  * Event observer.
@@ -102,8 +102,7 @@ class local_uploadnotification_observer {
         $timestamp = time();
         $cm = $DB->get_record('course_modules', array('id' => $event->objectid));
         $availability = json_decode($cm->availability);
-        if (!is_null($availability)
-            && !is_null($availability->c)) { // This resource has visibility conditions
+        if (!is_null($availability) && !is_null($availability->c)) { // This resource has visibility conditions
             $conditions = $availability->c;
             foreach ($conditions as $condition) {
                 // Check for a date condition with "visible after" definition
@@ -113,25 +112,28 @@ class local_uploadnotification_observer {
             }
         }
 
-        $detector = new local_uploadnotification_update_detector($cm);
-        $predecessor = $detector->is_update();
-        if ($predecessor != false) { // A predecessor was found
+        // Generate changelog if the admin has enabled the feature
+        if (get_config('uploadnotification', 'changelog_enabled')) {
+            $detector = new local_uploadnotification_update_detector($cm);
+            $predecessor = $detector->is_update();
+            if ($predecessor != false) { // A predecessor was found
 
-            // Get the resource of this course module
-            // The check on top of this function ensures that the course module is a resource
-            $resource = $DB->get_record('resource', array('id' => $cm->instance));
-            if ($resource->intro == '') { // Only update the data if nothing custom is stored
-                $DB->update_record('resource', (object)array(
-                    'id' => $resource->id,
-                    'intro' => $predecessor->get_filename()
-                ));
-                $DB->update_record('course_modules', (object)array(
-                    'id' => $cm->id,
-                    'visibleoncoursepage' => 1
-                ));
+                // Get the resource of this course module
+                // The check on top of this function ensures that the course module is a resource
+                $resource = $DB->get_record('resource', array('id' => $cm->instance));
+                if ($resource->intro == '') { // Only update the data if nothing custom is stored
+                    $DB->update_record('resource', (object)array(
+                        'id' => $resource->id,
+                        'intro' => $predecessor->get_filename()
+                    ));
+                    $DB->update_record('course_modules', (object)array(
+                        'id' => $cm->id,
+                        'visibleoncoursepage' => 1
+                    ));
 
-                rebuild_course_cache($cm->course, true);
+                    rebuild_course_cache($cm->course, true);
 
+                }
             }
         }
 
@@ -145,12 +147,12 @@ class local_uploadnotification_observer {
                 'coursemoduleid' => $event->objectid,
                 'userid' => $enrolleduser->id,
             ));
-            $DB->insert_record('local_uploadnotification', (object) array(
-                'action'         => $action,
-                'courseid'       => $event->courseid,
+            $DB->insert_record('local_uploadnotification', (object)array(
+                'action' => $action,
+                'courseid' => $event->courseid,
                 'coursemoduleid' => $event->objectid,
-                'userid'         => $enrolleduser->id,
-                'timestamp'      => $timestamp
+                'userid' => $enrolleduser->id,
+                'timestamp' => $timestamp
             ));
         }
     }

@@ -68,10 +68,12 @@ $string['messageprovider:digest'] = 'Course modification digest notification';
 // Settings
 $string['setting_enable_plugin'] = 'Enable Mail delivery by this plugin';
 $string['setting_max_filesize'] = 'Maximum filesize of mail attachments (in KB)';
+$string['setting_max_filesize_not_more_than_admin'] = 'The moodle admin only allows attachments up to {$a}KB';
 $string['setting_max_mails_for_resource'] = 'Maximum amount of mails with the same attachment';
 $string['setting_enable_changelog'] = 'Enable Changelog generation by this plugin';
 $string['setting_receive_attachments'] = 'Send email attachments';
 $string['settings_no_preferences'] = 'No preferences';
+$string['setting_not_negative'] = 'Negative values are not allowed';
 $string['settings_allow'] = 'Allow';
 $string['settings_enable'] = 'Enable';
 $string['settings_disable'] = 'Disable';

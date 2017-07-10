@@ -81,6 +81,12 @@ class local_uploadnotification_admin_form extends moodleform {
      */
     public function validation($data, $files) {
         $errors = parent::validation($data, $files);
+        if ($data['max_filesize'] < 0) {
+            $errors['max_filesize'] = get_string('setting_not_negative', 'local_uploadnotification');
+        }
+        if ($data['max_mails_for_resource'] < 0) {
+            $errors['max_mails_for_resource'] = get_string('setting_not_negative', 'local_uploadnotification');
+        }
         return $errors;
     }
 }

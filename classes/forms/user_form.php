@@ -28,7 +28,7 @@ global $CFG;
 
 // @codingStandardsIgnoreStart PhpStorm only supports /** */ annotation
 /** @noinspection PhpIncludeInspection */
-require_once($CFG->libdir.'/formslib.php');
+require_once($CFG->libdir . '/formslib.php');
 // @codingStandardsIgnoreEnd
 
 /**
@@ -59,9 +59,9 @@ class local_uploadnotification_user_form extends moodleform {
         $mform->addElement('select', 'enable', get_string('setting_enable_plugin', 'local_uploadnotification'), $preferences);
         $mform->setDefault('enable', $this->_customdata['enable']);
 
-        $mform->addElement('text', 'max_filesize', get_string('setting_max_filesize', 'local_uploadnotification') / 1024);
+        $mform->addElement('text', 'max_filesize', get_string('setting_max_filesize', 'local_uploadnotification'));
         $mform->setType('max_filesize', PARAM_INT);
-        $mform->setDefault('max_filesize', $this->_customdata['max_filesize']);
+        $mform->setDefault('max_filesize', $this->_customdata['max_filesize'] / 1024);
 
         $this->add_action_buttons();
     }
@@ -69,13 +69,21 @@ class local_uploadnotification_user_form extends moodleform {
     /**
      * Validate submitted form data
      *
-     * @param      array  $data   The data fields submitted from the form. (not used)
-     * @param      array  $files  Files submitted from the form (not used)
+     * @param      array $data The data fields submitted from the form. (not used)
+     * @param      array $files Files submitted from the form (not used)
      *
      * @return     array  List of errors to be displayed on the form if validation fails.
      */
     public function validation($data, $files) {
         $errors = parent::validation($data, $files);
+        if ($data['max_filesize'] < 0) {
+            $errors['max_filesize'] = get_string('setting_not_negative', 'local_uploadnotification');
+        }
+        $max_admin_filesize = get_config('uploadnotification', 'max_filesize') / 1024;
+        if ($data['max_filesize'] > $max_admin_filesize) {
+            $errors['max_filesize'] = get_string('setting_max_filesize_not_more_than_admin',
+                'local_uploadnotification', $max_admin_filesize);
+        }
         return $errors;
     }
 }
