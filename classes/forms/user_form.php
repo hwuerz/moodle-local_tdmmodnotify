@@ -59,7 +59,7 @@ class local_uploadnotification_user_form extends moodleform {
         $mform->addElement('select', 'enable', get_string('setting_enable_plugin', 'local_uploadnotification'), $preferences);
         $mform->setDefault('enable', $this->_customdata['enable']);
 
-        $mform->addElement('text', 'max_filesize', get_string('setting_max_filesize', 'local_uploadnotification'));
+        $mform->addElement('text', 'max_filesize', get_string('setting_max_filesize', 'local_uploadnotification') / 1024);
         $mform->setType('max_filesize', PARAM_INT);
         $mform->setDefault('max_filesize', $this->_customdata['max_filesize']);
 

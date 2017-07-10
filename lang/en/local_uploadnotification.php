@@ -67,7 +67,7 @@ $string['messageprovider:digest'] = 'Course modification digest notification';
 
 // Settings
 $string['setting_enable_plugin'] = 'Enable Mail delivery by this plugin';
-$string['setting_max_filesize'] = 'Maximum filesize of mail attachments (in bytes)';
+$string['setting_max_filesize'] = 'Maximum filesize of mail attachments (in KB)';
 $string['setting_max_mails_for_resource'] = 'Maximum amount of mails with the same attachment';
 $string['setting_enable_changelog'] = 'Enable Changelog generation by this plugin';
 $string['setting_receive_attachments'] = 'Send email attachments';

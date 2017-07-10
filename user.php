@@ -60,7 +60,7 @@ $user_form = new local_uploadnotification_user_form(null, array(
 $data = $user_form->get_data();
 if ($data) {
     $settings->set_mail_enabled($data->enable);
-    $settings->set_max_filesize($data->max_filesize);
+    $settings->set_max_filesize($data->max_filesize * 1024);
     $settings->save();
 }
 
