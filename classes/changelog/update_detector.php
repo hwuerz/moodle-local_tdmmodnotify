@@ -30,28 +30,32 @@ defined('MOODLE_INTERNAL') || die;
  */
 class local_uploadnotification_update_detector {
 
-    // Keys in the response array after a similarity check
-    const BEST_CANDIDATE_KEY = 'best_candidate_key';
-    const BEST_CANDIDATE_SIMILARITY = 'best_candidate_similarity';
-
+    /**
+     * The course_module of the original resource whose previous version should be found.
+     * @var stdClass $original_cm
+     */
     private $original_cm;
+
+    /**
+     * The file instance for the original course_module.
+     * @var stored_file $original_file
+     */
     private $original_file;
 
+    /**
+     * local_uploadnotification_update_detector constructor.
+     * @param stdClass $original_cm The course_module of the original resource whose previous version should be found.
+     */
     public function __construct($original_cm) {
         $this->original_cm = $original_cm;
 
         // Get the uploaded file instance
         $this->original_file = self::get_file($original_cm->id);
-
-        echo "Check for updates for " . $this->original_file->get_filename()
-            . " cm = " . $original_cm->id
-            . " in course " . $original_cm->course
-            . " and section " . $original_cm->section . "\n";
     }
 
     /**
      * Check whether this is course module is an update.
-     * @return string
+     * @return bool|stored_file False if this is not an update of an earlier file. The previous version of this file if found.
      */
     public function is_update() {
         global $DB;
@@ -60,23 +64,20 @@ class local_uploadnotification_update_detector {
 
         // No candidate was found
         if ($candidate == null) {
-            echo "No fitting candidate\n";
             return false;
         }
 
         // Threshold: If the candidate similarity is lower this value is is not a predecessor?
         if ($candidate->similarity < 0.5) {
-            echo "No good candidate\n";
             return false;
         }
 
-        $DB->insert_record('local_uploadnotification_cl', (object)array(
-            'course_module' => $this->original_cm->id,
-            'changelog' => "Best fitting candidate: " .
-                $candidate->file->get_filename()
-        ));
-        echo "Found candidate: ".$candidate->file->get_filename()."\n";
-        return null;
+//        $DB->insert_record('local_uploadnotification_cl', (object)array(
+//            'course_module' => $this->original_cm->id,
+//            'changelog' => "Best fitting candidate: " .
+//                $candidate->file->get_filename()
+//        ));
+        return $candidate->file;
 
     }
 
@@ -122,7 +123,6 @@ class local_uploadnotification_update_detector {
             'course' => $this->original_cm->course,
             'section' => $this->original_cm->section
         ));
-        echo "There are " . count($candidates_pending) . " relevant pending deletions\n";
 
         // Get the file instances for pending candidates
         $candidate_pending_files = array_map(function ($candidate) {
@@ -145,7 +145,6 @@ class local_uploadnotification_update_detector {
             'course' => $this->original_cm->course,
             'section' => $this->original_cm->section
         ));
-        echo "There are " . count($candidates_stored) . " relevant stored deletions\n";
 
         // Get the file instances for pending candidates
         /** @var stored_file[] $candidate_stored_files */
@@ -179,20 +178,13 @@ class local_uploadnotification_update_detector {
         // Check each candidate whether it is the best
         foreach ($candidate_files as $key => $candidate_file) {
 
-            echo "Check for similarity with ".$candidate_file->get_filename()
-                ."\n  Mimetype ".$candidate_file->get_mimetype()." vs ".$this->original_file->get_mimetype()
-                ."\n  Filename ".$candidate_file->get_filename()." vs ".$this->original_file->get_filename()
-                ."\n  size ".$candidate_file->get_filesize()." vs ".$this->original_file->get_filesize()
-                ."\n  deletion time ".(time() - $candidate_file->get_timemodified())
-                ."\n";
-
             // The types of the files must match
             if ($this->original_file->get_mimetype() != $candidate_file->get_mimetype()) {
                 continue;
             }
 
             $similarity = self::calculate_meta_similarity($this->original_file, $candidate_file);
-            echo "  Similarity = ".$similarity."\n";
+
             if ($similarity > $best_similarity) { // This candidate is the best until now
                 $best_candidate = $key;
                 $best_similarity = $similarity;

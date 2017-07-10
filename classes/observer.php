@@ -113,6 +113,28 @@ class local_uploadnotification_observer {
             }
         }
 
+        $detector = new local_uploadnotification_update_detector($cm);
+        $predecessor = $detector->is_update();
+        if ($predecessor != false) { // A predecessor was found
+
+            // Get the resource of this course module
+            // The check on top of this function ensures that the course module is a resource
+            $resource = $DB->get_record('resource', array('id' => $cm->instance));
+            if ($resource->intro == '') { // Only update the data if nothing custom is stored
+                $DB->update_record('resource', (object)array(
+                    'id' => $resource->id,
+                    'intro' => $predecessor->get_filename()
+                ));
+                $DB->update_record('course_modules', (object)array(
+                    'id' => $cm->id,
+                    'visibleoncoursepage' => 1
+                ));
+
+                rebuild_course_cache($cm->course, true);
+
+            }
+        }
+
         $coursecontext = context_course::instance($event->courseid);
         $enrolledusers = get_enrolled_users($coursecontext);
 
