@@ -29,7 +29,7 @@ global $CFG;
 
 $plugin->component = 'local_uploadnotification';
 
-$plugin->release  = '0.2.0';
+$plugin->release = '0.2.0';
 $plugin->maturity = MATURITY_ALPHA;
 
 // Emails are sent daily unless we're in debug mode
@@ -40,5 +40,5 @@ $plugin->cron = $CFG->debugdeveloper ? 1 : 86400;
 $plugin->cron = 1;
 
 // Version format:  YYYYMMDDXX
-$plugin->version  = 2017071007;
+$plugin->version = 2017071708;
 $plugin->requires = 2013111800;

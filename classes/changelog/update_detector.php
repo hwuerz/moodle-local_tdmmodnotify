@@ -56,11 +56,17 @@ class local_uploadnotification_update_detector {
     }
 
     /**
+     * @return stored_file
+     */
+    public function get_original_file() {
+        return $this->original_file;
+    }
+
+    /**
      * Check whether this is course module is an update.
      * @return bool|stored_file False if this is not an update of an earlier file. The previous version of this file if found.
      */
     public function is_update() {
-        global $DB;
 
         $candidate = $this->get_best_candidate();
 
@@ -74,15 +80,8 @@ class local_uploadnotification_update_detector {
             return false;
         }
 
-//        $DB->insert_record('local_uploadnotification_cl', (object)array(
-//            'course_module' => $this->original_cm->id,
-//            'changelog' => "Best fitting candidate: " .
-//                $candidate->file->get_filename()
-//        ));
         return $candidate->file;
-
     }
-
 
     /**
      * Get the best candidate for an update.
@@ -258,7 +257,7 @@ class local_uploadnotification_update_detector {
      * @param int $val2 The second number
      * @return float The similarity of the passed numbers
      */
-    private static function  number_similarity_realtive($val1, $val2) {
+    private static function number_similarity_realtive($val1, $val2) {
         return 1 - abs($val1 - $val2) / max($val1, $val2);
     }
 

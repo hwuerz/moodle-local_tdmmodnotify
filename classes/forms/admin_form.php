@@ -32,6 +32,7 @@ require_once($CFG->libdir . '/formslib.php');
 // @codingStandardsIgnoreEnd
 
 require_once(dirname(__FILE__) . '/../../definitions.php');
+require_once(dirname(__FILE__) . '/../changelog/pdftotext.php');
 
 /**
  * Settings form for moodle admins to customize uploadnotification
@@ -70,6 +71,21 @@ class local_uploadnotification_admin_form extends moodleform {
             get_string('setting_enable_changelog', LOCAL_UPLOADNOTIFICATION_FULL_NAME), $preferences);
         $mform->setDefault('changelog_enabled', get_config(LOCAL_UPLOADNOTIFICATION_FULL_NAME, 'changelog_enabled'));
 
+        // Only activate diff generation if pdftotext is available
+        $diff_preferences = array('0' => get_string('settings_disable', LOCAL_UPLOADNOTIFICATION_FULL_NAME));
+        $pdftotext_installed = local_uploadnotification_pdftotext::is_installed();
+        if ($pdftotext_installed) {
+            $diff_preferences['1'] = get_string('settings_enable', LOCAL_UPLOADNOTIFICATION_FULL_NAME);
+        }
+        $mform->addElement('select', 'diff_enabled',
+            get_string('setting_enable_diff', LOCAL_UPLOADNOTIFICATION_FULL_NAME), $diff_preferences);
+        $mform->setDefault('diff_enabled', get_config(LOCAL_UPLOADNOTIFICATION_FULL_NAME, 'diff_enabled'));
+        if ($pdftotext_installed) {
+            $mform->addElement('html', get_string('setting_enable_diff_available', LOCAL_UPLOADNOTIFICATION_FULL_NAME));
+        } else {
+            $mform->addElement('html', get_string('setting_enable_diff_not_available', LOCAL_UPLOADNOTIFICATION_FULL_NAME));
+        }
+
         $this->add_action_buttons();
     }
 
@@ -88,6 +104,12 @@ class local_uploadnotification_admin_form extends moodleform {
         }
         if ($data['max_mails_for_resource'] < 0) {
             $errors['max_mails_for_resource'] = get_string('setting_not_negative', LOCAL_UPLOADNOTIFICATION_FULL_NAME);
+        }
+        if ($data['diff_enabled'] && !$data['changelog_enabled']) {
+            $errors['diff_enabled'] = get_string('setting_require_changelog_for_diff',
+                LOCAL_UPLOADNOTIFICATION_FULL_NAME);
+            $errors['changelog_enabled'] = get_string('setting_require_changelog_for_diff',
+                LOCAL_UPLOADNOTIFICATION_FULL_NAME);
         }
         return $errors;
     }

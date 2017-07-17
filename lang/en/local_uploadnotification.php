@@ -53,10 +53,10 @@ The following activities resources have changed in courses you\'re enrolled in.
 {$a->signoff}<br><br>
 
 You are receiving this mail because you or a course admin has requested this information. You can edit your preferences under your <a href="{$a->user_settings}">preferences</a>.';
-$string['templateresource']      = '* "{$a->filename}" in "{$a->coursefullname}" ({$a->url_course}) was {$a->action}: {$a->url_file} ';
+$string['templateresource'] = '* "{$a->filename}" in "{$a->coursefullname}" ({$a->url_course}) was {$a->action}: {$a->url_file} ';
 $string['templateresource_html'] = '<li><a href="{$a->url_file}">{$a->filename}</a> in <a href="{$a->url_course}">{$a->coursefullname}</a> was {$a->action}</li>';
-$string['actioncreated']    = 'created';
-$string['actionupdated']    = 'updated';
+$string['actioncreated'] = 'created';
+$string['actionupdated'] = 'updated';
 
 // Capabilities
 $string['uploadnotification:receivedigest'] = 'Receive course modification digest notification';
@@ -70,13 +70,21 @@ $string['setting_enable_plugin'] = 'Enable Mail delivery by this plugin';
 $string['setting_max_filesize'] = 'Maximum filesize of mail attachments (in KB)';
 $string['setting_max_filesize_not_more_than_admin'] = 'The moodle admin only allows attachments up to {$a}KB';
 $string['setting_max_mails_for_resource'] = 'Maximum amount of mails with the same attachment';
-$string['setting_enable_changelog'] = 'Enable Changelog generation by this plugin';
+$string['setting_enable_changelog'] = 'Enable Changelog generation';
+$string['setting_enable_diff'] = 'Enable Diff generation';
+$string['setting_enable_diff_not_available'] = '<p>Diff-Generation is disabled because the package <code>poppler-utils</code> is not installed on your system. Ask your server admin to run <code>apt-get install poppler-utils</code> and visit this page again.</p>';
+$string['setting_enable_diff_available'] = '<p>All required tools for diff generation are installed</p>';
 $string['setting_receive_attachments'] = 'Send email attachments';
 $string['settings_no_preferences'] = 'No preferences';
 $string['setting_not_negative'] = 'Negative values are not allowed';
+$string['setting_require_changelog_for_diff'] = 'You must enable the changelog to use the diff generation';
 $string['settings_allow'] = 'Allow';
 $string['settings_enable'] = 'Enable';
 $string['settings_disable'] = 'Disable';
 $string['course_settings_link'] = 'Uploadnotification';
 
 $string['deletion_backup_clean_task'] = 'Clean old deletion backups';
+
+// Changelog
+$string['printed_changelog_prefix'] = 'This file is an update of {$a->filename} from {$a->date}. ';
+$string['printed_diff_prefix'] = 'The following pages were changed: ';

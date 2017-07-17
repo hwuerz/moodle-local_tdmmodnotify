@@ -119,13 +119,37 @@ class local_uploadnotification_observer {
             $predecessor = $detector->is_update();
             if ($predecessor != false) { // A predecessor was found
 
+                $diff_output = get_string('printed_changelog_prefix', LOCAL_UPLOADNOTIFICATION_FULL_NAME, (object)array(
+                    'filename' => $predecessor->get_filename(),
+                    'date' => date("m.d.Y H:i")
+                ));
+
+                require_once(dirname(__FILE__) . '/changelog/diff_detector.php');
+                if (local_uploadnotification_diff_detector::is_enabled()) {
+                    $predecessor_txt_file = local_uploadnotification_pdftotext::convert_to_txt($predecessor);
+                    $original_txt_file = local_uploadnotification_pdftotext::convert_to_txt($detector->get_original_file());
+
+                    $diff_detector = new local_uploadnotification_diff_detector($predecessor_txt_file, $original_txt_file);
+
+                    // TODO Abort output if to many changes
+
+                    $diff_output .= $diff_detector->get_info();
+                }
+
                 // Get the resource of this course module
                 // The check on top of this function ensures that the course module is a resource
                 $resource = $DB->get_record('resource', array('id' => $cm->instance));
 
+                // Build new intro based on calculation and current data
+                $intro = $resource->intro;
+                if (strlen($intro) > 0) {
+                    $intro .= "<br>";
+                }
+                $intro .= $diff_output;
+
                 $DB->update_record('resource', (object)array(
                     'id' => $resource->id,
-                    'intro' => $resource->intro . $predecessor->get_filename()
+                    'intro' => $intro
                 ));
                 $DB->update_record('course_modules', (object)array(
                     'id' => $cm->id,

@@ -82,6 +82,8 @@ if ($data) {
     set_config('max_filesize', $data->max_filesize * 1024, LOCAL_UPLOADNOTIFICATION_FULL_NAME);
     set_config('max_mails_for_resource', $data->max_mails_for_resource, LOCAL_UPLOADNOTIFICATION_FULL_NAME);
     set_config('changelog_enabled', $data->changelog_enabled, LOCAL_UPLOADNOTIFICATION_FULL_NAME);
+    // The diff can only be enabled if the changelog is enabled
+    set_config('diff_enabled', $data->diff_enabled && $data->changelog_enabled, LOCAL_UPLOADNOTIFICATION_FULL_NAME);
 }
 $admin_form->display();
 
