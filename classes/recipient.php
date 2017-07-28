@@ -185,10 +185,12 @@ class local_uploadnotification_recipient extends local_uploadnotification_model 
                     if (empty($text_mail)) {
                         $text_mail = new local_uploadnotification_mail_wrapper($this->user);
                     }
+                    $text_mail->add_course($substitutions->coursefullname);
                     $text_mail->add_content($content->text, $content->html);
 
                 } else { // Each attachment will lead in a single mail
                     $mail = new local_uploadnotification_mail_wrapper($this->user);
+                    $mail->add_course($substitutions->coursefullname);
                     $mail->add_content($content->text, $content->html);
                     $mail->set_attachment($attachment->file_name, $attachment->file_path);
                     $attachment_mails[] = $mail;

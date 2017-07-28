@@ -25,6 +25,8 @@
 
 defined('MOODLE_INTERNAL') || die;
 
+require_once(dirname(__FILE__) . '/../definitions.php');
+
 
 /**
  * A wrapper for notification mails.
@@ -35,6 +37,13 @@ class local_uploadnotification_mail_wrapper {
      * @var stdClass The user object, who should receive the mail
      */
     private $recipient;
+
+    /**
+     * The names of all courses in which a notification exists.
+     * This will be used for the title of the mail.
+     * @var array of String
+     */
+    private $affected_courses = array();
 
     /**
      * @var string The message of the mail in plain text
@@ -88,19 +97,34 @@ class local_uploadnotification_mail_wrapper {
     }
 
     /**
+     * Adds the passed course name to the title of the generated mail.
+     * @param string $course_name The name of the course in which a notification exists.
+     */
+    public function add_course($course_name) {
+        if (!in_array($course_name, $this->affected_courses)) {
+            $this->affected_courses[] = $course_name;
+        }
+    }
+
+    /**
      * Sends this mail to the user
      * @param $substitutions object The substitutions for the mail template.
      */
     public function send($substitutions) {
         $substitutions->notifications = $this->message_text;
-        $message_text = get_string('templatemessage', 'local_uploadnotification', $substitutions);
+        $message_text = get_string('templatemessage', LOCAL_UPLOADNOTIFICATION_FULL_NAME, $substitutions);
 
         $substitutions->notifications = $this->message_html;
-        $message_html = get_string('templatemessage_html', 'local_uploadnotification', $substitutions);
+        $message_html = get_string('templatemessage_html', LOCAL_UPLOADNOTIFICATION_FULL_NAME, $substitutions);
+
+        // Build subject based on the names of all courses from which a notification is in this mail.
+        $courses = implode(', ', $this->affected_courses);
+        $subject_template = (count($this->affected_courses) > 1) ? 'templatesubject_plural' : 'templatesubject_singular';
+        $subject = get_string($subject_template, LOCAL_UPLOADNOTIFICATION_FULL_NAME, $courses);
 
         email_to_user($this->recipient,
             core_user::get_noreply_user(),
-            get_string('templatesubject', 'local_uploadnotification'),
+            $subject,
             $message_text,
             $message_html,
             $this->attachment_path, $this->attachment_name,

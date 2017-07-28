@@ -32,7 +32,8 @@ $string['pluginname'] = 'Upload notification';
 $string['heading'] = 'Upload notification settings';
 
 // Created notification
-$string['templatesubject'] = 'Resource updates in your courses';
+$string['templatesubject_singular'] = 'Resource updates in your course {$a}';
+$string['templatesubject_plural'] = 'Resource updates in your courses {$a}';
 $string['templatemessage'] = 'Hi {$a->firstname},
 
 The following activities resources have changed in courses you\'re enrolled in.
