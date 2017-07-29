@@ -129,11 +129,14 @@ class local_uploadnotification_observer {
                     $predecessor_txt_file = local_uploadnotification_pdftotext::convert_to_txt($predecessor);
                     $original_txt_file = local_uploadnotification_pdftotext::convert_to_txt($detector->get_original_file());
 
-                    $diff_detector = new local_uploadnotification_diff_detector($predecessor_txt_file, $original_txt_file);
+                    // Only continue of valid text files could be generated.
+                    if ($predecessor_txt_file !== false && $original_txt_file !== false) {
+                        $diff_detector = new local_uploadnotification_diff_detector($predecessor_txt_file, $original_txt_file);
 
-                    // TODO Abort output if to many changes
+                        // TODO Abort output if to many changes
 
-                    $diff_output .= $diff_detector->get_info();
+                        $diff_output .= $diff_detector->get_info();
+                    }
                 }
 
                 // Get the resource of this course module
