@@ -40,8 +40,8 @@ class clean_deletion_backup extends \core\task\scheduled_task {
     public function execute() {
 
         // Delete old backup files for changelog generation
-        require_once(dirname(__FILE__).'/../changelog/deletion_hock.php');
-        \local_uploadnotification_deletion_hock::clean_up_old_files();
+        require_once(dirname(__FILE__).'/../changelog/backup_lib.php');
+        \local_uploadnotification_backup_lib::clean_up_old_files();
 
     }
 }

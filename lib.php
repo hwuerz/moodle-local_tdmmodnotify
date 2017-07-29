@@ -55,8 +55,20 @@ function local_uploadnotification_cron() {
  * @param \stdClass $cm The course module record.
  */
 function local_uploadnotification_pre_course_module_delete($cm) {
-    require_once(dirname(__FILE__).'/classes/changelog/deletion_hock.php');
-    local_uploadnotification_deletion_hock::course_module_delete($cm);
+    require_once(dirname(__FILE__).'/classes/changelog/backup_lib.php');
+    local_uploadnotification_backup_lib::backup($cm);
+}
+
+/**
+ * Hook called on course module edit form validation.
+ *
+ * @param object $data The form data which should be validated. The course module must be available with §data->get_cm().
+ * @return array Empty array to indicate no validation errors.
+ */
+function local_uploadnotification_coursemodule_validation($data) {
+    require_once(dirname(__FILE__).'/classes/changelog/backup_lib.php');
+    local_uploadnotification_backup_lib::backup($data->get_coursemodule());
+    return array(); // Empty array to indicate no errors
 }
 
 /**

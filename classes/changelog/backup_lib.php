@@ -32,7 +32,7 @@ require_once(dirname(__FILE__) . '/../../definitions.php');
  *
  * Responds to course module events emitted by the Moodle event manager.
  */
-class local_uploadnotification_deletion_hock {
+class local_uploadnotification_backup_lib {
 
     /**
      * The name of the database table where all deleted, but backuped files are managed.
@@ -45,7 +45,7 @@ class local_uploadnotification_deletion_hock {
      * @param stdClass $cm Course module
      * @throws moodle_exception
      */
-    public static function course_module_delete($cm) {
+    public static function backup($cm) {
 
         // Only store this file if the plugin is enabled
         $enabled = get_config(LOCAL_UPLOADNOTIFICATION_FULL_NAME, 'changelog_enabled');
@@ -81,9 +81,9 @@ class local_uploadnotification_deletion_hock {
             'sortorder DESC, id ASC',
             false);
 
-        // There should be exactly one file for this course module.
-        // If there are more or less an error occurred.
-        if (count($area_files) != 1) {
+        // There should be minimum one file for this course module.
+        // If there are less an error occurred.
+        if (count($area_files) < 1) {
             return;
         }
         $deleted_file = array_shift($area_files); // Get only the first file
