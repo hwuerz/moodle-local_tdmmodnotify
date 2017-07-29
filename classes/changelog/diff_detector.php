@@ -137,24 +137,29 @@ class local_uploadnotification_diff_detector {
      */
     private function analyse_line($line) {
         // Initialize array because optional groups ('?' in regex) would not generate an array entry if they are not present
-        $hits = array('', '', '', '', '', '', '', '');
+        $hits = array();
         $match = preg_match('/^(\d+)(,(\d+))?([acd])(\d+)(,(\d+))?$/m', $line, $hits);
         if (!$match) {
             return false;
         }
-        $affected_lines_original = array($hits[1]); // The starting line definition
-        if ($hits[2] != '') { // A range of lines is defined
-            for ($i = $hits[1] + 1; $i <= $hits[2]; $i++) { // Add the other lines
-                $affected_lines_original[] = $i;
-            }
-        }
         return array(
             'operation' => $hits[4], // Contains 'a' for add, 'c' for change or 'd' for delete
             'affected_lines' => array(
-                $this->build_range($hits[1], $hits[3]),
-                $this->build_range($hits[5], $hits[7])
+                $this->build_range(self::get($hits[1]), self::get($hits[3])),
+                $this->build_range(self::get($hits[5]), self::get($hits[7]))
             )
         );
+    }
+
+    /**
+     * Gets the passed value or the default if not defined.
+     * Taken from https://stackoverflow.com/a/25205195
+     * @param mixed $var The value which should be extracted.
+     * @param mixed $default The value which should be returned if the requested element is not available.
+     * @return mixed The requested value or the default if it is not available.
+     */
+    private static function get(&$var, $default = null) {
+        return isset($var) ? $var : $default;
     }
 
     /**
@@ -166,7 +171,7 @@ class local_uploadnotification_diff_detector {
      */
     private function build_range($start, $end) {
         $range = array();
-        if ($start != '') { // A start of the range is known. This should always be given.
+        if ($start != '' && $start != null) { // A start of the range is known. This should always be given.
             $range[] = $start;
             if ($end != '') { // Also an end is given. This might be happen.
                 for ($i = $start + 1; $i <= $end; $i++) { // Add elements until end.
