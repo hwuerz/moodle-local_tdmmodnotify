@@ -80,6 +80,14 @@ class local_uploadnotification_update_detector {
             return false;
         }
 
+        // Check whether the files are identically.
+        // The detector will be called if a course module becomes updated. In this case it is possible, that only meta
+        // information were changed and the file is the same as before. In this case it must not be recognized as an update
+        // of itself.
+        if ($this->original_file->get_contenthash() == $candidate->file->get_contenthash()) {
+            return false;
+        }
+
         return $candidate->file;
     }
 
