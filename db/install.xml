@@ -1,4 +1,4 @@
-<XMLDB xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" PATH="local/uploadnotification/db" VERSION="20170612" COMMENT="Upload notification" xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd">
+<XMLDB xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" PATH="local/uploadnotification/db" VERSION="20170709" COMMENT="Upload notification" xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd">
   <TABLES>
     <TABLE NAME="local_uploadnotification" COMMENT="Tracks notification messages">
       <FIELDS>
@@ -17,6 +17,7 @@
       <FIELDS>
         <FIELD NAME="courseid" TYPE="int" LENGTH="6" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="activated" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="attachment" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="courseid"/>
@@ -26,10 +27,24 @@
       <FIELDS>
         <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
         <FIELD NAME="activated" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false"/>
-        <FIELD NAME="attachment" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="max_filesize" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="userid"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="local_uploadnotification_del" COMMENT="Cached files which are already deleted by the user">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="course" TYPE="int" LENGTH="6" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="context" TYPE="int" LENGTH="6" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="section" TYPE="int" LENGTH="6" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="400" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="timestamp" TYPE="int" LENGTH="11" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="course_module" TYPE="int" LENGTH="7" NOTNULL="false" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
       </KEYS>
     </TABLE>
   </TABLES>
