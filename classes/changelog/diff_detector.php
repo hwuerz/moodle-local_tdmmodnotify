@@ -117,8 +117,7 @@ class local_uploadnotification_diff_detector {
             if ($line_data === false) { // This is an invalid line (empty, detail information or something like this)
                 continue;
             }
-//            echo "Detected " . $line_data['operation'] . " on the lines " . implode(", ", $line_data['affected_lines'][0])."\n";
-//            var_dump($line_data);
+
             $affected_lines = $line_data['affected_lines']; // The lines from the two documents which are part of the changes.
             for ($document = 0; $document < 2; $document++) {
                 foreach ($affected_lines[$document] as $line_number) { // Loop each changed line number in the documents.

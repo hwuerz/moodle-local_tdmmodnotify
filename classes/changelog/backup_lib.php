@@ -98,6 +98,7 @@ class local_uploadnotification_backup_lib {
             'context' => $context,
             'section' => $cm->section,
             'name' => $cminfo->name,
+            'course_module' => $cm->id,
             'timestamp' => time()
         ), true);
 
@@ -149,5 +150,23 @@ class local_uploadnotification_backup_lib {
 
         // Delete the reference in the database
         $DB->delete_records_select(self::DELETED_FILE_TABLE, $select);
+    }
+
+    /**
+     * Get a previously saved file in the backup database.
+     * @param int $backup_context The course context of the backup. Stored in column context in the deletion-table.
+     * @param int $backup_id The ID of the backup. Stored in column id in the deletion-table.
+     * @return stored_file The file instance of the backup-file
+     */
+    public static function get_backup_file($backup_context, $backup_id) {
+        $fs = get_file_storage();
+        $area_files = $fs->get_area_files(
+            $backup_context,
+            LOCAL_UPLOADNOTIFICATION_FULL_NAME,
+            LOCAL_UPLOADNOTIFICATION_RECENT_DELETIONS_FILEAREA,
+            $backup_id,
+            'sortorder DESC, id ASC',
+            false);
+        return array_shift($area_files); // Get only the first file
     }
 }

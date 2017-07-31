@@ -26,6 +26,7 @@
 defined('MOODLE_INTERNAL') || die;
 
 require_once(dirname(__FILE__) . '/../../definitions.php');
+require_once(dirname(__FILE__) . '/backup_lib.php');
 
 /**
  * Checks whether a course module is an update of an old, deleted module.
@@ -96,10 +97,18 @@ class local_uploadnotification_update_detector {
      * This will check pending deletions as well as stored, but officially deleted files.
      * @return null|stdClass
      * Null is returned if no candidate fits.
-     * The stdClass contains the key of the best candidate, the calculated similarity and the @see stored_file of the best candidate
+     * The stdClass contains the key of the best candidate, the calculated similarity and the stored_file of the best candidate
      */
     private function get_best_candidate() {
 
+        // Check whether there is a definite predecessor. (= a backup of exactly this course module)
+        // Use it, if it is not completely unfitting.
+        $definite_predecessor = $this->get_definite_predecessor();
+        if ($definite_predecessor != null && $definite_predecessor->similarity > 0.2) {
+            return $definite_predecessor;
+        }
+
+        // Get the best candidate from both origins: The already deleted but backed files and the pending deletions.
         $best_pending = $this->get_best_pending_candidate();
         $best_stored = $this->get_best_stored_candidate();
 
@@ -118,9 +127,43 @@ class local_uploadnotification_update_detector {
     }
 
     /**
+     * Check whether there is a previous version of this course module stored.
+     * This situation happens if the user updates a file via the 'edit settings' dialog.
+     * In this case the passed `original_cm` is the same as the course module from the backup.
+     * Because Moodle will increase the cm ID for each new file, an other upload can not be detected
+     * as a definite predecessor falsely.
+     * @return null|stdClass Null if no definite predecessor could be found. StdClass width similarity
+     * and file a definite predecessor was found. Hint: Similarity is always 1
+     */
+    private function get_definite_predecessor() {
+        global $DB;
+
+        // Get all backups stored with the same course module ID as the current file.
+        // Order them by timestamp to get the newest predecessor if there are multiple.
+        $predecessors = $DB->get_records(local_uploadnotification_backup_lib::DELETED_FILE_TABLE, array(
+            'course' => $this->original_cm->course,
+            'section' => $this->original_cm->section,
+            'course_module' => $this->original_cm->id
+        ), 'timestamp DESC');
+
+        // There is a definite predecessor.
+        if (count($predecessors) > 0) {
+            $predecessor = reset($predecessors);
+
+            // Perform the normal analysis of this file
+            return $this->check_candidates(array(local_uploadnotification_backup_lib::get_backup_file(
+                $predecessor->context,
+                $predecessor->id
+            )));
+        }
+
+        return null;
+    }
+
+    /**
      * @return null|stdClass
      * Null is returned if no candidate fits.
-     * The stdClass contains the key of the best candidate, the calculated similarity and the @see stored_file of the best candidate
+     * The stdClass contains the calculated similarity and the stored_file of the best candidate
      */
     private function get_best_pending_candidate() {
         global $DB;
@@ -144,13 +187,13 @@ class local_uploadnotification_update_detector {
     /**
      * @return null|stdClass
      * Null is returned if no candidate fits.
-     * The stdClass contains the key of the best candidate, the calculated similarity and the @see stored_file of the best candidate
+     * The stdClass contains the calculated similarity and the stored_file of the best candidate
      */
     private function get_best_stored_candidate() {
         global $DB;
 
         // Get candidates_stored
-        $candidates_stored = $DB->get_records('local_uploadnotification_del', array(
+        $candidates_stored = $DB->get_records(local_uploadnotification_backup_lib::DELETED_FILE_TABLE, array(
             'course' => $this->original_cm->course,
             'section' => $this->original_cm->section
         ));
@@ -158,15 +201,7 @@ class local_uploadnotification_update_detector {
         // Get the file instances for pending candidates
         /** @var stored_file[] $candidate_stored_files */
         $candidate_stored_files = array_map(function ($candidate) {
-            $fs = get_file_storage();
-            $area_files = $fs->get_area_files(
-                $candidate->context,
-                LOCAL_UPLOADNOTIFICATION_FULL_NAME,
-                LOCAL_UPLOADNOTIFICATION_RECENT_DELETIONS_FILEAREA,
-                $candidate->id,
-                'sortorder DESC, id ASC',
-                false);
-            return array_shift($area_files); // Get only the first file
+            return local_uploadnotification_backup_lib::get_backup_file($candidate->context, $candidate->id);
         }, $candidates_stored);
 
         return $this->check_candidates($candidate_stored_files);
@@ -176,7 +211,7 @@ class local_uploadnotification_update_detector {
      * @param stored_file[] $candidate_files
      * @return null|stdClass
      * Null is returned if no candidate fits.
-     * The stdClass contains the key of the best candidate, the calculated similarity and the @see stored_file of the best candidate
+     * The stdClass contains the calculated similarity and the `stored_file` of the best candidate
      */
     private function check_candidates($candidate_files) {
 
@@ -207,7 +242,6 @@ class local_uploadnotification_update_detector {
 
         // Build a response object based on the calculated similarity
         $response = new stdClass();
-        $response->key = $best_candidate;
         $response->similarity = $best_similarity;
         $response->file = $candidate_files[$best_candidate];
         return $response;
@@ -250,7 +284,8 @@ class local_uploadnotification_update_detector {
     }
 
     /**
-     * Wrapper around @see levenshtein Which calculates the operations relative to the string length
+     * Wrapper around levenshtein which calculates the operations relative to the string length
+     * @see levenshtein
      * @param string $str1 The first string
      * @param string $str2 The second string
      * @return float The operations relative to the string length.

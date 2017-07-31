@@ -172,6 +172,21 @@ function xmldb_local_uploadnotification_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2017070900, 'local', 'uploadnotification');
     }
 
+    if ($oldversion < 2017073100) {
+
+        // Define field course_module to be added to local_uploadnotification_del.
+        $table = new xmldb_table('local_uploadnotification_del');
+        $field = new xmldb_field('course_module', XMLDB_TYPE_INTEGER, '7', null, XMLDB_NOTNULL, null, '0', 'timestamp');
+
+        // Conditionally launch add field course_module.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Uploadnotification savepoint reached.
+        upgrade_plugin_savepoint(true, 2017073100, 'local', 'uploadnotification');
+    }
+
 
     return true;
 }
