@@ -66,8 +66,11 @@ function local_uploadnotification_pre_course_module_delete($cm) {
  * @return array Empty array to indicate no validation errors.
  */
 function local_uploadnotification_coursemodule_validation($data) {
-    require_once(dirname(__FILE__).'/classes/changelog/backup_lib.php');
-    local_uploadnotification_backup_lib::backup($data->get_coursemodule());
+    $modulename = $data->get_current()->modulename;
+    if ($modulename == 'resource') {
+        require_once(dirname(__FILE__).'/classes/changelog/backup_lib.php');
+        local_uploadnotification_backup_lib::backup($data->get_coursemodule());
+    }
     return array(); // Empty array to indicate no errors
 }
 
