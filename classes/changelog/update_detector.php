@@ -270,7 +270,7 @@ class local_uploadnotification_update_detector {
 
         // How many minutes ago the candidate was deleted
         // Until one minute (= 60 sec) the similarity will not decrease
-        $deletion_time = 60 / max(60, (time() - $candidate->get_timemodified()));
+        $deletion_time = 1 / (1 + 0.01 * ( time() - $candidate->get_timemodified()));
         $factors[] = array($key_weight => 0.5, $key_similarity => $deletion_time);
 
         // Sum up all factors with their weights
