@@ -84,8 +84,6 @@ $string['settings_enable'] = 'Enable';
 $string['settings_disable'] = 'Disable';
 $string['course_settings_link'] = 'Uploadnotification';
 
-$string['deletion_backup_clean_task'] = 'Clean old deletion backups';
-
 // Changelog
 $string['printed_changelog_prefix'] = 'This file is an update of {$a->filename} from {$a->date}. ';
 $string['printed_diff_prefix'] = 'The following pages of this file were changed: ';

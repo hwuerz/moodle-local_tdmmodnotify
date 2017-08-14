@@ -27,7 +27,7 @@ defined('MOODLE_INTERNAL') || die;
 
 require_once(dirname(__FILE__) . '/../definitions.php');
 require_once(dirname(__FILE__) . '/../lib.php');
-require_once(dirname(__FILE__) . '/changelog/update_detector.php');
+require_once(dirname(__FILE__) . '/changelog.php');
 
 /**
  * Event observer.
@@ -115,7 +115,7 @@ class local_uploadnotification_observer {
 
         // Generate changelog if the admin has enabled the feature
         if (get_config(LOCAL_UPLOADNOTIFICATION_FULL_NAME, 'changelog_enabled')) {
-            $detector = new local_uploadnotification_update_detector($cm);
+            $detector = local_uploadnotification_changelog::get_update_detector($cm);
             $predecessor = $detector->is_update();
             if ($predecessor != false) { // A predecessor was found
 
@@ -124,17 +124,17 @@ class local_uploadnotification_observer {
                     'date' => date("m.d.Y H:i")
                 ));
 
-                require_once(dirname(__FILE__) . '/changelog/diff_detector.php');
-                if (local_uploadnotification_diff_detector::is_enabled()) {
-                    $predecessor_txt_file = local_uploadnotification_pdftotext::convert_to_txt($predecessor);
-                    $original_txt_file = local_uploadnotification_pdftotext::convert_to_txt($detector->get_original_file());
+                if (local_uploadnotification_changelog::is_changelog_enabled()) {
+                    $predecessor_txt_file = local_changeloglib_pdftotext::convert_to_txt($predecessor);
+                    $original_txt_file = local_changeloglib_pdftotext::convert_to_txt($detector->get_new_file());
 
                     // Only continue of valid text files could be generated.
                     if ($predecessor_txt_file !== false && $original_txt_file !== false) {
-                        $diff_detector = new local_uploadnotification_diff_detector($predecessor_txt_file, $original_txt_file);
+                        $diff_detector = new local_changeloglib_diff_detector($predecessor_txt_file, $original_txt_file);
 
                         // TODO Abort output if to many changes
 
+                        $diff_output .= get_string('printed_diff_prefix', LOCAL_UPLOADNOTIFICATION_FULL_NAME);
                         $diff_output .= $diff_detector->get_info();
                     }
                 }

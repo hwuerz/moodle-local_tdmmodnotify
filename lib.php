@@ -26,6 +26,7 @@
 defined('MOODLE_INTERNAL') || die;
 
 require_once(dirname(__FILE__).'/definitions.php');
+require_once(dirname(__FILE__).'/classes/changelog.php');
 
 
 /**
@@ -55,8 +56,7 @@ function local_uploadnotification_cron() {
  * @param \stdClass $cm The course module record.
  */
 function local_uploadnotification_pre_course_module_delete($cm) {
-    require_once(dirname(__FILE__).'/classes/changelog/backup_lib.php');
-    local_uploadnotification_backup_lib::backup($cm);
+    local_uploadnotification_changelog::backup_coursemodule($cm);
 }
 
 /**
@@ -67,9 +67,8 @@ function local_uploadnotification_pre_course_module_delete($cm) {
  */
 function local_uploadnotification_coursemodule_validation($data) {
     $modulename = $data->get_current()->modulename;
-    if ($modulename == 'resource') {
-        require_once(dirname(__FILE__).'/classes/changelog/backup_lib.php');
-        local_uploadnotification_backup_lib::backup($data->get_coursemodule());
+    if ($modulename == 'resource' && $data->get_coursemodule() != null) {
+        local_uploadnotification_changelog::backup_coursemodule($data->get_coursemodule());
     }
     return array(); // Empty array to indicate no errors
 }

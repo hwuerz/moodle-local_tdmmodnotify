@@ -29,6 +29,11 @@ global $CFG;
 
 $plugin->component = 'local_uploadnotification';
 
+// require the backup and compare libs
+$plugin->dependencies = array(
+    'local_changeloglib' => 2017081400,
+);
+
 $plugin->release = '0.2.0';
 $plugin->maturity = MATURITY_ALPHA;
 
@@ -40,5 +45,5 @@ $plugin->cron = $CFG->debugdeveloper ? 1 : 86400;
 $plugin->cron = 1;
 
 // Version format:  YYYYMMDDXX
-$plugin->version = 2017073101;
+$plugin->version = 2017081400;
 $plugin->requires = 2013111800;

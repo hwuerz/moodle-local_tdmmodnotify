@@ -32,7 +32,7 @@ require_once($CFG->libdir . '/formslib.php');
 // @codingStandardsIgnoreEnd
 
 require_once(dirname(__FILE__) . '/../../definitions.php');
-require_once(dirname(__FILE__) . '/../changelog/pdftotext.php');
+require_once(dirname(__FILE__) . '/../../../changeloglib/classes/pdftotext.php');
 
 /**
  * Settings form for moodle admins to customize uploadnotification
@@ -73,7 +73,7 @@ class local_uploadnotification_admin_form extends moodleform {
 
         // Only activate diff generation if pdftotext is available
         $diff_preferences = array('0' => get_string('settings_disable', LOCAL_UPLOADNOTIFICATION_FULL_NAME));
-        $pdftotext_installed = local_uploadnotification_pdftotext::is_installed();
+        $pdftotext_installed = local_changeloglib_pdftotext::is_installed();
         if ($pdftotext_installed) {
             $diff_preferences['1'] = get_string('settings_enable', LOCAL_UPLOADNOTIFICATION_FULL_NAME);
         }
