@@ -30,7 +30,7 @@ require_once(dirname(__FILE__) . '/../../changeloglib/classes/pdftotext.php');
 require_once(dirname(__FILE__) . '/../../changeloglib/classes/update_detector.php');
 
 /**
- * Digest mailer.
+ * Wrapper to access changelog functions.
  */
 class local_uploadnotification_changelog {
 
@@ -49,14 +49,6 @@ class local_uploadnotification_changelog {
         $further_candidates = self::get_pending_files($coursemodule);
 
         return new local_changeloglib_update_detector($new_file, $new_data, $context, $scope, $further_candidates);
-    }
-
-    static function var_dump_ret($mixed = null) {
-        ob_start();
-        var_dump($mixed);
-        $content = ob_get_contents();
-        ob_end_clean();
-        return $content;
     }
 
     /**

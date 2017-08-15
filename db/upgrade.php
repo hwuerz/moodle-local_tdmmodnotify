@@ -35,6 +35,5 @@ function xmldb_local_uploadnotification_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2017081400, 'local', 'uploadnotification');
     }
 
-
     return true;
 }

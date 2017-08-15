@@ -148,7 +148,6 @@ class local_uploadnotification_recipient extends local_uploadnotification_model 
         foreach ($this->notifications as $notification) {
             try { // Maybe there is any error while creating the notification
 
-
                 // Should a mail be send?
                 // General rule: A mail will be send if
                 // docent or student has requested it

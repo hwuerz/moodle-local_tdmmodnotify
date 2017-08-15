@@ -29,7 +29,7 @@ global $CFG;
 
 $plugin->component = 'local_uploadnotification';
 
-// require the backup and compare libs
+// Require the backup and compare libs
 $plugin->dependencies = array(
     'local_changeloglib' => 2017081400,
 );
