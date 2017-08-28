@@ -15,7 +15,7 @@
 // along with UploadNotification.  If not, see <http://www.gnu.org/licenses/>.
 
 defined('MOODLE_INTERNAL') || die;
-require_once(dirname(__FILE__).'/settings_model.php');
+require_once(dirname(__FILE__) . '/settings_model.php');
 
 /**
  * Created by PhpStorm.
@@ -31,7 +31,13 @@ class local_uploadnotification_course_settings_model extends local_uploadnotific
      * The first name must be the primary key
      * @var array string
      */
-    private $attributes = array('courseid' => -1, 'activated' => -1, 'attachment' => -1);
+    private $attributes = array(
+        'courseid' => -1,
+        'enable_mail' => -1,
+        'allow_attachment' => 1,
+        'enable_changelog' => 0,
+        'enable_diff' => 0
+    );
 
     /**
      * course_settings_model constructor.
@@ -40,6 +46,9 @@ class local_uploadnotification_course_settings_model extends local_uploadnotific
      */
     // @codingStandardsIgnoreStart CodeSniffer detects constructor as useless but it is required to make class accessible
     public function __construct($courseid) {
+        // Overwrite default data by the admin configuration
+        $this->attributes['enable_changelog'] = get_config(LOCAL_UPLOADNOTIFICATION_FULL_NAME, 'enable_changelog_by_default');
+        $this->attributes['enable_diff'] = get_config(LOCAL_UPLOADNOTIFICATION_FULL_NAME, 'enable_diff_by_default');
         parent::__construct($courseid);
     }
     // @codingStandardsIgnoreEnd
@@ -66,37 +75,73 @@ class local_uploadnotification_course_settings_model extends local_uploadnotific
      * @return integer -1 for no preferences, 0 for 'disabled', 1 for 'activated'
      */
     public function is_mail_enabled() {
-        return $this->get('activated');
+        return $this->get('enable_mail');
     }
 
     /**
      * Stores the new preference.
-     * Does not update the database until save id called
-     * @param $preference integer The new preference. Must be -1, 0 or 1
+     * Does not update the database until save is called.
+     * If preference is not set, nothing will be done.
+     * @param $preference integer The new preference. Must be -1, 0 or 1.
      * @throws InvalidArgumentException If the preference is invalid
      */
-    public function set_mail_enabled($preference) {
-        $this->set_preference('activated', $preference);
+    public function set_mail_enabled(&$preference) {
+        if (isset($preference)) {
+            $this->set_preference('enable_mail', $preference);
+        }
     }
 
     /**
      * Checks whether attachments could be send in this course.
-     * @return integer -1 for no preferences, 0 for 'disabled', 1 for 'activated'
+     * @return integer 0 for 'disabled', 1 for 'activated'
      */
-    public function is_attachment_enabled() {
-        return $this->get('attachment');
+    public function is_attachment_allowed() {
+        return $this->get('allow_attachment');
     }
 
     /**
-     * Stores the new preference.
-     * Does not update the database until save id called
-     * @param $preference integer The new preference. Must be -1 or 0
-     * @throws InvalidArgumentException If the preference is invalid
+     * Stores the new value.
+     * Does not update the database until save is called
+     * @param $value integer The new value. Must be 0 or 1. Undefined will be mapped tp 0.
+     * @throws InvalidArgumentException If the value is invalid
      */
-    public function set_attachment_enabled($preference) {
-        if (!in_array($preference, array(-1, 0))) {
-            throw new InvalidArgumentException('A course admin can only allow attachments (-1) or not (0)');
-        }
-        $this->set_preference('attachment', $preference);
+    public function set_attachment_allowed(&$value) {
+        $this->set_binary('allow_attachment', $value);
+    }
+
+    /**
+     * Checks whether the changelog is enabled in this course.
+     * @return integer 0 for 'disabled', 1 for 'activated'
+     */
+    public function is_changelog_enabled() {
+        return $this->get('enable_changelog');
+    }
+
+    /**
+     * Stores the new value.
+     * Does not update the database until save is called
+     * @param $value integer The new value. Must be 0 or 1. Undefined will be mapped tp 0.
+     * @throws InvalidArgumentException If the value is invalid
+     */
+    public function set_changelog_enabled(&$value) {
+        $this->set_binary('enable_changelog', $value);
+    }
+
+    /**
+     * Checks whether the difference detection is enabled in this course.
+     * @return integer 0 for 'disabled', 1 for 'activated'
+     */
+    public function is_diff_enabled() {
+        return $this->get('enable_diff');
+    }
+
+    /**
+     * Stores the new value.
+     * Does not update the database until save is called
+     * @param $value integer The new value. Must be 0 or 1. Undefined will be mapped tp 0.
+     * @throws InvalidArgumentException If the value is invalid
+     */
+    public function set_diff_enabled(&$value) {
+        $this->set_binary('enable_diff', $value);
     }
 }

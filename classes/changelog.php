@@ -73,10 +73,12 @@ class local_uploadnotification_changelog {
             $context_id_to, $scope_id);
     }
 
-    public static function is_changelog_enabled() {
-        require_once(dirname(__FILE__) . '/../../changeloglib/classes/pdftotext.php');
-        return get_config(LOCAL_UPLOADNOTIFICATION_FULL_NAME, 'changelog_enabled')
-            && get_config(LOCAL_UPLOADNOTIFICATION_FULL_NAME, 'diff_enabled')
+    /**
+     * @return bool Whether the diff detection is allowed technically and by the admin.
+     */
+    public static function is_diff_allowed() {
+        return get_config(LOCAL_UPLOADNOTIFICATION_FULL_NAME, 'allow_changelog')
+            && get_config(LOCAL_UPLOADNOTIFICATION_FULL_NAME, 'max_diff_filesize') > 0
             && local_changeloglib_pdftotext::is_installed();
     }
 

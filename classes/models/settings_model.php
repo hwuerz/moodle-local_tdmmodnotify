@@ -16,6 +16,8 @@
 
 defined('MOODLE_INTERNAL') || die;
 
+require_once(dirname(__FILE__) . '/../../definitions.php');
+
 /**
  * Created by PhpStorm.
  * User: Hendrik
@@ -110,8 +112,73 @@ abstract class local_uploadnotification_settings_model {
      * @throws InvalidArgumentException If the preference or attribute is invalid
      */
     protected function set_preference($attribute, $preference) {
-        local_uploadnotification_util::require_valid_preference($preference);
+        self::require_valid_preference($preference);
         $this->set($attribute, $preference);
+    }
+
+    /**
+     * Checks whether the passed preference is valid and can be stored in the database
+     * If it is not, an exception will be thrown
+     * @param $preference int The preference to be checked
+     * @throws InvalidArgumentException If the preference is invalid
+     */
+    private static function require_valid_preference($preference) {
+        if (!self::is_valid_preference($preference)) {
+            throw new InvalidArgumentException(
+                "Only valid preferences are accepted. Use -1 for no preference, 0 for deactivated and 1 for activated");
+        }
+    }
+
+    /**
+     * Checks whether the passed preference is valid and can be stored in the database
+     * @param $preference int The preference to be checked
+     * @return bool True if valid, false otherwise
+     */
+    private static function is_valid_preference($preference) {
+        return $preference == -1 || $preference == 0 || $preference == 1;
+    }
+
+    /**
+     * Stores the new value.
+     * Does not update the database until save id called
+     * @param $attribute string The attribute which should be set
+     * @param $value integer The new value. Must be 0 or 1. If variable is unset it will be handled as 0.
+     * @throws InvalidArgumentException If the value or attribute is invalid
+     */
+    protected function set_binary($attribute, &$value) {
+        $data = self::require_valid_binary($value);
+        $this->set($attribute, $data);
+    }
+
+    /**
+     * Checks whether the passed value is valid and can be stored in the database
+     * If it is not, an exception will be thrown.
+     * @param int $value The value to be checked
+     * @return int The corrected binary value if possible.
+     * @throws InvalidArgumentException If the value is invalid
+     */
+    private static function require_valid_binary(&$value) {
+        // In checkboxes nothing is passed if they are unselected --> Map this case to 0
+        if (!isset($value)) {
+            return 0;
+        }
+
+        // Value is not valid --> throw the exception
+        if (!self::is_valid_binary($value)) {
+            throw new InvalidArgumentException(
+                "Only valid binary values are accepted. Use 0 to forbid, 1 to allow");
+        }
+
+        return $value; // Value is valid
+    }
+
+    /**
+     * Checks whether the passed value is valid and can be stored in the database
+     * @param int $value The value to be checked
+     * @return bool True if valid, false otherwise
+     */
+    private static function is_valid_binary($value) {
+        return $value == 0 || $value == 1;
     }
 
     /**

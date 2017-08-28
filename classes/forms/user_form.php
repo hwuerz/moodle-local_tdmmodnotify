@@ -38,6 +38,8 @@ require_once(dirname(__FILE__) . '/../../definitions.php');
  */
 class local_uploadnotification_user_form extends moodleform {
 
+    const STRING_PREFIX = 'settings_user_';
+
     /**
      * Define the form.
      */
@@ -50,24 +52,49 @@ class local_uploadnotification_user_form extends moodleform {
         $mform->setType('id', PARAM_INT);
         $mform->setDefault('id', $this->_customdata['id']);
 
-        $mform->addElement('html', '<h3>Uploadnotification</h3>');
-        $mform->addElement('html', '<p>Do you want to receive notifications when new material was uploaded to a course?</p>');
+        $mform->addElement('html',
+            '<h3>' . get_string(self::STRING_PREFIX . 'link', LOCAL_UPLOADNOTIFICATION_FULL_NAME) . '</h3>');
+        $mform->addElement('html',
+            '<p>' . get_string(self::STRING_PREFIX . 'headline', LOCAL_UPLOADNOTIFICATION_FULL_NAME) . '</p>');
 
-        $preferences = array(
-            '-1' => get_string('settings_no_preferences', LOCAL_UPLOADNOTIFICATION_FULL_NAME),
-            '0' => get_string('settings_disable', LOCAL_UPLOADNOTIFICATION_FULL_NAME),
-            '1' => get_string('settings_enable', LOCAL_UPLOADNOTIFICATION_FULL_NAME)
-        );
-        $mform->addElement('select', 'enable', get_string('setting_enable_plugin',
-            LOCAL_UPLOADNOTIFICATION_FULL_NAME), $preferences);
-        $mform->setDefault('enable', $this->_customdata['enable']);
+        // Get admin settings to show only relevant form elements
+        $admin_allow_mail = get_config(LOCAL_UPLOADNOTIFICATION_FULL_NAME, 'allow_mail');
+        $admin_allow_attachment = get_config(LOCAL_UPLOADNOTIFICATION_FULL_NAME, 'max_mail_filesize') > 0;
 
-        $mform->addElement('text', 'max_filesize', get_string('setting_max_filesize',
-            LOCAL_UPLOADNOTIFICATION_FULL_NAME));
-        $mform->setType('max_filesize', PARAM_INT);
-        $mform->setDefault('max_filesize', $this->_customdata['max_filesize'] / 1024);
+        // Whether mails should be delivered
+        if ($admin_allow_mail) {
+            $this->add_setting('select', 'enable_mail', array(
+                '-1' => get_string(self::STRING_PREFIX . 'no_preferences', LOCAL_UPLOADNOTIFICATION_FULL_NAME),
+                '0' => get_string(self::STRING_PREFIX . 'disable', LOCAL_UPLOADNOTIFICATION_FULL_NAME),
+                '1' => get_string(self::STRING_PREFIX . 'enable', LOCAL_UPLOADNOTIFICATION_FULL_NAME)
+            ));
+        }
+
+        // Whether attachments should be send
+        if ($admin_allow_mail && $admin_allow_attachment) {
+            $this->add_setting('text', 'max_mail_filesize');
+            $mform->setType('max_mail_filesize', PARAM_INT);
+        }
 
         $this->add_action_buttons();
+    }
+
+    /**
+     * Adds a new setting to the displayed form.
+     * The string identifier in the language file must match to the passed element_name.
+     * @param string $type The type of this setting (select, checkbox, ...)
+     * @param string $element_name The name of the element. Must match the default settings, the language string
+     *                             definition and will be used as varaible name for the response data.
+     * @param null|array $options If selected type is checkbox, pass the options here.
+     */
+    private function add_setting($type, $element_name, $options = null) {
+        $mform = $this->_form;
+
+        $mform->addElement($type, $element_name,
+            get_string(self::STRING_PREFIX . $element_name, LOCAL_UPLOADNOTIFICATION_FULL_NAME),
+            $options);
+        $mform->setDefault($element_name, $this->_customdata[$element_name]);
+        $mform->addHelpButton($element_name, self::STRING_PREFIX . $element_name, LOCAL_UPLOADNOTIFICATION_FULL_NAME);
     }
 
     /**
@@ -80,13 +107,13 @@ class local_uploadnotification_user_form extends moodleform {
      */
     public function validation($data, $files) {
         $errors = parent::validation($data, $files);
-        if ($data['max_filesize'] < 0) {
-            $errors['max_filesize'] = get_string('setting_not_negative', LOCAL_UPLOADNOTIFICATION_FULL_NAME);
+        if ($data['max_mail_filesize'] < 0) {
+            $errors['max_mail_filesize'] = get_string('settings_user_not_negative', LOCAL_UPLOADNOTIFICATION_FULL_NAME);
         }
-        $max_admin_filesize = get_config(LOCAL_UPLOADNOTIFICATION_FULL_NAME, 'max_filesize') / 1024;
-        if ($data['max_filesize'] > $max_admin_filesize) {
-            $errors['max_filesize'] = get_string('setting_max_filesize_not_more_than_admin',
-                LOCAL_UPLOADNOTIFICATION_FULL_NAME, $max_admin_filesize);
+        $admin_max_mail_filesize = get_config(LOCAL_UPLOADNOTIFICATION_FULL_NAME, 'max_mail_filesize');
+        if ($data['max_mail_filesize'] > $admin_max_mail_filesize) {
+            $errors['max_mail_filesize'] = get_string('settings_user_max_mail_filesize_not_more_than_admin',
+                LOCAL_UPLOADNOTIFICATION_FULL_NAME, $admin_max_mail_filesize);
         }
         return $errors;
     }

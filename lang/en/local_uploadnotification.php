@@ -66,24 +66,52 @@ $string['uploadnotification:receivedigest'] = 'Receive course modification diges
 $string['messageprovider:digest'] = 'Course modification digest notification';
 
 
-// Settings
-$string['setting_enable_plugin'] = 'Enable Mail delivery by this plugin';
-$string['setting_max_filesize'] = 'Maximum filesize of mail attachments (in KB)';
-$string['setting_max_filesize_not_more_than_admin'] = 'The moodle admin only allows attachments up to {$a}KB';
-$string['setting_max_mails_for_resource'] = 'Maximum amount of mails with the same attachment';
-$string['setting_enable_changelog'] = 'Enable Changelog generation';
-$string['setting_enable_diff'] = 'Enable Diff generation';
-$string['setting_enable_diff_not_available'] = '<p>Diff-Generation is disabled because the package <code>poppler-utils</code> is not installed on your system. Ask your server admin to run <code>apt-get install poppler-utils</code> and visit this page again.</p>';
-$string['setting_enable_diff_available'] = '<p>All required tools for diff generation are installed</p>';
-$string['setting_receive_attachments'] = 'Send email attachments';
-$string['settings_no_preferences'] = 'No preferences';
-$string['setting_not_negative'] = 'Negative values are not allowed';
-$string['setting_require_changelog_for_diff'] = 'You must enable the changelog to use the diff generation';
-$string['settings_allow'] = 'Allow';
-$string['settings_enable'] = 'Enable';
-$string['settings_disable'] = 'Disable';
-$string['course_settings_link'] = 'Uploadnotification';
+// Settings Admin
+$string['settings_allow_mail'] = 'Allow notification mail delivery';
+$string['settings_allow_mail_help'] = 'If enabled, mails with notifications about new material can be send';
+$string['settings_max_mail_filesize'] = 'Maximum filesize of mail attachments<br>(in KB)';
+$string['settings_max_mail_filesize_help'] = 'The maximum material filesize which is allowed to be send in a mail attachments<br>Set to zero to disable attachments.';
+$string['settings_max_mails_for_resource'] = 'Maximum amount of mails with the same attachment';
+$string['settings_max_mails_for_resource_help'] = 'Adjust this value to avoid to much load at one time. Defines the amount of mails with attachment which are allowed to be send based on one course module.';
+$string['settings_allow_changelog'] = 'Allow automatic changelog generation in courses';
+$string['settings_allow_changelog_help'] = 'Allow course admins to enable the automatic changelog detection for their course. If disabled, course admins will not see this settings and can not enable the functionality.';
+$string['settings_max_diff_filesize'] = 'Allowed size of analysed files for the diff detection<br>(in MB)';
+$string['settings_max_diff_filesize_help'] = 'If the filesize of material is greater than this value, no differences will be calculated for it. Set this value to zero to disable the difference detection.<br>The difference detection requires an enabled changelog.';
+$string['settings_enable_changelog_by_default'] = 'Enable the changelog in new courses by default';
+$string['settings_enable_changelog_by_default_help'] = 'If set, the changelog will be activated in new courses and a course admin has to disable it manually if none should be created.';
+$string['settings_enable_diff_by_default'] = 'Enable the diff detection in new courses by default';
+$string['settings_enable_diff_by_default_help'] = 'If set, the diff detection will be activated in new courses and a course admin has to disable it manually if this function should be deactivated.';
+
+// Settings Course
+$string['settings_course_link'] = 'Uploadnotification';
+$string['settings_course_no_preferences'] = 'No preferences';
+$string['settings_course_disable'] = 'Disable';
+$string['settings_course_enable'] = 'Enable';
+$string['settings_course_headline'] = 'Course settings for upload notifications and changelog generation.';
+$string['settings_course_enable_mail'] = 'Enable notification mail delivery for material uploads';
+$string['settings_course_enable_mail_help'] = 'No preference: Your students can decide by their own whether they want to receive emails or not<br>Disabled: No mails will be delivered for material changes in your course<br>Enabled: Students will receive mails for material changes, expect they have forbidden the delivery explicate';
+$string['settings_course_allow_attachment'] = 'Allow email attachments';
+$string['settings_course_allow_attachment_help'] = 'If set, students can receive new material directly via email. Activating this option will not automatically send an attachment every time, but students have the possibility to enable this function for them.';
+$string['settings_course_enable_changelog'] = 'Display a changelog for updates.';
+$string['settings_course_enable_changelog_help'] = 'If set, updates of the provided material will be detected and a changelog will be displayed under the current file. This can help your students to handle changes in the documents.';
+$string['settings_course_enable_diff'] = 'Detect differences in updates';
+$string['settings_course_enable_diff_help'] = 'If set, an automatic analyse will detect the changed pages if you update provided material. The page number will be displayed under the current file.';
+$string['settings_course_error_diff_no_changelog'] = 'The diff detection requires the changelog functionality. Please enable the changelog or disable the diff detection.';
+
+// Settings User
+$string['settings_user_link'] = 'Uploadnotification';
+$string['settings_user_no_preferences'] = 'No preferences';
+$string['settings_user_disable'] = 'Disable';
+$string['settings_user_enable'] = 'Enable';
+$string['settings_user_headline'] = 'Do you want to receive notifications when new material was uploaded to a course?';
+$string['settings_user_enable_mail'] = 'Enable notification mail delivery for material uploads';
+$string['settings_user_enable_mail_help'] = 'No preference: You will only receive emails if a course admin has enabled it explicit for his course<br>Disabled: No mails will be delivered for material changes<br>Enabled: You will receive mails for material changes, expect a course admin has forbidden the delivery explicit';
+$string['settings_user_max_mail_filesize'] = 'Maximum filesize of mail attachments<br>(in KB)';
+$string['settings_user_max_mail_filesize_help'] = 'You can receive new or updated material directly via email. This defines the maximum material filesize which is allowed to be send in a mail attachments<br>Set to zero to disable attachments.';
+$string['settings_user_max_mail_filesize_not_more_than_admin'] = 'The moodle admin only allows attachments up to {$a}KB';
+$string['settings_user_not_negative'] = 'Negative values are not allowed';
 
 // Changelog
 $string['printed_changelog_prefix'] = 'This file is an update of {$a->filename} from {$a->date}. ';
+$string['long_diff'] = 'In this file {$a} pages were changed.';
 $string['printed_diff_prefix'] = 'The following pages of this file were changed: ';

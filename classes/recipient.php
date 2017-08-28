@@ -217,8 +217,8 @@ class local_uploadnotification_recipient extends local_uploadnotification_model 
     private function add_file_attachment($cm, $user_settings, $course_settings, $attachment_optimizer) {
 
         // If the admin has attachments disabled --> do not send them
-        $max_filesize = get_config(LOCAL_UPLOADNOTIFICATION_FULL_NAME, 'max_filesize');
-        if ($max_filesize !== false && $max_filesize == 0) {
+        $max_filesize = get_config(LOCAL_UPLOADNOTIFICATION_FULL_NAME, 'max_mail_filesize');
+        if ($max_filesize == 0) {
             return false;
         }
 
@@ -228,7 +228,7 @@ class local_uploadnotification_recipient extends local_uploadnotification_model 
         }
 
         // If the course admin has forbidden attachments --> do not send them
-        if ($course_settings->is_attachment_enabled() == 0) {
+        if (!$course_settings->is_attachment_allowed()) {
             return false;
         }
 
@@ -241,9 +241,8 @@ class local_uploadnotification_recipient extends local_uploadnotification_model 
         }
 
         // Check filesize
-        if ($file->filesize > get_config(LOCAL_UPLOADNOTIFICATION_FULL_NAME, 'max_filesize')
-            || $file->filesize > $user_settings->get_max_filesize()
-        ) {
+        if ($file->filesize > $max_filesize * 1024
+            || $file->filesize > $user_settings->get_max_filesize() * 1024) {
             return false;
         }
 

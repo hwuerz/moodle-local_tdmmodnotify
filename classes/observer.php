@@ -26,8 +26,7 @@
 defined('MOODLE_INTERNAL') || die;
 
 require_once(dirname(__FILE__) . '/../definitions.php');
-require_once(dirname(__FILE__) . '/../lib.php');
-require_once(dirname(__FILE__) . '/changelog.php');
+require_once(dirname(__FILE__) . '/update_handler.php');
 
 /**
  * Event observer.
@@ -35,151 +34,41 @@ require_once(dirname(__FILE__) . '/changelog.php');
  * Responds to course module events emitted by the Moodle event manager.
  */
 class local_uploadnotification_observer {
+
     /**
      * Course module created.
      *
      * @param \core\event\course_module_created $event The event that triggered our execution.
-     *
      * @return void
      */
     public static function course_module_created($event) {
-        static::schedule_notification($event);
+        self::handle_update($event);
     }
 
     /**
      * Course module updated.
      *
      * @param \core\event\course_module_updated $event The event that triggered our execution.
-     *
      * @return void
      */
     public static function course_module_updated($event) {
-        static::schedule_notification($event);
+        self::handle_update($event);
     }
 
     /**
      * Event handler.
-     *
-     * Called by observers to handle notification sending.
-     *
-     * @param \core\event\base $event The event object.
-     *
-     * @return void
-     *
-     * @throws \coding_exception When given an invalid action.
+     * Called by observers to handle notifications and changelog.
+     * @param \core\event\base $event
      */
-    protected static function schedule_notification(\core\event\base $event) {
+    private static function handle_update($event) {
+        $handler = new local_uploadnotification_update_handler($event);
 
-        // Do not record updates if the plugin is deactivated
-        $enabled = get_config(LOCAL_UPLOADNOTIFICATION_FULL_NAME, 'enabled');
-        if (!$enabled) {
-            return;
+        if ($handler->is_changelog_enabled()) {
+            $handler->generate_changelog();
         }
 
-        global $DB;
-
-        // Only send mails for updated resources
-        if ($event->other['modulename'] != 'resource') {
-            return;
-        }
-
-        switch ($event->action) {
-            case 'created':
-                $action = LOCAL_UPLOADNOTIFICATION_ACTION_CREATED;
-                break;
-
-            case 'updated':
-                $action = LOCAL_UPLOADNOTIFICATION_ACTION_UPDATED;
-                break;
-
-            default:
-                throw new coding_exception("Invalid event action '{$event->action}' (valid options: 'created', 'updated')");
-        }
-
-        // Check for "visible from" condition
-        // A docent can define a date when the material becomes available for students.
-        // Do not check visibility for students before this date.
-        // If the dates becomes modified, an update event will be send and the record will be changed.
-        $timestamp = time();
-        $cm = $DB->get_record('course_modules', array('id' => $event->objectid));
-        $availability = json_decode($cm->availability);
-        if (!is_null($availability) && !is_null($availability->c)) { // This resource has visibility conditions
-            $conditions = $availability->c;
-            foreach ($conditions as $condition) {
-                // Check for a date condition with "visible after" definition
-                if ($condition->type == 'date' && $condition->d == '>=' && $condition->t > $timestamp) {
-                    $timestamp = $condition->t;
-                }
-            }
-        }
-
-        // Generate changelog if the admin has enabled the feature
-        if (get_config(LOCAL_UPLOADNOTIFICATION_FULL_NAME, 'changelog_enabled')) {
-            $detector = local_uploadnotification_changelog::get_update_detector($cm);
-            $predecessor = $detector->is_update();
-            if ($predecessor != false) { // A predecessor was found
-
-                $diff_output = get_string('printed_changelog_prefix', LOCAL_UPLOADNOTIFICATION_FULL_NAME, (object)array(
-                    'filename' => $predecessor->get_filename(),
-                    'date' => date("m.d.Y H:i")
-                ));
-
-                if (local_uploadnotification_changelog::is_changelog_enabled()) {
-                    $predecessor_txt_file = local_changeloglib_pdftotext::convert_to_txt($predecessor);
-                    $original_txt_file = local_changeloglib_pdftotext::convert_to_txt($detector->get_new_file());
-
-                    // Only continue of valid text files could be generated.
-                    if ($predecessor_txt_file !== false && $original_txt_file !== false) {
-                        $diff_detector = new local_changeloglib_diff_detector($predecessor_txt_file, $original_txt_file);
-
-                        // TODO Abort output if to many changes
-
-                        $diff_output .= get_string('printed_diff_prefix', LOCAL_UPLOADNOTIFICATION_FULL_NAME);
-                        $diff_output .= $diff_detector->get_info();
-                    }
-                }
-
-                // Get the resource of this course module
-                // The check on top of this function ensures that the course module is a resource
-                $resource = $DB->get_record('resource', array('id' => $cm->instance));
-
-                // Build new intro based on calculation and current data
-                $intro = $resource->intro;
-                if (strlen($intro) > 0) {
-                    $intro .= "<br>";
-                }
-                $intro .= $diff_output;
-
-                $DB->update_record('resource', (object)array(
-                    'id' => $resource->id,
-                    'intro' => $intro
-                ));
-                $DB->update_record('course_modules', (object)array(
-                    'id' => $cm->id,
-                    'showdescription' => 1
-                ));
-
-                rebuild_course_cache($cm->course, true);
-            }
-        }
-
-        $coursecontext = context_course::instance($event->courseid);
-        $enrolledusers = get_enrolled_users($coursecontext);
-
-        foreach ($enrolledusers as $enrolleduser) {
-            // Delete entries for this user and file which are already stored in the database.
-            // This is needed to avoid duplicated entries on file updates.
-            $DB->delete_records('local_uploadnotification', array(
-                'coursemoduleid' => $event->objectid,
-                'userid' => $enrolleduser->id,
-            ));
-            $DB->insert_record('local_uploadnotification', (object)array(
-                'action' => $action,
-                'courseid' => $event->courseid,
-                'coursemoduleid' => $event->objectid,
-                'userid' => $enrolleduser->id,
-                'timestamp' => $timestamp
-            ));
+        if ($handler->is_notification_enabled()) {
+            $handler->schedule_notification();
         }
     }
 }

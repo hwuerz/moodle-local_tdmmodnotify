@@ -36,9 +36,9 @@ require_once(dirname(__FILE__).'/classes/changelog.php');
  */
 function local_uploadnotification_cron() {
 
-    // Only send mails if a moodle admin has enabled this function
-    $enabled = get_config(LOCAL_UPLOADNOTIFICATION_FULL_NAME, 'enabled');
-    if (!$enabled) {
+    // Only send mails if a moodle admin has allowed this function
+    $allowed = get_config(LOCAL_UPLOADNOTIFICATION_FULL_NAME, 'allow_mail');
+    if (!$allowed) {
         return;
     }
 
@@ -83,7 +83,8 @@ function local_uploadnotification_extend_settings_navigation($settingsnav, $cont
     global $PAGE;
 
     // Disable menu if admin has forbidden mail delivery
-    if (!get_config(LOCAL_UPLOADNOTIFICATION_FULL_NAME, 'enabled')) {
+    if (!get_config(LOCAL_UPLOADNOTIFICATION_FULL_NAME, 'allow_mail')
+        && !get_config(LOCAL_UPLOADNOTIFICATION_FULL_NAME, 'allow_changelog')) {
         return;
     }
 
@@ -98,7 +99,7 @@ function local_uploadnotification_extend_settings_navigation($settingsnav, $cont
     }
 
     if ($settingnode = $settingsnav->find('courseadmin', navigation_node::TYPE_COURSE)) {
-        $displayed_text = get_string('course_settings_link', 'local_uploadnotification');
+        $displayed_text = get_string('settings_course_link', 'local_uploadnotification');
         $url = new moodle_url('/local/uploadnotification/course.php', array('id' => $PAGE->course->id));
         $foonode = navigation_node::create(
             $displayed_text,
@@ -122,8 +123,8 @@ function local_uploadnotification_extend_navigation_user_settings
 (navigation_node $parentnode, stdClass $user, context_user $context, stdClass $course, context_course $coursecontext) {
     global $PAGE;
 
-    // Disable menu if admin has forbidden mail delivery
-    if (!get_config(LOCAL_UPLOADNOTIFICATION_FULL_NAME, 'enabled')) {
+    // Disable menu if admin has forbidden mail delivery (user could not set any preferences even if link would be enabled)
+    if (!get_config(LOCAL_UPLOADNOTIFICATION_FULL_NAME, 'allow_mail')) {
         return;
     }
 
@@ -132,7 +133,7 @@ function local_uploadnotification_extend_navigation_user_settings
         return;
     }
 
-    $displayed_text = get_string('course_settings_link', 'local_uploadnotification');
+    $displayed_text = get_string('settings_user_link', 'local_uploadnotification');
     $url = new moodle_url('/local/uploadnotification/user.php');
     $foonode = navigation_node::create(
         $displayed_text,

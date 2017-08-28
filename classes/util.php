@@ -87,29 +87,6 @@ SQL;
 
 
     /**
-     * Checks whether the passed preference is valid and can be stored in the database
-     * @param $preference int The preference to be checked
-     * @return bool True if valid, false otherwise
-     */
-    private static function is_valid_preference($preference) {
-        return $preference == -1 || $preference == 0 || $preference == 1;
-    }
-
-    /**
-     * Checks whether the passed preference is valid and can be stored in the database
-     * If it is not, an exception will be thrown
-     * @param $preference int The preference to be checked
-     * @throws InvalidArgumentException If the preference is invalid
-     */
-    public static function require_valid_preference($preference) {
-        if (!self::is_valid_preference($preference)) {
-            throw new InvalidArgumentException(
-                "Only valid preferences are accepted. Use -1 for no preference, 0 for deactivated and 1 for activated");
-        }
-    }
-
-
-    /**
      * Get the maximum timestamp of records to be returned.
      * Only get entries which are older than 5 minutes
      * After a docent uploaded some material, he maybe wants to change some properties

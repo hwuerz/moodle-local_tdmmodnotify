@@ -33,7 +33,6 @@ require_once(dirname(__FILE__) . '/classes/models/course_settings_model.php');
 // Globals.
 global $DB, $CFG, $OUTPUT, $USER, $SITE, $PAGE;
 
-
 $course_id = required_param('id', PARAM_INT);
 $course = $DB->get_record('course', array('id' => $course_id), '*', MUST_EXIST);
 require_login($course, true);
@@ -52,25 +51,29 @@ if ($course_id == 1) {
 
 // Only let users with the appropriate capability see this settings item.
 if (!has_capability('moodle/backup:backupcourse', context_course::instance($course_id))) {
-    redirect($homeurl, "This feature is only available for valid course ids.", 5);
+    redirect($homeurl, "This feature is only available for course admins.", 5);
 }
 
 echo $OUTPUT->header();
 
 $settings = new local_uploadnotification_course_settings_model($course_id);
 
-// Display global config
+// Display config
 $course_form = new local_uploadnotification_course_form(null, array(
     'id' => $course_id,
     'fullname' => $course->fullname,
-    'enable' => $settings->is_mail_enabled(),
-    'attachment' => $settings->is_attachment_enabled()));
+    'enable_mail' => $settings->is_mail_enabled(),
+    'allow_attachment' => $settings->is_attachment_allowed(),
+    'enable_changelog' => $settings->is_changelog_enabled(),
+    'enable_diff' => $settings->is_diff_enabled()));
 
 // Evaluate form data
 $data = $course_form->get_data();
 if ($data) {
-    $settings->set_mail_enabled($data->enable);
-    $settings->set_attachment_enabled($data->attachment);
+    $settings->set_mail_enabled($data->enable_mail);
+    $settings->set_attachment_allowed($data->allow_attachment);
+    $settings->set_changelog_enabled($data->enable_changelog);
+    $settings->set_diff_enabled($data->enable_diff);
     $settings->save();
 }
 

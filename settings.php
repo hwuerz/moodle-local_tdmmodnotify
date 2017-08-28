@@ -28,9 +28,53 @@ defined('MOODLE_INTERNAL') || die;
 require_once(dirname(__FILE__) . '/definitions.php');
 
 if ($hassiteconfig) {
-    $section = 'localplugins';
-    $ADMIN->add($section, new admin_externalpage(LOCAL_UPLOADNOTIFICATION_FULL_NAME,
-        LOCAL_UPLOADNOTIFICATION_NAME,
-        new moodle_url('/local/uploadnotification/')
-    ));
+
+    // Create the new settings page
+    $settings_name = get_string('pluginname', LOCAL_UPLOADNOTIFICATION_FULL_NAME);
+    $settings = new admin_settingpage( LOCAL_UPLOADNOTIFICATION_FULL_NAME, $settings_name);
+
+    // Create
+    $ADMIN->add( 'localplugins', $settings );
+
+    $settings->add(new admin_setting_configcheckbox(
+        LOCAL_UPLOADNOTIFICATION_FULL_NAME . '/allow_mail',
+        new lang_string('settings_allow_mail', LOCAL_UPLOADNOTIFICATION_FULL_NAME),
+        new lang_string('settings_allow_mail_help', LOCAL_UPLOADNOTIFICATION_FULL_NAME),
+        1));
+
+    $settings->add(new admin_setting_configtext(
+        LOCAL_UPLOADNOTIFICATION_FULL_NAME . '/max_mail_filesize',
+        new lang_string('settings_max_mail_filesize', LOCAL_UPLOADNOTIFICATION_FULL_NAME),
+        new lang_string('settings_max_mail_filesize_help', LOCAL_UPLOADNOTIFICATION_FULL_NAME),
+        100000,  '/^[0-9]+$/'));
+
+    $settings->add(new admin_setting_configtext(
+        LOCAL_UPLOADNOTIFICATION_FULL_NAME . '/max_mails_for_resource',
+        new lang_string('settings_max_mails_for_resource', LOCAL_UPLOADNOTIFICATION_FULL_NAME),
+        new lang_string('settings_max_mails_for_resource_help', LOCAL_UPLOADNOTIFICATION_FULL_NAME),
+        800, '/^[0-9]+$/'));
+
+    $settings->add(new admin_setting_configcheckbox(
+        LOCAL_UPLOADNOTIFICATION_FULL_NAME . '/allow_changelog',
+        new lang_string('settings_allow_changelog', LOCAL_UPLOADNOTIFICATION_FULL_NAME),
+        new lang_string('settings_allow_changelog_help', LOCAL_UPLOADNOTIFICATION_FULL_NAME),
+        1));
+
+    $settings->add(new admin_setting_configtext(
+        LOCAL_UPLOADNOTIFICATION_FULL_NAME . '/max_diff_filesize',
+        new lang_string('settings_max_diff_filesize', LOCAL_UPLOADNOTIFICATION_FULL_NAME),
+        new lang_string('settings_max_diff_filesize_help', LOCAL_UPLOADNOTIFICATION_FULL_NAME),
+        100000, '/^[0-9]+$/'));
+
+    $settings->add(new admin_setting_configcheckbox(
+        LOCAL_UPLOADNOTIFICATION_FULL_NAME . '/enable_changelog_by_default',
+        new lang_string('settings_enable_changelog_by_default', LOCAL_UPLOADNOTIFICATION_FULL_NAME),
+        new lang_string('settings_enable_changelog_by_default_help', LOCAL_UPLOADNOTIFICATION_FULL_NAME),
+        0));
+
+    $settings->add(new admin_setting_configcheckbox(
+        LOCAL_UPLOADNOTIFICATION_FULL_NAME . '/enable_diff_by_default',
+        new lang_string('settings_enable_diff_by_default', LOCAL_UPLOADNOTIFICATION_FULL_NAME),
+        new lang_string('settings_enable_diff_by_default_help', LOCAL_UPLOADNOTIFICATION_FULL_NAME),
+        0));
 }
