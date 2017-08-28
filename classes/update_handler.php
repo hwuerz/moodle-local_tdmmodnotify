@@ -116,8 +116,13 @@ class local_uploadnotification_update_handler {
                 'date' => date("m.d.Y H:i")
             ));
 
-            if ($this->is_diff_enabled()) {
-                $diff = $this->generate_diff($predecessor, $detector->get_new_file());
+            $file = $detector->get_new_file();
+            $max_filesize_for_diff = get_config(LOCAL_UPLOADNOTIFICATION_FULL_NAME, 'max_diff_filesize');
+            if ($this->is_diff_enabled()
+                && $predecessor->get_filesize() <= $max_filesize_for_diff * 1024 * 1024
+                && $file->get_filesize() <= $max_filesize_for_diff * 1024 * 1024) {
+
+                $diff = $this->generate_diff($predecessor, $file);
                 if ($diff !== false) { // After diff generation the predecessor was not rejected.
                     $changelog_entry .= $diff;
                 }
