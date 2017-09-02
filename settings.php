@@ -26,6 +26,7 @@
 defined('MOODLE_INTERNAL') || die;
 
 require_once(dirname(__FILE__) . '/definitions.php');
+require_once(dirname(__FILE__) . '/../changeloglib/classes/pdftotext.php');
 
 if ($hassiteconfig) {
 
@@ -65,6 +66,13 @@ if ($hassiteconfig) {
         new lang_string('settings_max_diff_filesize', LOCAL_UPLOADNOTIFICATION_FULL_NAME),
         new lang_string('settings_max_diff_filesize_help', LOCAL_UPLOADNOTIFICATION_FULL_NAME),
         100, '/^[0-9]+$/'));
+
+    if (!local_changeloglib_pdftotext::is_installed()) {
+        $settings->add(new admin_setting_heading(
+            LOCAL_UPLOADNOTIFICATION_FULL_NAME . '/diff_not_available',
+            "Warning",
+            new lang_string('settings_diff_not_available', LOCAL_UPLOADNOTIFICATION_FULL_NAME)));
+    }
 
     $settings->add(new admin_setting_configcheckbox(
         LOCAL_UPLOADNOTIFICATION_FULL_NAME . '/enable_changelog_by_default',

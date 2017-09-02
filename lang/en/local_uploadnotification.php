@@ -81,6 +81,7 @@ $string['settings_enable_changelog_by_default'] = 'Enable the changelog in new c
 $string['settings_enable_changelog_by_default_help'] = 'If set, the changelog will be activated in new courses and a course admin has to disable it manually if none should be created.';
 $string['settings_enable_diff_by_default'] = 'Enable the diff detection in new courses by default';
 $string['settings_enable_diff_by_default_help'] = 'If set, the diff detection will be activated in new courses and a course admin has to disable it manually if this function should be deactivated.';
+$string['settings_diff_not_available'] = '<p>The detection for changes in PDF files is not available because the package <code>poppler-utils</code> is not installed on your system. If you have enabled the setting above, ask your server admin to run <code>apt-get install poppler-utils</code> and visit this page again. This message disappears if the tool is installed correctly.</p>';
 
 // Settings Course
 $string['settings_course_link'] = 'Uploadnotification';
