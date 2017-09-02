@@ -24,7 +24,6 @@
  */
 
 defined('MOODLE_INTERNAL') || die;
-require_once(dirname(__FILE__) . '/models/course_settings_model.php');
 
 
 /**
@@ -41,10 +40,9 @@ class local_uploadnotification_attachment_optimizer {
 
     /**
      * @param $cm cm_info The course module record. Must contain the id and the modname.
-     * @param $course_settings local_uploadnotification_course_settings_model The course settings of the corresponding course.
-     * @return bool|local_uploadnotification_attachment_optimizer_file
+     * @return local_uploadnotification_attachment_optimizer_file|bool
      */
-    public function require_file($cm, $course_settings) {
+    public function require_file($cm) {
 
         // Check whether this file is already known
         if (in_array($cm->id, array_keys($this->files))) {
@@ -75,7 +73,7 @@ class local_uploadnotification_attachment_optimizer {
         $file->file_name = $resource_file->get_filename();
         $file->file_path = $resource_file->copy_content_to_temp();
         $file->filesize = $resource_file->get_filesize();
-        $file->requesting_users = $this->calculate_requesting_users($cm->course, $course_settings);
+        $file->requesting_users = $this->calculate_requesting_users($cm->id);
 
         // Store cache object
         $this->files[$cm->id] = $file;
@@ -85,36 +83,22 @@ class local_uploadnotification_attachment_optimizer {
     /**
      * Calculates how many users have requested this file as an attachment.
      * The value might be not exactly but is an upper limit
-     * @param $course_id int The course ID of the resource
-     * @param $course_settings local_uploadnotification_course_settings_model The settings of the course.
+     * @param $cm_id int The course module ID of the resource
      * @return int The amount of requesting users
      */
-    private function calculate_requesting_users($course_id, $course_settings) {
+    private function calculate_requesting_users($cm_id) {
         global $DB;
+        // TODO optimize: which users request attachments
 
-        // Taken and modified from https://moodle.org/mod/forum/discuss.php?d=118532#p968575
-        $sql = "
-SELECT COUNT(u.id)
-FROM {course} c
-JOIN {context} ct ON c.id = ct.instanceid
-JOIN {role_assignments} ra ON ra.contextid = ct.id
-JOIN {user} u ON u.id = ra.userid
-JOIN {role} r ON r.id = ra.roleid
-LEFT JOIN {local_uploadnotification_usr} usr ON u.id = usr.userid
-WHERE c.id = ?";
+        $sql = <<<SQL
+SELECT COUNT(n.id)
+FROM {local_uploadnotification} n
+INNER JOIN {local_uploadnotification_usr} u
+ON n.userid = u.userid
+WHERE u.activated = 1 AND n.coursemoduleid = ?
+SQL;
 
-        // The course requests mails --> All students which have not forbidden mail deliver request the file
-        if ($course_settings->is_mail_enabled() == '1') {
-            $sql .= " AND (usr.userid IS NULL OR usr.enable_mail != 0)";
-
-        } else if ($course_settings->is_mail_enabled() == '-1') { // No preference from the course --> Only active requests
-            $sql .= " AND usr.enable_mail = 1";
-
-        } else { // Course has forbidden mail (this function should not be called in this case)
-            return 0;
-        }
-
-        $count = $DB->count_records_sql($sql, array($course_id));
+        $count = $DB->count_records_sql($sql, array($cm_id));
         return $count;
     }
 

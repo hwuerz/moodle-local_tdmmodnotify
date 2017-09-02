@@ -233,7 +233,7 @@ class local_uploadnotification_recipient extends local_uploadnotification_model 
         }
 
         // File might be interesting --> fetch it
-        $file = $attachment_optimizer->require_file($cm, $course_settings);
+        $file = $attachment_optimizer->require_file($cm);
 
         // The file could not be fetched for any reason
         if ($file === false) {
