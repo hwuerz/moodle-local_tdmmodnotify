@@ -1,7 +1,9 @@
-Notify enrolled learners of changes to course content
+Upload notification
 =====================================================
 
-This simple plugin sends users daily digests of changed content within their enrolled courses.
+This plugins allows students to receive a notification as soon as new material becomes uploaded. 
+Optionally the new file can be included in the mail directly.
+For updated material a changelog will be displayed which includes the changed page for PDF documents.
 
 License
 -------
@@ -24,7 +26,6 @@ License
 Requirements
 ------------
 
-* Moodle 2.6+, as we make use of the new observer system for consuming events.
 * Tested with Moodle 3.3+
 
 Installation

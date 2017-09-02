@@ -31,19 +31,15 @@ $plugin->component = 'local_uploadnotification';
 
 // Require the backup and compare libs
 $plugin->dependencies = array(
-    'local_changeloglib' => 2017081400,
+    'local_changeloglib' => 2017090200,
 );
 
 $plugin->release = '0.2.0';
 $plugin->maturity = MATURITY_ALPHA;
 
-// Emails are sent daily unless we're in debug mode
-// TODO: Add internal checks:
-// Notification does not need to be checked often,
-// deleted files should be checked often
-$plugin->cron = $CFG->debugdeveloper ? 1 : 86400;
+// Directly send mails
 $plugin->cron = 1;
 
 // Version format:  YYYYMMDDXX
-$plugin->version = 2017082800;
-$plugin->requires = 2013111800;
+$plugin->version = 2017090200;
+$plugin->requires = 2017051500;
