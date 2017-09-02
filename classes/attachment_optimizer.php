@@ -88,14 +88,12 @@ class local_uploadnotification_attachment_optimizer {
      */
     private function calculate_requesting_users($cm_id) {
         global $DB;
-        // TODO optimize: which users request attachments
 
         $sql = <<<SQL
-SELECT COUNT(n.id)
-FROM {local_uploadnotification} n
-INNER JOIN {local_uploadnotification_usr} u
-ON n.userid = u.userid
-WHERE u.activated = 1 AND n.coursemoduleid = ?
+SELECT COUNT(notification.id)
+FROM {local_uploadnotification} notification
+LEFT JOIN {local_uploadnotification_usr} usr ON notification.userid = usr.userid
+WHERE notification.coursemoduleid = ? AND usr.max_mail_filesize > 0
 SQL;
 
         $count = $DB->count_records_sql($sql, array($cm_id));
