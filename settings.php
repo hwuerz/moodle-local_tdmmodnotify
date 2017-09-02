@@ -64,7 +64,7 @@ if ($hassiteconfig) {
         LOCAL_UPLOADNOTIFICATION_FULL_NAME . '/max_diff_filesize',
         new lang_string('settings_max_diff_filesize', LOCAL_UPLOADNOTIFICATION_FULL_NAME),
         new lang_string('settings_max_diff_filesize_help', LOCAL_UPLOADNOTIFICATION_FULL_NAME),
-        100000, '/^[0-9]+$/'));
+        100, '/^[0-9]+$/'));
 
     $settings->add(new admin_setting_configcheckbox(
         LOCAL_UPLOADNOTIFICATION_FULL_NAME . '/enable_changelog_by_default',
