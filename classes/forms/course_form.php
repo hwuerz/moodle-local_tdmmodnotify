@@ -34,7 +34,9 @@ require_once($CFG->libdir.'/formslib.php');
 require_once(dirname(__FILE__) . '/../../definitions.php');
 
 /**
- * Settings form for moodle admins to customize uploadnotification
+ * Settings form for moodle admins to customize uploadnotification.
+ * @copyright (c) 2017 Hendrik Wuerz
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class local_uploadnotification_course_form extends moodleform {
 
@@ -46,23 +48,23 @@ class local_uploadnotification_course_form extends moodleform {
     public function definition() {
         $mform = $this->_form;
 
-        // Inject the course ID to parse the submitted data easily
+        // Inject the course ID to parse the submitted data easily.
         $mform->addElement('hidden', 'id', '');
         $mform->setType('id', PARAM_INT);
         $mform->setDefault('id', $this->_customdata['id']);
 
-        // Headline
+        // Headline.
         $mform->addElement('html', '<h3>'.$this->_customdata['fullname'].'</h3>');
         $mform->addElement('html',
             '<p>' . get_string(self::STRING_PREFIX . 'headline', LOCAL_UPLOADNOTIFICATION_FULL_NAME) . '</p>');
 
-        // Get admin settings to show only relevant form elements
+        // Get admin settings to show only relevant form elements.
         $admin_allow_mail = get_config(LOCAL_UPLOADNOTIFICATION_FULL_NAME, 'allow_mail');
         $admin_allow_attachment = get_config(LOCAL_UPLOADNOTIFICATION_FULL_NAME, 'max_mail_filesize') > 0;
         $admin_allow_changelog = get_config(LOCAL_UPLOADNOTIFICATION_FULL_NAME, 'allow_changelog');
         $admin_allow_diff = get_config(LOCAL_UPLOADNOTIFICATION_FULL_NAME, 'max_diff_filesize') > 0;
 
-        // Whether mails should be delivered
+        // Whether mails should be delivered.
         if ($admin_allow_mail) {
             $this->add_setting('select', 'enable_mail', array(
                 '-1' => get_string(self::STRING_PREFIX . 'no_preferences', LOCAL_UPLOADNOTIFICATION_FULL_NAME),
@@ -71,17 +73,17 @@ class local_uploadnotification_course_form extends moodleform {
             ));
         }
 
-        // Whether attachments should be send
+        // Whether attachments should be send.
         if ($admin_allow_mail && $admin_allow_attachment) {
             $this->add_setting('checkbox', 'allow_attachment');
         }
 
-        // Whether a changelog should be generated
+        // Whether a changelog should be generated.
         if ($admin_allow_changelog) {
             $this->add_setting('checkbox', 'enable_changelog');
         }
 
-        // Whether differences should be detected
+        // Whether differences should be detected.
         if ($admin_allow_changelog && $admin_allow_diff) {
             $this->add_setting('checkbox', 'enable_diff');
         }
@@ -116,7 +118,7 @@ class local_uploadnotification_course_form extends moodleform {
     public function validation($data, $files) {
         $errors = parent::validation($data, $files);
 
-        // Diff but no changelog
+        // Diff but no changelog.
         if (!isset($data['enable_changelog']) && isset($data['enable_diff'])) {
             $error = get_string(self::STRING_PREFIX . 'error_diff_no_changelog', LOCAL_UPLOADNOTIFICATION_FULL_NAME);
             $errors['enable_changelog'] = $error;

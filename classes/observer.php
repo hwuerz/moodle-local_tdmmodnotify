@@ -32,6 +32,9 @@ require_once(dirname(__FILE__) . '/update_handler.php');
  * Event observer.
  *
  * Responds to course module events emitted by the Moodle event manager.
+ *
+ * @copyright (c) 2014 The Development Manager Ltd, 2017 Hendrik Wuerz
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class local_uploadnotification_observer {
 
@@ -39,7 +42,6 @@ class local_uploadnotification_observer {
      * Course module created.
      *
      * @param \core\event\course_module_created $event The event that triggered our execution.
-     * @return void
      */
     public static function course_module_created($event) {
         self::handle_update($event);
@@ -49,7 +51,6 @@ class local_uploadnotification_observer {
      * Course module updated.
      *
      * @param \core\event\course_module_updated $event The event that triggered our execution.
-     * @return void
      */
     public static function course_module_updated($event) {
         self::handle_update($event);
@@ -58,7 +59,7 @@ class local_uploadnotification_observer {
     /**
      * Event handler.
      * Called by observers to handle notifications and changelog.
-     * @param \core\event\base $event
+     * @param \core\event\base $event The received event.
      */
     private static function handle_update($event) {
         $handler = new local_uploadnotification_update_handler($event);

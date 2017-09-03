@@ -50,13 +50,13 @@ echo $OUTPUT->header();
 
 $settings = new local_uploadnotification_user_settings_model($USER->id);
 
-// Display global config
+// Display global config.
 $user_form = new local_uploadnotification_user_form(null, array(
     'id' => $USER->id,
     'enable_mail' => $settings->is_mail_enabled(),
     'max_mail_filesize' => $settings->get_max_filesize()));
 
-// Evaluate form data
+// Evaluate form data.
 $data = $user_form->get_data();
 if ($data) {
     $settings->set_mail_enabled($data->enable_mail);

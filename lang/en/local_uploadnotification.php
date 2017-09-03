@@ -25,13 +25,13 @@
 
 defined('MOODLE_INTERNAL') || die;
 
-// Module metadata
+// Module metadata.
 $string['pluginname'] = 'Upload notification';
 
-// Settings
+// Settings.
 $string['heading'] = 'Upload notification settings';
 
-// Created notification
+// Created notification.
 $string['templatesubject_singular'] = 'Resource updates in your course {$a}';
 $string['templatesubject_plural'] = 'Resource updates in your courses {$a}';
 $string['templatemessage'] = 'Hi {$a->firstname},
@@ -59,14 +59,14 @@ $string['templateresource_html'] = '<li><a href="{$a->url_file}">{$a->filename}<
 $string['actioncreated'] = 'created';
 $string['actionupdated'] = 'updated';
 
-// Capabilities
+// Capabilities.
 $string['uploadnotification:receivedigest'] = 'Receive course modification digest notification';
 
-// Message providers
+// Message providers.
 $string['messageprovider:digest'] = 'Course modification digest notification';
 
 
-// Settings Admin
+// Settings Admin.
 $string['settings_allow_mail'] = 'Allow notification mail delivery';
 $string['settings_allow_mail_help'] = 'If enabled, mails with notifications about new material can be send';
 $string['settings_max_mail_filesize'] = 'Maximum filesize of mail attachments<br>(in KB)';
@@ -83,7 +83,7 @@ $string['settings_enable_diff_by_default'] = 'Enable the diff detection in new c
 $string['settings_enable_diff_by_default_help'] = 'If set, the diff detection will be activated in new courses and a course admin has to disable it manually if this function should be deactivated.';
 $string['settings_diff_not_available'] = '<p>The detection for changes in PDF files is not available because the package <code>poppler-utils</code> is not installed on your system. If you have enabled the setting above, ask your server admin to run <code>apt-get install poppler-utils</code> and visit this page again. This message disappears if the tool is installed correctly.</p>';
 
-// Settings Course
+// Settings Course.
 $string['settings_course_link'] = 'Uploadnotification';
 $string['settings_course_no_preferences'] = 'No preferences';
 $string['settings_course_disable'] = 'Disable';
@@ -99,7 +99,7 @@ $string['settings_course_enable_diff'] = 'Detect differences in updates';
 $string['settings_course_enable_diff_help'] = 'If set, an automatic analyse will detect the changed pages if you update provided material. The page number will be displayed under the current file.';
 $string['settings_course_error_diff_no_changelog'] = 'The diff detection requires the changelog functionality. Please enable the changelog or disable the diff detection.';
 
-// Settings User
+// Settings User.
 $string['settings_user_link'] = 'Uploadnotification';
 $string['settings_user_no_preferences'] = 'No preferences';
 $string['settings_user_disable'] = 'Disable';
@@ -112,7 +112,7 @@ $string['settings_user_max_mail_filesize_help'] = 'You can receive new or update
 $string['settings_user_max_mail_filesize_not_more_than_admin'] = 'The moodle admin only allows attachments up to {$a}KB';
 $string['settings_user_not_negative'] = 'Negative values are not allowed';
 
-// Changelog
+// Changelog.
 $string['printed_changelog_prefix'] = 'This file is an update of {$a->filename} from {$a->date}. ';
 $string['long_diff'] = 'In this file {$a} pages were changed.';
 $string['printed_diff_prefix'] = 'The following pages of this file were changed: ';

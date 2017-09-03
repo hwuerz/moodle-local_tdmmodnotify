@@ -58,7 +58,7 @@ echo $OUTPUT->header();
 
 $settings = new local_uploadnotification_course_settings_model($course_id);
 
-// Display config
+// Display config.
 $course_form = new local_uploadnotification_course_form(null, array(
     'id' => $course_id,
     'fullname' => $course->fullname,
@@ -67,7 +67,7 @@ $course_form = new local_uploadnotification_course_form(null, array(
     'enable_changelog' => $settings->is_changelog_enabled(),
     'enable_diff' => $settings->is_diff_enabled()));
 
-// Evaluate form data
+// Evaluate form data.
 $data = $course_form->get_data();
 if ($data) {
     $settings->set_mail_enabled($data->enable_mail);

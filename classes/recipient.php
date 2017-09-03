@@ -34,12 +34,15 @@ require_once(dirname(__FILE__) . '/mail_wrapper.php');
 
 /**
  * Recipient.
+ * @copyright (c) 2014 The Development Manager Ltd, 2017 Hendrik Wuerz
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class local_uploadnotification_recipient extends local_uploadnotification_model {
+
     /**
      * User ID.
      *
-     * @var integer
+     * @var int
      */
     protected $userid;
 
@@ -74,7 +77,7 @@ class local_uploadnotification_recipient extends local_uploadnotification_model 
     /**
      * Initialiser.
      *
-     * @param integer $userid User ID.
+     * @param int $userid User ID.
      * @param string $userfirstname User forename.
      * @param string $userlastname User surname.
      * @param local_uploadnotification_notification[] $notifications Notifications.
@@ -89,28 +92,32 @@ class local_uploadnotification_recipient extends local_uploadnotification_model 
     }
 
     /**
-     * @return int
+     * Get the receiving user ID.
+     * @return int The user ID.
      */
     public function get_userid() {
         return $this->userid;
     }
 
     /**
-     * @return string
+     * Get the first name of the receiving user.
+     * @return string The users first name.
      */
     public function get_userfirstname() {
         return $this->userfirstname;
     }
 
     /**
-     * @return string
+     * Get the last name of the receiving user.
+     * @return string The users last name.
      */
     public function get_userlastname() {
         return $this->userlastname;
     }
 
     /**
-     * @return local_uploadnotification_notification[]
+     * Get all notifications for this user.
+     * @return local_uploadnotification_notification[] All notifications which should be send now.
      */
     public function get_notifications() {
         return $this->notifications;
@@ -144,30 +151,30 @@ class local_uploadnotification_recipient extends local_uploadnotification_model 
         $attachment_mails = array();
         $text_mail = false;
 
-        // Loop each notification (= file were changes are detected)
+        // Loop each notification (= file were changes are detected).
         foreach ($this->notifications as $notification) {
-            try { // Maybe there is any error while creating the notification
+            try { // Maybe there is any error while creating the notification.
 
                 // Should a mail be send?
                 // General rule: A mail will be send if
                 // docent or student has requested it
                 // AS WELL AS
-                // nobody (docent or student) has forbidden it
+                // nobody (docent or student) has forbidden it.
                 $course_settings = new local_uploadnotification_course_settings_model($notification->get_courseid());
 
-                // Docent has disabled mail delivery for his course
+                // Docent has disabled mail delivery for his course.
                 if ($course_settings->is_mail_enabled() == 0) {
                     continue;
                 }
 
-                // No one has requested mails
+                // No one has requested mails.
                 if (!($user_settings->is_mail_enabled() == 1 || $course_settings->is_mail_enabled() == 1)) {
                     continue;
                 }
 
                 // Check visibility for current user
                 // Handles restricted access like visibility for groups and timestamps
-                // See https://docs.moodle.org/dev/Availability_API
+                // See https://docs.moodle.org/dev/Availability_API .
                 $course = $DB->get_record('course', array('id' => $notification->get_courseid()));
                 $modinfo = get_fast_modinfo($course, $this->userid);
                 $cm = $modinfo->get_cm($notification->get_moodleid());
@@ -175,19 +182,19 @@ class local_uploadnotification_recipient extends local_uploadnotification_model 
                     continue;
                 }
 
-                // Generate the text which informs the user about the file
+                // Generate the text which informs the user about the file.
                 $content = $notification->build_content($substitutions);
 
-                // Check whether this notification will lead to an attachment
+                // Check whether this notification will lead to an attachment.
                 $attachment = $this->add_file_attachment($cm, $user_settings, $course_settings, $attachment_optimizer);
-                if ($attachment === false) { // No attachment --> this notification can be written in the text mail
+                if ($attachment === false) { // No attachment --> this notification can be written in the text mail.
                     if (empty($text_mail)) {
                         $text_mail = new local_uploadnotification_mail_wrapper($this->user);
                     }
                     $text_mail->add_course($substitutions->coursefullname);
                     $text_mail->add_content($content->text, $content->html);
 
-                } else { // Each attachment will lead in a single mail
+                } else { // Each attachment will lead in a single mail.
                     $mail = new local_uploadnotification_mail_wrapper($this->user);
                     $mail->add_course($substitutions->coursefullname);
                     $mail->add_content($content->text, $content->html);
@@ -195,12 +202,12 @@ class local_uploadnotification_recipient extends local_uploadnotification_model 
                     $attachment_mails[] = $mail;
                 }
 
-            } catch (Exception $exception) { // If any error occurs with this notification --> skip it
+            } catch (Exception $exception) { // If any error occurs with this notification --> skip it.
                 continue;
             }
         }
 
-        // Add the plain text mail to the array
+        // Add the plain text mail to the array.
         if (!empty($text_mail)) {
             $attachment_mails[] = $text_mail;
         }
@@ -208,45 +215,46 @@ class local_uploadnotification_recipient extends local_uploadnotification_model 
     }
 
     /**
-     * @param $cm cm_info The course module record
-     * @param $user_settings local_uploadnotification_user_settings_model
-     * @param $course_settings local_uploadnotification_course_settings_model
-     * @param $attachment_optimizer local_uploadnotification_attachment_optimizer
+     * @param cm_info $cm The course module record which should be included in the mail
+     * @param local_uploadnotification_user_settings_model $user_settings The user settings.
+     * @param local_uploadnotification_course_settings_model $course_settings The course settings
+     * @param local_uploadnotification_attachment_optimizer $attachment_optimizer An attachment optimizer which should be used.
      * @return bool|local_uploadnotification_attachment_optimizer_file
+     *         False if attachment could not be added, the file if successful.
      */
     private function add_file_attachment($cm, $user_settings, $course_settings, $attachment_optimizer) {
 
-        // If the admin has attachments disabled --> do not send them
+        // If the admin has attachments disabled --> do not send them.
         $max_filesize = get_config(LOCAL_UPLOADNOTIFICATION_FULL_NAME, 'max_mail_filesize');
         if ($max_filesize == 0) {
             return false;
         }
 
-        // If the user has not requested attachments --> do not send them
+        // If the user has not requested attachments --> do not send them.
         if ($user_settings->get_max_filesize() == 0) {
             return false;
         }
 
-        // If the course admin has forbidden attachments --> do not send them
+        // If the course admin has forbidden attachments --> do not send them.
         if (!$course_settings->is_attachment_allowed()) {
             return false;
         }
 
-        // File might be interesting --> fetch it
+        // File might be interesting --> fetch it.
         $file = $attachment_optimizer->require_file($cm);
 
-        // The file could not be fetched for any reason
+        // The file could not be fetched for any reason.
         if ($file === false) {
             return false;
         }
 
-        // Check filesize
+        // Check filesize.
         if ($file->filesize > $max_filesize * 1024
             || $file->filesize > $user_settings->get_max_filesize() * 1024) {
             return false;
         }
 
-        // Check number of receiving users
+        // Check number of receiving users.
         if ($file->requesting_users > get_config(LOCAL_UPLOADNOTIFICATION_FULL_NAME, 'max_mails_for_resource')) {
             return false;
         }

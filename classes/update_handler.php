@@ -14,6 +14,15 @@
 // You should have received a copy of the GNU General Public License
 // along with UploadNotification.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * Upload notification.
+ *
+ * @package   local_uploadnotification
+ * @author    Luke Carrier <luke@tdm.co>, Hendrik Wuerz <hendrikmartin.wuerz@stud.tu-darmstadt.de>
+ * @copyright (c) 2014 The Development Manager Ltd, 2017 Hendrik Wuerz
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 defined('MOODLE_INTERNAL') || die;
 
 require_once(dirname(__FILE__) . '/../definitions.php');
@@ -61,12 +70,12 @@ class local_uploadnotification_update_handler {
      */
     private function is_event_valid() {
 
-        // Check course module type (Only send mails for updated resources)
+        // Check course module type (Only send mails for updated resources).
         if ($this->get_module_name() != 'resource') {
             return false;
         }
 
-        // Check action
+        // Check action.
         if ($this->get_action() === false) {
             return false;
         }
@@ -79,23 +88,23 @@ class local_uploadnotification_update_handler {
      */
     public function is_changelog_enabled() {
 
-        // Check event metadata
+        // Check event metadata.
         if (!$this->is_event_valid()) {
             return false;
         }
 
-        // Check admin settings
+        // Check admin settings.
         $allowed = get_config(LOCAL_UPLOADNOTIFICATION_FULL_NAME, 'allow_changelog');
         if (!$allowed) {
             return false;
         }
 
-        // Check course settings
+        // Check course settings.
         if (!$this->get_course_settings()->is_changelog_enabled()) {
             return false;
         }
 
-        // Everything is ok --> Notifications can be scheduled
+        // Everything is ok --> Notifications can be scheduled.
         return true;
     }
 
@@ -109,7 +118,7 @@ class local_uploadnotification_update_handler {
 
         $detector = local_uploadnotification_changelog::get_update_detector($this->get_course_module());
         $predecessor = $detector->is_update();
-        if ($predecessor != false) { // A predecessor was found
+        if ($predecessor != false) { // A predecessor was found.
 
             $changelog_entry = get_string('printed_changelog_prefix', LOCAL_UPLOADNOTIFICATION_FULL_NAME, (object)array(
                 'filename' => $predecessor->get_filename(),
@@ -129,32 +138,32 @@ class local_uploadnotification_update_handler {
             }
 
             // Get the resource of this course module
-            // The check on top of this function ensures that the course module is a resource
+            // The check on top of this function ensures that the course module is a resource.
             $resource = $DB->get_record('resource', array('id' => $this->get_course_module()->instance));
 
-            // Build new intro based on calculation and current data
+            // Build new intro based on calculation and current data.
             $intro = $resource->intro;
-            if (strlen($intro) > 0) { // Add new line if an intro already exists
+            if (strlen($intro) > 0) { // Add new line if an intro already exists.
                 $intro .= "<br>";
             }
             $intro .= $changelog_entry;
 
-            // Store the new intro with the changelog
+            // Store the new intro with the changelog.
             $DB->update_record('resource', (object)array(
                 'id' => $resource->id,
                 'intro' => $intro
             ));
 
-            // Show the intro on the course page
+            // Show the intro on the course page.
             $DB->update_record('course_modules', (object)array(
                 'id' => $this->get_course_module()->id,
                 'showdescription' => 1
             ));
 
-            // Cache must be rebuild to render intro with changelog
+            // Cache must be rebuild to render intro with changelog.
             rebuild_course_cache($this->get_course_module()->course, true);
 
-            // Only the generated changelog (not the complete intro)
+            // Only the generated changelog (not the complete intro).
             return $changelog_entry;
         }
 
@@ -162,6 +171,7 @@ class local_uploadnotification_update_handler {
     }
 
     /**
+     * Checks whether diff detection is enabled in this course.
      * @return bool Whether difference detection is enabled for this course or not
      */
     private function is_diff_enabled() {
@@ -200,7 +210,7 @@ class local_uploadnotification_update_handler {
             }
         }
 
-        // Delete auto generated text files
+        // Delete auto generated text files.
         if ($predecessor_txt_file) {
             unlink($predecessor_txt_file);
         }
@@ -218,23 +228,23 @@ class local_uploadnotification_update_handler {
      */
     public function is_notification_enabled() {
 
-        // Check event metadata
+        // Check event metadata.
         if (!$this->is_event_valid()) {
             return false;
         }
 
-        // Check admin settings
+        // Check admin settings.
         $allowed = get_config(LOCAL_UPLOADNOTIFICATION_FULL_NAME, 'allow_mail');
         if (!$allowed) {
             return false;
         }
 
-        // Check course settings
+        // Check course settings.
         if (!$this->get_course_settings()->is_mail_enabled()) {
             return false;
         }
 
-        // Everything is ok --> Notifications can be scheduled
+        // Everything is ok --> Notifications can be scheduled.
         return true;
     }
 
@@ -277,10 +287,10 @@ class local_uploadnotification_update_handler {
     private function get_notification_timestamp() {
         $timestamp = time();
         $availability = json_decode($this->get_course_module()->availability);
-        if (!is_null($availability) && !is_null($availability->c)) { // This resource has visibility conditions
+        if (!is_null($availability) && !is_null($availability->c)) { // This resource has visibility conditions.
             $conditions = $availability->c;
             foreach ($conditions as $condition) {
-                // Check for a date condition with "visible after" definition
+                // Check for a date condition with "visible after" definition.
                 if ($condition->type == 'date' && $condition->d == '>=' && $condition->t > $timestamp) {
                     $timestamp = $condition->t;
                 }
@@ -307,6 +317,7 @@ class local_uploadnotification_update_handler {
     }
 
     /**
+     * Get the course module name from the event.
      * @return string The type of the updated / created course module. Normally this is 'resource'.
      */
     private function get_module_name() {
@@ -349,7 +360,7 @@ class local_uploadnotification_update_handler {
      */
     private function get_course_settings() {
 
-        // Check whether settings are not already loaded --> Load now
+        // Check whether settings are not already loaded --> Load now.
         if ($this->course_settings == null) {
             $this->course_settings = new local_uploadnotification_course_settings_model($this->get_course_id());
         }

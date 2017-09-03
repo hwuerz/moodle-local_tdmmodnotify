@@ -30,43 +30,45 @@ require_once(dirname(__FILE__) . '/../definitions.php');
 
 /**
  * A wrapper for notification mails.
+ * @copyright (c) 2017 Hendrik Wuerz
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class local_uploadnotification_mail_wrapper {
 
     /**
-     * @var stdClass The user object, who should receive the mail
+     * @var stdClass The user object, who should receive the mail.
      */
     private $recipient;
 
     /**
      * The names of all courses in which a notification exists.
      * This will be used for the title of the mail.
-     * @var array of String
+     * @var array Array of strings with all course names.
      */
     private $affected_courses = array();
 
     /**
-     * @var string The message of the mail in plain text
+     * @var string The message of the mail in plain text.
      */
     private $message_text = '';
 
     /**
-     * @var string The message of the mail in HTML format
+     * @var string The message of the mail in HTML format.
      */
     private $message_html = '';
 
     /**
-     * @var string The filename of the attachment. If no attachment is send an empty string will be stored
+     * @var string The filename of the attachment. If no attachment is send an empty string will be stored.
      */
     private $attachment_name = '';
 
     /**
-     * @var string The file path of the attachment. If no attachment is send an empty string will be stored
+     * @var string The file path of the attachment. If no attachment is send an empty string will be stored.
      */
     private $attachment_path = '';
 
     /**
-     * @var stdClass The user record, who should receive the mail
+     * @var stdClass The user record, who should receive the mail.
      */
     public function __construct($recipient) {
         $this->recipient = $recipient;
@@ -75,8 +77,8 @@ class local_uploadnotification_mail_wrapper {
     /**
      * Define an attachment for this mail.
      * This method can only be called ones, because multiple attachments are not supported.
-     * @param $name string The filename
-     * @param $path string The path, where the attachment is stored
+     * @param string $name The filename.
+     * @param string $path The path, where the attachment is stored.
      */
     public function set_attachment($name, $path) {
         if ($this->attachment_name !== '') {
@@ -88,8 +90,8 @@ class local_uploadnotification_mail_wrapper {
     }
 
     /**
-     * @param $text string The content of the message in plain text which should be added.
-     * @param $html string The content of the message in html which should be added.
+     * @param string $text The content of the message in plain text which should be added.
+     * @param string $html The content of the message in html which should be added.
      */
     public function add_content($text, $html) {
         $this->message_text .= $text;
@@ -107,8 +109,8 @@ class local_uploadnotification_mail_wrapper {
     }
 
     /**
-     * Sends this mail to the user
-     * @param $substitutions object The substitutions for the mail template.
+     * Sends this mail to the user.
+     * @param object $substitutions The substitutions for the mail template.
      */
     public function send($substitutions) {
         $substitutions->notifications = $this->message_text;

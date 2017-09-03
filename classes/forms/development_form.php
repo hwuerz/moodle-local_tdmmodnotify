@@ -32,7 +32,9 @@ require_once($CFG->libdir.'/formslib.php');
 // @codingStandardsIgnoreEnd
 
 /**
- * Form manually execute the cron function for uploadnotification
+ * Form manually execute the cron function for uploadnotification.
+ * @copyright (c) 2017 Hendrik Wuerz
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class local_uploadnotification_development_form extends moodleform {
 

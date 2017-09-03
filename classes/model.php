@@ -27,8 +27,11 @@ defined('MOODLE_INTERNAL') || die;
 
 /**
  * Base model class.
+ * @copyright (c) 2014 The Development Manager Ltd, 2017 Hendrik Wuerz
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 abstract class local_uploadnotification_model {
+
     /**
      * Retrieve an array of accessors.
      *
@@ -42,9 +45,7 @@ abstract class local_uploadnotification_model {
      * Get a given property via its accessor (if permitted).
      *
      * @param string $property The property to retrieve the value for.
-     *
      * @return mixed The value.
-     *
      * @throws \coding_exception When a property is specified which does not exist within the permitted accessors.
      * @access private
      */

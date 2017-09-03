@@ -29,7 +29,7 @@ global $CFG;
 
 $plugin->component = 'local_uploadnotification';
 
-// Require the backup and compare libs
+// Require the backup and compare libs.
 $plugin->dependencies = array(
     'local_changeloglib' => 2017090200,
 );
@@ -37,9 +37,9 @@ $plugin->dependencies = array(
 $plugin->release = '0.2.0';
 $plugin->maturity = MATURITY_ALPHA;
 
-// Directly send mails
+// Directly send mails.
 $plugin->cron = 1;
 
-// Version format:  YYYYMMDDXX
+// Version format:  YYYYMMDDXX.
 $plugin->version = 2017090201;
 $plugin->requires = 2017051500;

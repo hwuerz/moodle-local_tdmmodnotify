@@ -27,8 +27,11 @@ defined('MOODLE_INTERNAL') || die;
 
 /**
  * Recipient iterator.
+ * @copyright (c) 2014 The Development Manager Ltd, 2017 Hendrik Wuerz
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class local_uploadnotification_recipient_iterator implements Iterator {
+
     /**
      * Record set.
      *
@@ -58,7 +61,7 @@ class local_uploadnotification_recipient_iterator implements Iterator {
     /**
      * Get the current recipient key.
      *
-     * @return integer The ID of the recipient's associated user.
+     * @return int The ID of the recipient's associated user.
      */
     public function key() {
         return key($this->records);
@@ -66,8 +69,6 @@ class local_uploadnotification_recipient_iterator implements Iterator {
 
     /**
      * Skip to the next record.
-     *
-     * @return void
      */
     public function next() {
         next($this->records);
@@ -75,8 +76,6 @@ class local_uploadnotification_recipient_iterator implements Iterator {
 
     /**
      * Rewind to the beginning of the record set.
-     *
-     * @return void
      */
     public function rewind() {
         reset($this->records);

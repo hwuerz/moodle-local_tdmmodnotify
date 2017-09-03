@@ -27,8 +27,11 @@ require_once(dirname(__FILE__) . '/attachment_optimizer.php');
 
 /**
  * Digest mailer.
+ * @copyright (c) 2014 The Development Manager Ltd, 2017 Hendrik Wuerz
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class local_uploadnotification_mailer {
+
     /**
      * Array/iterator of recipients.
      *
@@ -44,7 +47,7 @@ class local_uploadnotification_mailer {
     protected $supportuser;
 
     /**
-     * The manager for the file attachments to avoid duplicated files for every user
+     * The manager for the file attachments to avoid duplicated files for every user.
      * @var local_uploadnotification_attachment_optimizer
      */
     private $attachment_optimizer;
@@ -52,8 +55,8 @@ class local_uploadnotification_mailer {
     /**
      * Initialiser.
      *
-     * @param \local_uploadnotification_recipient[]|\local_uploadnotification_recipient_iterator $recipients Array/iterator of
-     *                                                                                            recipients.
+     * @param \local_uploadnotification_recipient[]|\local_uploadnotification_recipient_iterator $recipients
+     *        Array/iterator of recipients.
      * @param stdClass $supportuser Support user record.
      */
     public function __construct($recipients, $supportuser) {
@@ -65,8 +68,6 @@ class local_uploadnotification_mailer {
      * Delete scheduled notifications for a recipient.
      *
      * @param \local_uploadnotification_recipient $recipient The recipient record.
-     *
-     * @return void
      */
     public function delete_scheduled_notifications($recipient) {
         $recipient->delete();
@@ -76,8 +77,6 @@ class local_uploadnotification_mailer {
      * Execute the mailer.
      *
      * Send all of the scheduled notifications in digest form.
-     *
-     * @return void
      */
     public function execute() {
         $this->attachment_optimizer = new local_uploadnotification_attachment_optimizer();
@@ -87,8 +86,8 @@ class local_uploadnotification_mailer {
             $this->mail($recipient);
         }
 
-        // Records must be deleted AFTER all mails are send
-        // Script counts scheduled mails to calculate load for mail attachments
+        // Records must be deleted AFTER all mails are send.
+        // Script counts scheduled mails to calculate load for mail attachments.
         foreach ($this->recipients as $recipient) {
             $this->delete_scheduled_notifications($recipient);
         }
@@ -100,8 +99,6 @@ class local_uploadnotification_mailer {
      * Mail a single recipient.
      *
      * @param \local_uploadnotification_recipient $recipient The recipient record.
-     *
-     * @return void
      */
     protected function mail($recipient) {
 
@@ -114,7 +111,7 @@ class local_uploadnotification_mailer {
         );
         $mail_wrappers = $recipient->build_content($substitutions, $this->attachment_optimizer);
 
-        // Iterate over all mails for the user
+        // Iterate over all mails for the user.
         // It is possible that there are no notifications available for the user.
         // This can happen if the visibility of a stored file was changed to hidden.
         // In this case no mail has to be delivered.

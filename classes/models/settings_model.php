@@ -14,21 +14,27 @@
 // You should have received a copy of the GNU General Public License
 // along with UploadNotification.  If not, see <http://www.gnu.org/licenses/>.
 
-defined('MOODLE_INTERNAL') || die;
+/**
+ * Settings model.
+ *
+ * @package   local_uploadnotification
+ * @author    Hendrik Wuerz <hendrikmartin.wuerz@stud.tu-darmstadt.de>
+ * @copyright (c) 2017 Hendrik Wuerz
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
+defined('MOODLE_INTERNAL') || die;
 require_once(dirname(__FILE__) . '/../../definitions.php');
 
 /**
- * Created by PhpStorm.
- * User: Hendrik
- * Date: 17.06.2017
- * Time: 16:53
+ * Settings model.
+ * @copyright (c) 2017 Hendrik Wuerz
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 abstract class local_uploadnotification_settings_model {
 
     /**
-     * All settings
-     * @var stdClass
+     * @var stdClass All settings
      */
     protected $settings;
 
@@ -36,40 +42,40 @@ abstract class local_uploadnotification_settings_model {
      * All attributes with their default settings.
      * These keys must me identically with the attributes in the database table.
      * If get_id_attribute() is not overwritten, the first key has to be the primary key in the database.
-     * @return array Key is attribute name, Value is default Value
+     * @return array Key is attribute name, Value is default Value.
      */
     abstract protected function get_attributes();
 
     /**
-     * Get the name of the primary attribute of the table
-     * @return string
+     * Get the name of the primary attribute of the table.
+     * @return string The name of the attribute which is the ID of the settings record.
      */
     protected function get_id_attribute() {
         return array_keys($this->get_attributes())[0];
     }
 
     /**
-     * Get the table name where the settings are stored
-     * @return string
+     * Get the table name where the settings are stored.
+     * @return string The name of the database table where the settings are stored.
      */
     abstract protected function get_table_name();
 
     /**
      * settings_model constructor.
-     * Get all settings for the entry with the passed ID
-     * @param integer $id
+     * Get all settings for the entry with the passed ID.
+     * @param int $id The ID of the settings record in the correct database table.
      */
     protected function __construct($id) {
         global $DB;
 
-        // Fetch settings from DB
+        // Fetch settings from DB.
         $settings = $DB->get_record(
             $this->get_table_name(),
             array($this->get_id_attribute() => $id),
             implode(', ', array_keys($this->get_attributes())),
             IGNORE_MISSING);
 
-        // There are no settings stored --> build default settings
+        // There are no settings stored --> build default settings.
         if ($settings === false) {
             $settings = new stdClass();
             foreach (array_keys($this->get_attributes()) as $attribute) {
@@ -78,26 +84,26 @@ abstract class local_uploadnotification_settings_model {
             $settings->{$this->get_id_attribute()} = $id;
         }
 
-        // Store settings in this object
+        // Store settings in this object.
         $this->settings = $settings;
     }
 
     /**
-     * Requires that the passed attribute is a part of these settings
-     * @param $attribute string The attribute to be checked
-     * @throws InvalidArgumentException If the attribute is not defined in these settings
+     * Requires that the passed attribute is a part of these settings.
+     * @param string $attribute The attribute to be checked.
+     * @throws InvalidArgumentException If the attribute is not defined in these settings.
      */
     private function require_valid_attribute($attribute) {
         if (!in_array($attribute, array_keys($this->get_attributes()))) {
-            throw new InvalidArgumentException('Attribute is not available in these settings');
+            throw new InvalidArgumentException('Attribute is not available in these settings.');
         }
     }
 
     /**
-     * Checks the value of the passed attribute
-     * @param $attribute string The attribute which is requested
-     * @return int -1 for no preferences, 0 for 'disabled', 1 for 'activated'
-     * @throws InvalidArgumentException If the attribute is not defined
+     * Checks the value of the passed attribute.
+     * @param string $attribute The attribute which is requested.
+     * @return int -1 for no preferences, 0 for 'disabled', 1 for 'activated'.
+     * @throws InvalidArgumentException If the attribute is not defined.
      */
     protected function get($attribute) {
         $this->require_valid_attribute($attribute);
@@ -106,10 +112,10 @@ abstract class local_uploadnotification_settings_model {
 
     /**
      * Stores the new preference.
-     * Does not update the database until save id called
-     * @param $attribute string The attribute which should be set
-     * @param $preference integer The new preference. Must be -1, 0 or 1
-     * @throws InvalidArgumentException If the preference or attribute is invalid
+     * Does not update the database until save id called.
+     * @param string $attribute The attribute which should be set.
+     * @param int $preference The new preference. Must be -1, 0 or 1.
+     * @throws InvalidArgumentException If the preference or attribute is invalid.
      */
     protected function set_preference($attribute, $preference) {
         self::require_valid_preference($preference);
@@ -117,22 +123,22 @@ abstract class local_uploadnotification_settings_model {
     }
 
     /**
-     * Checks whether the passed preference is valid and can be stored in the database
-     * If it is not, an exception will be thrown
-     * @param $preference int The preference to be checked
-     * @throws InvalidArgumentException If the preference is invalid
+     * Checks whether the passed preference is valid and can be stored in the database.
+     * If it is not, an exception will be thrown.
+     * @param int $preference The preference to be checked.
+     * @throws InvalidArgumentException If the preference is invalid.
      */
     private static function require_valid_preference($preference) {
         if (!self::is_valid_preference($preference)) {
             throw new InvalidArgumentException(
-                "Only valid preferences are accepted. Use -1 for no preference, 0 for deactivated and 1 for activated");
+                "Only valid preferences are accepted. Use -1 for no preference, 0 for deactivated and 1 for activated.");
         }
     }
 
     /**
-     * Checks whether the passed preference is valid and can be stored in the database
-     * @param $preference int The preference to be checked
-     * @return bool True if valid, false otherwise
+     * Checks whether the passed preference is valid and can be stored in the database.
+     * @param int $preference The preference to be checked.
+     * @return bool True if valid, false otherwise.
      */
     private static function is_valid_preference($preference) {
         return $preference == -1 || $preference == 0 || $preference == 1;
@@ -140,10 +146,10 @@ abstract class local_uploadnotification_settings_model {
 
     /**
      * Stores the new value.
-     * Does not update the database until save id called
-     * @param $attribute string The attribute which should be set
-     * @param $value integer The new value. Must be 0 or 1. If variable is unset it will be handled as 0.
-     * @throws InvalidArgumentException If the value or attribute is invalid
+     * Does not update the database until save id called.
+     * @param string $attribute The attribute which should be set.
+     * @param int $value The new value. Must be 0 or 1. If variable is unset it will be handled as 0.
+     * @throws InvalidArgumentException If the value or attribute is invalid.
      */
     protected function set_binary($attribute, &$value) {
         $data = self::require_valid_binary($value);
@@ -151,31 +157,31 @@ abstract class local_uploadnotification_settings_model {
     }
 
     /**
-     * Checks whether the passed value is valid and can be stored in the database
+     * Checks whether the passed value is valid and can be stored in the database.
      * If it is not, an exception will be thrown.
-     * @param int $value The value to be checked
+     * @param int $value The value to be checked.
      * @return int The corrected binary value if possible.
-     * @throws InvalidArgumentException If the value is invalid
+     * @throws InvalidArgumentException If the value is invalid.
      */
     private static function require_valid_binary(&$value) {
-        // In checkboxes nothing is passed if they are unselected --> Map this case to 0
+        // In checkboxes nothing is passed if they are unselected --> Map this case to 0.
         if (!isset($value)) {
             return 0;
         }
 
-        // Value is not valid --> throw the exception
+        // Value is not valid --> throw the exception.
         if (!self::is_valid_binary($value)) {
             throw new InvalidArgumentException(
-                "Only valid binary values are accepted. Use 0 to forbid, 1 to allow");
+                "Only valid binary values are accepted. Use 0 to forbid, 1 to allow.");
         }
 
-        return $value; // Value is valid
+        return $value; // Value is valid.
     }
 
     /**
-     * Checks whether the passed value is valid and can be stored in the database
-     * @param int $value The value to be checked
-     * @return bool True if valid, false otherwise
+     * Checks whether the passed value is valid and can be stored in the database.
+     * @param int $value The value to be checked.
+     * @return bool True if valid, false otherwise.
      */
     private static function is_valid_binary($value) {
         return $value == 0 || $value == 1;
@@ -183,10 +189,10 @@ abstract class local_uploadnotification_settings_model {
 
     /**
      * Stores the new value under the passed attribute.
-     * Does not update the database until save id called
-     * @param $attribute string The attribute which should be set
-     * @param $value mixed The new value of the attribute
-     * @throws InvalidArgumentException If the attribute is invalid
+     * Does not update the database until save id called.
+     * @param string $attribute The attribute which should be set.
+     * @param mixed $value The new value of the attribute.
+     * @throws InvalidArgumentException If the attribute is invalid.
      */
     protected function set($attribute, $value) {
         $this->require_valid_attribute($attribute);
@@ -202,13 +208,20 @@ abstract class local_uploadnotification_settings_model {
         $settings = (array) $this->settings;
 
         $sql = "REPLACE INTO {".$this->get_table_name()."} ("
-            .implode(', ', array_keys($settings)). // All attributes
-        ") VALUES ("
-            .implode(', ', // Add a '?' for each settings attribute
-                array_map(function($a) {
-                    return '?';
-                }, $settings)).
-            ")";
+            . implode(', ', array_keys($settings)) // All attributes.
+            . ") VALUES ("
+            . implode(', ', $this->get_questionmark_foreach_setting())
+            . ")";
         $DB->execute($sql, $settings);
+    }
+
+    /**
+     * Set a '?' for each settings attribute.
+     * @return array of '?' strings. Size is equal to the amount of attributes.
+     */
+    private function get_questionmark_foreach_setting() {
+        return array_map(function($a) {
+            return '?';
+        }, (array) $this->settings);
     }
 }

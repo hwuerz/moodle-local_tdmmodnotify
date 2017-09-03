@@ -31,14 +31,16 @@ require_once(dirname(__FILE__) . '/../../changeloglib/classes/update_detector.ph
 
 /**
  * Wrapper to access changelog functions.
+ * @copyright (c) 2017 Hendrik Wuerz
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class local_uploadnotification_changelog {
 
     /**
      * Provides an update detector for the passed coursemodule.
      * Wrapper around changeloglib plugin to be used for course modules.
-     * @param stdClass $coursemodule The course module which should be checked as an update
-     * @return local_changeloglib_update_detector The update detector
+     * @param stdClass $coursemodule The course module which should be checked as an update.
+     * @return local_changeloglib_update_detector The update detector.
      */
     public static function get_update_detector($coursemodule) {
 
@@ -58,7 +60,7 @@ class local_uploadnotification_changelog {
      */
     public static function backup_coursemodule($coursemodule) {
 
-        // Get information to access the course module and create a copy of it
+        // Get information to access the course module and create a copy of it.
         $data = self::get_data($coursemodule);
         $context_id_from = context_module::instance($coursemodule->id)->id;
         $component_from = 'mod_resource';
@@ -74,6 +76,7 @@ class local_uploadnotification_changelog {
     }
 
     /**
+     * Check whether diff detection should be performed.
      * @return bool Whether the diff detection is allowed technically and by the admin.
      */
     public static function is_diff_allowed() {
@@ -118,15 +121,15 @@ class local_uploadnotification_changelog {
     private static function get_pending_files($coursemodule) {
         global $DB;
 
-        // Get candidates_pending
-        // These are all files which are marked for deletion, but are still in the normal storage
+        // Get candidates_pending.
+        // These are all files which are marked for deletion, but are still in the normal storage.
         $candidates_pending = $DB->get_records('course_modules', array(
-            'deletioninprogress' => 1, // The old file should be deleted
+            'deletioninprogress' => 1, // The old file should be deleted.
             'course' => $coursemodule->course,
             'section' => $coursemodule->section
         ));
 
-        // Get the file instances for pending candidates
+        // Get the file instances for pending candidates.
         return array_map(function ($candidate) {
             return self::get_file($candidate->id);
         }, $candidates_pending);
@@ -148,6 +151,6 @@ class local_uploadnotification_changelog {
             0,
             'sortorder DESC, id ASC',
             false);
-        return array_shift($area_files); // Get only the first file
+        return array_shift($area_files); // Get only the first file.
     }
 }

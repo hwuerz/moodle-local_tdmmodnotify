@@ -35,6 +35,8 @@ require_once(dirname(__FILE__) . '/../../definitions.php');
 
 /**
  * Settings form for moodle admins to customize uploadnotification
+ * @copyright (c) 2017 Hendrik Wuerz
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class local_uploadnotification_user_form extends moodleform {
 
@@ -57,11 +59,11 @@ class local_uploadnotification_user_form extends moodleform {
         $mform->addElement('html',
             '<p>' . get_string(self::STRING_PREFIX . 'headline', LOCAL_UPLOADNOTIFICATION_FULL_NAME) . '</p>');
 
-        // Get admin settings to show only relevant form elements
+        // Get admin settings to show only relevant form elements.
         $admin_allow_mail = get_config(LOCAL_UPLOADNOTIFICATION_FULL_NAME, 'allow_mail');
         $admin_allow_attachment = get_config(LOCAL_UPLOADNOTIFICATION_FULL_NAME, 'max_mail_filesize') > 0;
 
-        // Whether mails should be delivered
+        // Whether mails should be delivered.
         if ($admin_allow_mail) {
             $this->add_setting('select', 'enable_mail', array(
                 '-1' => get_string(self::STRING_PREFIX . 'no_preferences', LOCAL_UPLOADNOTIFICATION_FULL_NAME),
@@ -70,7 +72,7 @@ class local_uploadnotification_user_form extends moodleform {
             ));
         }
 
-        // Whether attachments should be send
+        // Whether attachments should be send.
         if ($admin_allow_mail && $admin_allow_attachment) {
             $this->add_setting('text', 'max_mail_filesize');
             $mform->setType('max_mail_filesize', PARAM_INT);

@@ -37,7 +37,6 @@ require_once($CFG->libdir . '/adminlib.php');
 // Include function library.
 require_once(dirname(__FILE__) . '/definitions.php');
 require_once(dirname(__FILE__) . '/lib.php');
-require_once(dirname(__FILE__) . '/classes/forms/admin_form.php');
 require_once(dirname(__FILE__) . '/classes/forms/development_form.php');
 
 
@@ -66,27 +65,13 @@ admin_externalpage_setup(LOCAL_UPLOADNOTIFICATION_FULL_NAME); // Sets the navbar
 
 echo $OUTPUT->header();
 
-// Manually send mail
+// Manually send mail.
 $development_form = new local_uploadnotification_development_form();
 $data = $development_form->get_data();
 if ($data) {
     local_uploadnotification_cron();
 }
 $development_form->display();
-
-// Display global config
-$admin_form = new local_uploadnotification_admin_form();
-$data = $admin_form->get_data();
-if ($data) {
-    set_config('enabled', $data->enable, LOCAL_UPLOADNOTIFICATION_FULL_NAME);
-    set_config('max_filesize', $data->max_filesize * 1024, LOCAL_UPLOADNOTIFICATION_FULL_NAME);
-    set_config('max_mails_for_resource', $data->max_mails_for_resource, LOCAL_UPLOADNOTIFICATION_FULL_NAME);
-    set_config('changelog_enabled', $data->changelog_enabled, LOCAL_UPLOADNOTIFICATION_FULL_NAME);
-    // The diff can only be enabled if the changelog is enabled
-    set_config('diff_enabled', $data->diff_enabled && $data->changelog_enabled, LOCAL_UPLOADNOTIFICATION_FULL_NAME);
-}
-$admin_form->display();
-
 
 // Footing  =========================================================.
 

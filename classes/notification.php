@@ -27,6 +27,8 @@ defined('MOODLE_INTERNAL') || die;
 
 /**
  * Notification.
+ * @copyright (c) 2014 The Development Manager Ltd, 2017 Hendrik Wuerz
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class local_uploadnotification_notification extends local_uploadnotification_model {
 
@@ -35,7 +37,7 @@ class local_uploadnotification_notification extends local_uploadnotification_mod
      *
      * The ID of this notification
      *
-     * @var integer
+     * @var int
      */
     protected $notificationid;
 
@@ -44,21 +46,21 @@ class local_uploadnotification_notification extends local_uploadnotification_mod
      *
      * One of the LOCAL_UPLOADNOTIFICATION_ACTION_* constants.
      *
-     * @var integer
+     * @var int
      */
     protected $action;
 
     /**
      * Whether this file is visible for the user (1) or not (0).
      *
-     * @var integer
+     * @var int
      */
     protected $visible;
 
     /**
      * Course ID.
      *
-     * @var integer
+     * @var int
      */
     protected $courseid;
 
@@ -93,14 +95,14 @@ class local_uploadnotification_notification extends local_uploadnotification_mod
     /**
      * Initialiser.
      *
-     * @param integer $notificationid The ID of this notification.
-     * @param integer $action Action.
-     * @param integer $visible Whether this file is visible for the user or not.
-     * @param integer $courseid Course ID.
+     * @param int $notificationid The ID of this notification.
+     * @param int $action Action.
+     * @param int $visible Whether this file is visible for the user or not.
+     * @param int $courseid Course ID.
      * @param string $coursefullname Course full name.
      * @param string $modulename Module name.
-     * @param string $filename The name of the file
-     * @param string $moodleid The ID of the file in coursemodules
+     * @param string $filename The name of the file.
+     * @param string $moodleid The ID of the file in coursemodules.
      */
     public function __construct($notificationid, $action, $visible, $courseid, $coursefullname, $modulename,
                                 $filename, $moodleid) {
@@ -115,56 +117,64 @@ class local_uploadnotification_notification extends local_uploadnotification_mod
     }
 
     /**
-     * @return int
+     * Get the ID of this notification.
+     * @return int The notification ID.
      */
     public function get_notificationid() {
         return $this->notificationid;
     }
 
     /**
-     * @return int
+     * Get the action which invoked this notification.
+     * @return int The invoking action.
      */
     public function get_action() {
         return $this->action;
     }
 
     /**
-     * @return int
+     * Get the module visibility status for the user.
+     * @return int The visibility for the user
      */
     public function get_visible() {
         return $this->visible;
     }
 
     /**
-     * @return int
+     * Get the course ID in which this notification was invoked.
+     * @return int The course ID.
      */
     public function get_courseid() {
         return $this->courseid;
     }
 
     /**
-     * @return string
+     * Get the full name of the course where the notification ws invoked.
+     * @return string The full course name.
      */
     public function get_coursefullname() {
         return $this->coursefullname;
     }
 
     /**
-     * @return string
+     * Get the module name which invoked this notification.
+     * @return string The module name.
      */
     public function get_modulename() {
         return $this->modulename;
     }
 
     /**
-     * @return string
+     * Get the filename of the corresponding file for this notification.
+     * @return string The filename.
      */
     public function get_filename() {
         return $this->filename;
     }
 
     /**
-     * @return int
+     * Get the course module ID.
+     * @return int The course module id.
      */
     public function get_moodleid() {
         return $this->moodleid;
@@ -176,8 +186,8 @@ class local_uploadnotification_notification extends local_uploadnotification_mod
      * @param stdClass $substitutions The string substitions to be passed to the location API when generating the
      *                                content. This object must include a moodle_url object in its baseurl property,
      *                                else a fatal error will be raised.
-     * @return object {string text, string html}
-     * @throws coding_exception
+     * @return object {string text, string html} The content of the generated mail in text and html format.
+     * @throws coding_exception If the action in unknown.
      */
     public function build_content($substitutions) {
         switch ($this->action) {

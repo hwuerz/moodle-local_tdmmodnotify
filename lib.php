@@ -36,13 +36,13 @@ require_once(dirname(__FILE__).'/classes/changelog.php');
  */
 function local_uploadnotification_cron() {
 
-    // Only send mails if a moodle admin has allowed this function
+    // Only send mails if a moodle admin has allowed this function.
     $allowed = get_config(LOCAL_UPLOADNOTIFICATION_FULL_NAME, 'allow_mail');
     if (!$allowed) {
         return;
     }
 
-    // Send mails
+    // Send mails.
     $recipients  = new local_uploadnotification_recipient_iterator();
     $supportuser = core_user::get_support_user();
     $mailer      = new local_uploadnotification_mailer($recipients, $supportuser);
@@ -70,7 +70,7 @@ function local_uploadnotification_coursemodule_validation($data) {
     if ($modulename == 'resource' && $data->get_coursemodule() != null) {
         local_uploadnotification_changelog::backup_coursemodule($data->get_coursemodule());
     }
-    return array(); // Empty array to indicate no errors
+    return array(); // Empty array to indicate no errors.
 }
 
 /**
@@ -82,7 +82,7 @@ function local_uploadnotification_coursemodule_validation($data) {
 function local_uploadnotification_extend_settings_navigation($settingsnav, $context) {
     global $PAGE;
 
-    // Disable menu if admin has forbidden mail delivery
+    // Disable menu if admin has forbidden mail delivery.
     if (!get_config(LOCAL_UPLOADNOTIFICATION_FULL_NAME, 'allow_mail')
         && !get_config(LOCAL_UPLOADNOTIFICATION_FULL_NAME, 'allow_changelog')) {
         return;
@@ -118,12 +118,12 @@ function local_uploadnotification_extend_settings_navigation($settingsnav, $cont
 
 
 // Inject link in user settings menu.
-// Provides options for students to disable mail delivery for themselves
+// Provides options for students to disable mail delivery for themselves.
 function local_uploadnotification_extend_navigation_user_settings
 (navigation_node $parentnode, stdClass $user, context_user $context, stdClass $course, context_course $coursecontext) {
     global $PAGE;
 
-    // Disable menu if admin has forbidden mail delivery (user could not set any preferences even if link would be enabled)
+    // Disable menu if admin has forbidden mail delivery (user could not set any preferences even if link would be enabled).
     if (!get_config(LOCAL_UPLOADNOTIFICATION_FULL_NAME, 'allow_mail')) {
         return;
     }

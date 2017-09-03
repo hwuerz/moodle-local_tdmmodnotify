@@ -27,6 +27,8 @@ defined('MOODLE_INTERNAL') || die;
 
 /**
  * Utility methods not covered by the data model.
+ * @copyright (c) 2014 The Development Manager Ltd, 2017 Hendrik Wuerz
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class local_uploadnotification_util {
 
@@ -40,8 +42,7 @@ class local_uploadnotification_util {
     public static function get_notification_digest($userid) {
         global $DB;
 
-        $sql = <<<SQL
-SELECT
+        $sql = "SELECT
     n.id AS notificationid,
     cm.id AS moodleid,
     n.action AS action,
@@ -61,8 +62,7 @@ LEFT JOIN {modules} m
     ON m.id = cm.module
 LEFT JOIN {resource} r
     ON cm.instance = r.id
-WHERE u.id = ? AND n.timestamp < ?
-SQL;
+WHERE u.id = ? AND n.timestamp < ?";
 
         return $DB->get_records_sql($sql, array($userid, self::get_max_timestamp()));
     }
@@ -70,17 +70,15 @@ SQL;
     /**
      * Retrieve a list of IDs of users with pending notifications.
      *
-     * @return integer[]
+     * @return int[]
      */
     public static function get_scheduled_recipients() {
         global $DB;
 
-        $sql = <<<SQL
-SELECT DISTINCT userid
+        $sql = "SELECT DISTINCT userid
 FROM {local_uploadnotification}
 WHERE timestamp < ?
-ORDER BY userid ASC
-SQL;
+ORDER BY userid ASC";
 
         return $DB->get_fieldset_sql($sql, array(self::get_max_timestamp()));
     }

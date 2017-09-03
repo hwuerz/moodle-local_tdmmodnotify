@@ -30,11 +30,11 @@ require_once(dirname(__FILE__) . '/../changeloglib/classes/pdftotext.php');
 
 if ($hassiteconfig) {
 
-    // Create the new settings page
+    // Create the new settings page.
     $settings_name = get_string('pluginname', LOCAL_UPLOADNOTIFICATION_FULL_NAME);
     $settings = new admin_settingpage( LOCAL_UPLOADNOTIFICATION_FULL_NAME, $settings_name);
 
-    // Create
+    // Create.
     $ADMIN->add( 'localplugins', $settings );
 
     $settings->add(new admin_setting_configcheckbox(
