@@ -76,8 +76,8 @@ function local_uploadnotification_coursemodule_validation($data) {
 /**
  * Inject a link in course settings menu.
  * Provides options for docents to disable mail delivery in particular courses.
- * @param $settingsnav settings_navigation
- * @param $context navigation_node
+ * @param settings_navigation $settingsnav The settings navigation node where the new element will be added.
+ * @param navigation_node $context The current context.
  */
 function local_uploadnotification_extend_settings_navigation($settingsnav, $context) {
     global $PAGE;
@@ -117,8 +117,15 @@ function local_uploadnotification_extend_settings_navigation($settingsnav, $cont
 }
 
 
-// Inject link in user settings menu.
-// Provides options for students to disable mail delivery for themselves.
+/**
+ * Inject link in user settings menu.
+ * Provides options for students to disable mail delivery for themselves.
+ * @param navigation_node $parentnode The parent where the menu will be added.
+ * @param stdClass $user The current user.
+ * @param context_user $context The current context.
+ * @param stdClass $course The displayed course.
+ * @param context_course $coursecontext The context of the displayed course.
+ */
 function local_uploadnotification_extend_navigation_user_settings
 (navigation_node $parentnode, stdClass $user, context_user $context, stdClass $course, context_course $coursecontext) {
     global $PAGE;

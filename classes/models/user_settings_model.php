@@ -45,12 +45,12 @@ class local_uploadnotification_user_settings_model extends local_uploadnotificat
         'max_mail_filesize' => 0
     );
 
+    // @codingStandardsIgnoreStart CodeSniffer detects constructor as useless but it is required to make class accessible
     /**
      * user_settings_model constructor.
      * Get all settings for the user with the passed ID.
      * @param int $userid The ID of the user whose settings should be fetched.
      */
-    // @codingStandardsIgnoreStart CodeSniffer detects constructor as useless but it is required to make class accessible
     public function __construct($userid) {
         parent::__construct($userid);
     }

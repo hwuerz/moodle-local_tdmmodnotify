@@ -26,10 +26,7 @@
 defined('MOODLE_INTERNAL') || die;
 global $CFG;
 
-// @codingStandardsIgnoreStart PhpStorm only supports /** */ annotation
-/** @noinspection PhpIncludeInspection */
 require_once($CFG->libdir.'/formslib.php');
-// @codingStandardsIgnoreEnd
 
 /**
  * Form manually execute the cron function for uploadnotification.

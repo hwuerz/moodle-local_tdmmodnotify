@@ -125,13 +125,11 @@ class local_uploadnotification_recipient extends local_uploadnotification_model 
 
     /**
      * Build the notification content.
-     *
      * @param stdClass $substitutions The string substitions to be passed to the location API when generating the
      *                                content. If this recipient object will have contain notifications, this object
      *                                must include a moodle_url object in its baseurl property else a fatal error will
      *                                be raised when building their content.
-     *
-     * @param $attachment_optimizer local_uploadnotification_attachment_optimizer The manager for all mail attachments
+     * @param local_uploadnotification_attachment_optimizer $attachment_optimizer The manager for all mail attachments
      * @return local_uploadnotification_mail_wrapper[] An array of all mails which should be send to this user.
      *                        The array can be empty if no content is available for this user. This can happen if the
      *                        visibility of a stored file was changed to hidden.
@@ -215,6 +213,7 @@ class local_uploadnotification_recipient extends local_uploadnotification_model 
     }
 
     /**
+     * Adds the passed course module as an attachment for the mail if possible.
      * @param cm_info $cm The course module record which should be included in the mail
      * @param local_uploadnotification_user_settings_model $user_settings The user settings.
      * @param local_uploadnotification_course_settings_model $course_settings The course settings
@@ -264,7 +263,6 @@ class local_uploadnotification_recipient extends local_uploadnotification_model 
 
     /**
      * Delete the recipient's record.
-     *
      * @return void
      */
     public function delete() {
@@ -278,7 +276,9 @@ class local_uploadnotification_recipient extends local_uploadnotification_model 
     }
 
     /**
-     * @override \local_uploadnotification_model
+     * Get an array of accessors.
+     * "Accessors" are fields which are publicly readable, but protected within the scope of the class.
+     * @return string[] The accessors.
      */
     public function model_accessors() {
         return array(
@@ -291,9 +291,7 @@ class local_uploadnotification_recipient extends local_uploadnotification_model 
 
     /**
      * Build a recipient object and child notification objects from a digest.
-     *
      * @param stdClass[] $notificationdigest A notfication digest object from the DML API.
-     *
      * @return \local_uploadnotification_recipient A recipient object.
      */
     public static function from_digest($notificationdigest) {

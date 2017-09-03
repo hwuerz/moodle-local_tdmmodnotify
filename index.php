@@ -29,10 +29,7 @@ require_once(dirname(__FILE__) . '/../../config.php');
 // Globals.
 global $CFG, $OUTPUT, $USER, $SITE, $PAGE;
 
-// @codingStandardsIgnoreStart PhpStorm only supports /** */ annotation
-/** @noinspection PhpIncludeInspection */
 require_once($CFG->libdir . '/adminlib.php');
-// @codingStandardsIgnoreEnd
 
 // Include function library.
 require_once(dirname(__FILE__) . '/definitions.php');

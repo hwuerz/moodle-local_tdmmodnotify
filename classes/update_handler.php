@@ -66,6 +66,7 @@ class local_uploadnotification_update_handler {
     }
 
     /**
+     * Checks whether the event is valid and can be handled.
      * @return bool Whether this event can be handled by this plugin or not.
      */
     private function is_event_valid() {
@@ -84,6 +85,7 @@ class local_uploadnotification_update_handler {
     }
 
     /**
+     * Checks whether the changelog is enabled.
      * @return bool Whether changelog generation is enabled in this course or not.
      */
     public function is_changelog_enabled() {

@@ -41,6 +41,7 @@ class local_uploadnotification_attachment_optimizer {
     private $files = array();
 
     /**
+     * Requires the passed course module in an email. Load this file if it is not already prepared.
      * @param cm_info $cm The course module record. Must contain the id and the modname.
      * @return local_uploadnotification_attachment_optimizer_file|bool The requested file or false if unavailable.
      */
@@ -115,7 +116,6 @@ SQL;
 }
 
 /**
- * Class local_uploadnotification_attachment_optimizer_file.
  * Simple wrapper around a requested file.
  * @copyright (c) 2017 Hendrik Wuerz
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later

@@ -34,60 +34,50 @@ class local_uploadnotification_notification extends local_uploadnotification_mod
 
     /**
      * Notification ID.
-     *
      * The ID of this notification
-     *
      * @var int
      */
     protected $notificationid;
 
     /**
      * Action.
-     *
      * One of the LOCAL_UPLOADNOTIFICATION_ACTION_* constants.
-     *
      * @var int
      */
     protected $action;
 
     /**
      * Whether this file is visible for the user (1) or not (0).
-     *
      * @var int
      */
     protected $visible;
 
     /**
      * Course ID.
-     *
      * @var int
      */
     protected $courseid;
 
     /**
      * Course full name.
-     *
      * @var string
      */
     protected $coursefullname;
 
     /**
      * Module name.
-     *
      * @var string
      */
     protected $modulename;
 
     /**
      * Filename.
-     *
      * @var string
      */
     protected $filename;
 
     /**
      * File ID in the coursemodules table.
-     *
      * @var int
      */
     protected $moodleid;
@@ -223,7 +213,9 @@ class local_uploadnotification_notification extends local_uploadnotification_mod
     }
 
     /**
-     * @override \local_uploadnotification_model
+     * Get an array of accessors.
+     * "Accessors" are fields which are publicly readable, but protected within the scope of the class.
+     * @return string[] The accessors.
      */
     public function model_accessors() {
         return array(
@@ -240,9 +232,7 @@ class local_uploadnotification_notification extends local_uploadnotification_mod
 
     /**
      * Build a notification object from a digest.
-     *
      * @param stdClass $notificationdigest A notfication digest object from the DML API.
-     *
      * @return \local_uploadnotification_notification A notification object.
      */
     public static function from_digest($notificationdigest) {

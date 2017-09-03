@@ -68,7 +68,8 @@ class local_uploadnotification_mail_wrapper {
     private $attachment_path = '';
 
     /**
-     * @var stdClass The user record, who should receive the mail.
+     * Creates a new mail wrapper for the passed recipient.
+     * @param stdClass $recipient The user record, who should receive the mail.
      */
     public function __construct($recipient) {
         $this->recipient = $recipient;
@@ -90,6 +91,7 @@ class local_uploadnotification_mail_wrapper {
     }
 
     /**
+     * Adds the passed strings to the content of the mail.
      * @param string $text The content of the message in plain text which should be added.
      * @param string $html The content of the message in html which should be added.
      */

@@ -47,7 +47,6 @@ abstract class local_uploadnotification_model {
      * @param string $property The property to retrieve the value for.
      * @return mixed The value.
      * @throws \coding_exception When a property is specified which does not exist within the permitted accessors.
-     * @access private
      */
     public function __get($property) {
         if (!in_array($property, $this->model_accessors())) {

@@ -52,14 +52,12 @@ class local_uploadnotification_course_settings_model extends local_uploadnotific
      * Get all settings for the course with the passed ID.
      * @param int $courseid The ID of the course whose settings should be fetched.
      */
-    // @codingStandardsIgnoreStart CodeSniffer detects constructor as useless but it is required to make class accessible.
     public function __construct($courseid) {
         // Overwrite default data by the admin configuration.
         $this->attributes['enable_changelog'] = get_config(LOCAL_UPLOADNOTIFICATION_FULL_NAME, 'enable_changelog_by_default');
         $this->attributes['enable_diff'] = get_config(LOCAL_UPLOADNOTIFICATION_FULL_NAME, 'enable_diff_by_default');
         parent::__construct($courseid);
     }
-    // @codingStandardsIgnoreEnd
 
     /**
      * All attributes of the course settings.

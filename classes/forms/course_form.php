@@ -26,11 +26,7 @@
 defined('MOODLE_INTERNAL') || die;
 global $CFG;
 
-// @codingStandardsIgnoreStart PhpStorm only supports /** */ annotation
-/** @noinspection PhpIncludeInspection */
 require_once($CFG->libdir.'/formslib.php');
-// @codingStandardsIgnoreEnd
-
 require_once(dirname(__FILE__) . '/../../definitions.php');
 
 /**
@@ -40,6 +36,9 @@ require_once(dirname(__FILE__) . '/../../definitions.php');
  */
 class local_uploadnotification_course_form extends moodleform {
 
+    /**
+     * The prefix for all used form elements and strings.
+     */
     const STRING_PREFIX = 'settings_course_';
 
     /**
