@@ -136,6 +136,8 @@ class local_uploadnotification_update_handler {
                 $diff = $this->generate_diff($predecessor, $file);
                 if ($diff !== false) { // After diff generation the predecessor was not rejected.
                     $changelog_entry .= $diff;
+                } else { // There are too many changes --> This is not a predecessor --> abort.
+                    return '';
                 }
             }
 
