@@ -82,7 +82,7 @@ class local_uploadnotification_mailer {
         $this->attachment_optimizer = new local_uploadnotification_attachment_optimizer();
 
         foreach ($this->recipients as $recipient) {
-            mtrace("user#{$recipient->get_userid()}");
+//            mtrace("user#{$recipient->get_userid()}");
             $this->mail($recipient);
         }
 

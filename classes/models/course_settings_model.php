@@ -108,7 +108,7 @@ class local_uploadnotification_course_settings_model extends local_uploadnotific
     /**
      * Stores the new value.
      * Does not update the database until save is called.
-     * @param int $value The new value. Must be 0 or 1. Undefined will be mapped tp 0.
+     * @param int $value The new value. Must be 0 or 1. Undefined will be mapped to 0.
      * @throws InvalidArgumentException If the value is invalid.
      */
     public function set_attachment_allowed(&$value) {
@@ -126,7 +126,7 @@ class local_uploadnotification_course_settings_model extends local_uploadnotific
     /**
      * Stores the new value.
      * Does not update the database until save is called.
-     * @param int $value The new value. Must be 0 or 1. Undefined will be mapped tp 0.
+     * @param int $value The new value. Must be 0 or 1. Undefined will be mapped to 0.
      * @throws InvalidArgumentException If the value is invalid.
      */
     public function set_changelog_enabled(&$value) {
@@ -144,7 +144,7 @@ class local_uploadnotification_course_settings_model extends local_uploadnotific
     /**
      * Stores the new value.
      * Does not update the database until save is called.
-     * @param int $value The new value. Must be 0 or 1. Undefined will be mapped tp 0.
+     * @param int $value The new value. Must be 0 or 1. Undefined will be mapped to 0.
      * @throws InvalidArgumentException If the value is invalid.
      */
     public function set_diff_enabled(&$value) {

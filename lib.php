@@ -27,6 +27,7 @@ defined('MOODLE_INTERNAL') || die;
 
 require_once(dirname(__FILE__).'/definitions.php');
 require_once(dirname(__FILE__).'/classes/changelog.php');
+require_once(dirname(__FILE__).'/classes/update_handler.php');
 
 
 /**
@@ -35,19 +36,7 @@ require_once(dirname(__FILE__).'/classes/changelog.php');
  * @return void
  */
 function local_uploadnotification_cron() {
-
-    // Only send mails if a moodle admin has allowed this function.
-    $allowed = get_config(LOCAL_UPLOADNOTIFICATION_FULL_NAME, 'allow_mail');
-    if (!$allowed) {
-        return;
-    }
-
-    // Send mails.
-    $recipients  = new local_uploadnotification_recipient_iterator();
-    $supportuser = core_user::get_support_user();
-    $mailer      = new local_uploadnotification_mailer($recipients, $supportuser);
-
-    $mailer->execute();
+    local_uploadnotification_update_handler::send_notifications();
 }
 
 /**

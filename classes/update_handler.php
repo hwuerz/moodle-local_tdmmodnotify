@@ -27,8 +27,10 @@ defined('MOODLE_INTERNAL') || die;
 
 require_once(dirname(__FILE__) . '/../definitions.php');
 require_once(dirname(__FILE__) . '/../lib.php');
-require_once(dirname(__FILE__) . '/changelog.php');
 require_once(dirname(__FILE__) . '/models/course_settings_model.php');
+require_once(dirname(__FILE__) . '/changelog.php');
+require_once(dirname(__FILE__) . '/mailer.php');
+require_once(dirname(__FILE__) . '/recipient_iterator.php');
 
 /**
  * Upload notification update handler.
@@ -370,5 +372,24 @@ class local_uploadnotification_update_handler {
         }
 
         return $this->course_settings;
+    }
+
+    /**
+     * Send scheduled notification emails.
+     * This function will be called by the cron job.
+     */
+    public static function send_notifications() {
+        // Only send mails if a moodle admin has allowed this function.
+        $allowed = get_config(LOCAL_UPLOADNOTIFICATION_FULL_NAME, 'allow_mail');
+        if (!$allowed) {
+            return;
+        }
+
+        // Send mails.
+        $recipients  = new local_uploadnotification_recipient_iterator();
+        $supportuser = core_user::get_support_user();
+        $mailer      = new local_uploadnotification_mailer($recipients, $supportuser);
+
+        $mailer->execute();
     }
 }
