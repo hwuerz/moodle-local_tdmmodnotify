@@ -259,7 +259,7 @@ class local_uploadnotification_attachment_test extends advanced_testcase {
 
     /**
      * Creates a new resource in the course and send all scheduled notifications.
-     * @param {string] $filename The filename of the created resource in the /res folder,
+     * @param string $filename The filename of the created resource in the /res folder.
      * @return array All send messages.
      */
     private function create_resource_and_send_mails($filename) {
