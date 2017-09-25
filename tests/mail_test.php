@@ -170,6 +170,41 @@ class local_uploadnotification_mail_test extends advanced_testcase {
     }
 
     /**
+     * Test the checks for availability settings.
+     */
+    public function test_availability_checks() {
+        global $CFG, $DB;
+        $this->resetAfterTest(true);
+
+        // Enable the mail delivery in admin settings to schedule a notification.
+        set_config('allow_mail', 1, LOCAL_UPLOADNOTIFICATION_FULL_NAME);
+
+        $this->prepare_course(); // Create course, student and teacher.
+
+        $this->set_mail_enabled_in_course(true);
+        $this->set_mail_enabled_for_student(true);
+
+        $CFG->enableavailability = true;
+        $time = time() + 10000;
+        $this->getDataGenerator()->create_module('resource', array(
+            'course' => $this->course->id,
+            'availability' => json_encode( // The resource will be available at $time.
+                \core_availability\tree::get_root_json(array(
+                    \availability_date\condition::get_json(\availability_date\condition::DIRECTION_FROM, $time)),
+                    \core_availability\tree::OP_AND,
+                    false)))
+        );
+
+        // The notification was planed.
+        $amount = $DB->count_records('local_uploadnotification');
+        $this->assertEquals(1, $amount);
+
+        // The timestamp maps to the availability date.
+        $record = $DB->get_record('local_uploadnotification', array());
+        $this->assertEquals($time, $record->timestamp);
+    }
+
+    /**
      * Creates a course, student and teacher.
      */
     private function prepare_course() {
