@@ -121,6 +121,13 @@ class local_uploadnotification_update_handler {
         global $DB;
 
         $detector = local_uploadnotification_changelog::get_update_detector($this->get_course_module());
+        $edit_dialog_used = $this->get_action() == LOCAL_UPLOADNOTIFICATION_ACTION_UPDATED; // Updates require the edit dialog.
+        if ($edit_dialog_used) { // This update was performed via the edit dialog --> only definit predecessors will be used.
+            // Because only definit predecessors are used, the requirements can be as low as possible.
+            // This will return the best fitting definit predecessor.
+            $detector->set_ensure_mime_type(false);
+            $detector->set_min_similarity(0);
+        }
         $predecessor = $detector->is_update();
         if ($predecessor != false) { // A predecessor was found.
 
@@ -138,7 +145,10 @@ class local_uploadnotification_update_handler {
                 $diff = $this->generate_diff($predecessor, $file);
                 if ($diff !== false) { // After diff generation the predecessor was not rejected.
                     $changelog_entry .= $diff;
-                } else { // There are too many changes --> This is not a predecessor --> abort.
+                } else if ($edit_dialog_used) { // There are too many changes for a diff, but this is a definit predecessor.
+                    $changelog_entry .= '<br>'
+                        . get_string('long_diff_many', LOCAL_UPLOADNOTIFICATION_FULL_NAME);
+                } else {  // There are too many changes and it is not a definit predecessor --> abort.
                     return '';
                 }
             }
@@ -165,6 +175,9 @@ class local_uploadnotification_update_handler {
                 'id' => $this->get_course_module()->id,
                 'showdescription' => 1
             ));
+
+            // Delete the found predecessor to avoid reuse.
+            $detector->delete_found_predecessor();
 
             // Cache must be rebuild to render intro with changelog.
             rebuild_course_cache($this->get_course_module()->course, true);

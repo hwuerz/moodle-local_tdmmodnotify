@@ -115,4 +115,5 @@ $string['settings_user_not_negative'] = 'Negative values are not allowed';
 // Changelog.
 $string['printed_changelog_prefix'] = 'This file is an update of {$a->filename} from {$a->date}. ';
 $string['long_diff'] = 'In this file {$a} pages were changed.';
+$string['long_diff_many'] = 'In this file many pages were changed.';
 $string['printed_diff_prefix'] = 'The following pages of this file were changed: ';
