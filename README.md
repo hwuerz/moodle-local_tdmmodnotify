@@ -58,29 +58,46 @@ Features
 --------
 
 ### Mail delivery for new material
-The plugin can inform your students as soon as new material is published in one of their courses. The delivered mail can optionally include the new file. These functions must be enabled by three parties: The moodle admin, the course admin and the student. The options for courses and for students are only visible if the admin has enabled the feature. 
+The plugin can inform your students as soon as new material is published in one of their courses. The delivered mail can optionally include the new file. These functions must be enabled by three parties: The moodle admin, the teacher and the student. The options for courses and for students are only visible if the admin has enabled the feature. 
 
-As an moodle admin follow these steps
-1. Open moodle
-2. Go to `Site administration` -> `Plugins` -> `Local plugins` -> `Upload notification`
-3. Set `Allow notification mail delivery` to yes. This will enable the mail delivery for course admins and students. If you set it to no, the delivery is completely disabled: No one can see the settings and no mails will be send in any case.
-4. Set `Maximum filesize of mail attachments (in KB)` to 100000. This will allow attachments up to 10MB. If this value is zero, no attachments will be send.
+As a **moodle admin** follow these steps
+1. Go to `Site administration` -> `Plugins` -> `Local plugins` -> `Upload notification`
+2. Set `Allow notification mail delivery` to yes. This will enable the mail delivery for course admins and students. If you set it to no, the delivery is completely disabled: No one can see the settings and no mails will be send in any case.
+3. Set `Maximum filesize of mail attachments (in KB)` to 100000. This will allow attachments up to 10MB. If this value is zero, no attachments will be send.
 
-Now the feature is visible for course admins and students. As a general rule: A mail will only be send if someone (teacher or student) has requested the delivery and no one has forbidden it.
+Now the feature is visible for teachers and students. As a general rule: A mail will only be send if someone (teacher or student) has requested the delivery and no one has forbidden it.
 
-As a teacher follow these steps
-1. Open moodle
-2. Go to your course -> Open the course menu (where you can access the settings, turn editing on, ...) -> Click on the link `Uploadnotification`
-3. You have three options for `Enable notification mail delivery for material uploads`
-- `No preferences` The default option. No mails will be send except the user requests them.
-- `Disable` No mails will be send for actions in this course. The student settings are ignored.
-- `Enable` Mails will be send except a user has disabled the delivery for himself.  
-4. Set the check mark for `Allow email attachments` (this is the default). This will allow students to receive mails with attachments. As a teacher you can not force this to avoid unwanted traffic.
+As a **teacher** follow these steps
+1. Go to your course -> Open the course menu (where you can access the settings, turn editing on, ...) -> Click on the link `Uploadnotification`
+2. You have three options for `Enable notification mail delivery for material uploads`
+   -  `No preferences` The default option. No mails will be send except the user requests them.
+   - `Disable` No mails will be send for actions in this course. The student settings are ignored.
+   - `Enable` Mails will be send except a user has disabled the delivery for himself.  
+3. Set the check mark for `Allow email attachments` (this is the default). This will allow students to receive mails with attachments. As a teacher you can not force this to avoid unwanted traffic.
 
-As a student follow these steps
-1. Open moodle
-2. Click on your username and select `Preferences`
-3. At `Miscellaneous` you find a link `Uploadnotification`
-4. All students have two settings:
-- `Enable notification mail delivery for material uploads` with the same options as teachers. `No preference` will only send mails if the course settings have enabled them. `Enable` sends always mails except a teacher has disabled the feature for a course. `Disable` will never allow the mail delivery to this student.
-- `Maximum filesize of mail attachments (in KB)` Insert a value greater zero to receive attachments up to this size. You can not request sizes which are greater than the limit of the moodle admin. The attachment will only be send if the teacher has not removed the check mark in his his course.
+As a **student** follow these steps
+1. Click on your username and select `Preferences`
+2. At `Miscellaneous` you find a link `Uploadnotification`
+3. All students have two settings:
+   - `Enable notification mail delivery for material uploads` with the same options as teachers. `No preference` will only send mails if the course settings have enabled them. `Enable` sends always mails except a teacher has disabled the feature for a course. `Disable` will never allow the mail delivery to this student.
+   - `Maximum filesize of mail attachments (in KB)` Insert a value greater zero to receive attachments up to this size. You can not request sizes which are greater than the limit of the moodle admin. The attachment will only be send if the teacher has not removed the check mark in his his course.
+
+###  Changelog generation
+The plugin can build a changelog for uploaded resources. It will include the timestamp of the update and the filename of the predecessor. At the moment only file resources are supported (no folders, pages, or others). For PDF documents, the plugin can detect the page number on which changes were performed. 
+
+Teachers can update material on two ways:
+1. Delete the old resource and upload the new document independently
+2. Edit the current resource and select a new file.
+
+A file and its predecessor must be uploaded in the same course and section.
+
+To enable the changelog, the **moodle admin** has to allow this feature. If he has deactivated it, teachers will not see the options in the course settings.
+1. Go to `Site administration` -> `Plugins` -> `Local plugins` -> `Upload notification`
+2. Set `Allow automatic changelog generation in courses` on true. This will activate the feature for teachers.
+3. Set `Allowed size of analysed files for the diff detection (in MB)` to 100. This will allow the plugin to search for differences on documents with maximum 100MB filesize. If you set this value to zero, a changelog can be generated, but the pages where changes are performed will not longer be identified.
+4. Set `Enable the changelog in new courses by default` and `Enable the diff detection in new courses by default` to true. This will activate the changelog and diff detection in all courses which have no custom settings.
+
+As a **teacher** follow these steps to customize the behaviour in your course:
+1. Go to your course -> Open the course menu (where you can access the settings, turn editing on, ...) -> Click on the link `Uploadnotification`
+2. Set `Display a changelog for updates` to true. This will print an information with the filename of the predecessor and the time of the change next to the new document.
+3. Set `Detect differences in updates` to true. This will search for changed pages in the new document and add their numbers to the changelog. This feature only works for PDF documents which are smaller than the admin-limit.
