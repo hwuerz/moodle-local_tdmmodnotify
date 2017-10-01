@@ -108,6 +108,12 @@ class local_uploadnotification_user_form extends moodleform {
      */
     public function validation($data, $files) {
         $errors = parent::validation($data, $files);
+
+        // If max filesize is not set, it can not be validated.
+        if (!isset($data['max_mail_filesize'])) {
+            return $errors;
+        }
+
         if ($data['max_mail_filesize'] < 0) {
             $errors['max_mail_filesize'] = get_string('settings_user_not_negative', LOCAL_UPLOADNOTIFICATION_FULL_NAME);
         }
