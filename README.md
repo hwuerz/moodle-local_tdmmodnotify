@@ -112,3 +112,8 @@ As a **teacher** follow these steps to customize the behaviour in your course:
 1. Go to your course -> Open the course menu (where you can access the settings, turn editing on, ...) -> Click on the link `Uploadnotification`
 2. Set `Display a changelog for updates` to true. This will print an information with the filename of the predecessor and the time of the change next to the new document.
 3. Set `Detect differences in updates` to true. This will search for changed pages in the new document and add their numbers to the changelog. This feature only works for PDF documents which are smaller than the admin-limit.
+4. Create a new PDF document in your course.
+5. Edit the new document and upload an update with a few changes.
+6. On the course page, the changelog will be displayed.
+7. Delete the updated resource and upload a version which was changed again a little bit. This upload must be in the same section as before.
+8. After a page reload (limitation of moodle because the upload was performed via ajax) the changelog is displayed again.
