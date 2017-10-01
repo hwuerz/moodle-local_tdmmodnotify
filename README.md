@@ -36,7 +36,7 @@ Installation
 2. Clone the repo inside MOODLE_HOME/local/uploadnotification
    ```bash
    cd path/to/moodle/home
-   git clone git@github.com:hwuerz/moodle-local_uploadnotification.git local/uploadnotification
+   git clone https://github.com/hwuerz/moodle-local_uploadnotification.git local/uploadnotification
    ```
 3. Browse to Site Administration -> Notifications and allow the database upgrades to execute
 4. After installation define your admin settings to customize the plugin behaviour.
