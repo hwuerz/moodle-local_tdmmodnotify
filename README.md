@@ -39,7 +39,7 @@ Installation
    git clone https://github.com/hwuerz/moodle-local_uploadnotification.git local/uploadnotification
    ```
 3. Browse to Site Administration -> Notifications and allow the database upgrades to execute
-4. After installation define your admin settings to customize the plugin behaviour.
+4. After installation define your admin settings to customize the plugin behaviour. See chapter *Features* of this document for more information.
 
 Tests
 ------

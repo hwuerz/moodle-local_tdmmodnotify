@@ -64,7 +64,7 @@ class local_uploadnotification_observer {
     private static function handle_update($event) {
         $handler = new local_uploadnotification_update_handler($event);
 
-        if ($handler->is_changelog_enabled()) {
+        if ($handler->is_changelog_requested()) {
             $handler->generate_changelog();
         }
 

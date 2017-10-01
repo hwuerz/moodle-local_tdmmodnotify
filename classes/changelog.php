@@ -24,6 +24,8 @@
 
 defined('MOODLE_INTERNAL') || die;
 
+require_once(dirname(__FILE__) . '/util.php');
+
 require_once(dirname(__FILE__) . '/../../changeloglib/classes/backup_lib.php');
 require_once(dirname(__FILE__) . '/../../changeloglib/classes/diff_detector.php');
 require_once(dirname(__FILE__) . '/../../changeloglib/classes/pdftotext.php');
@@ -59,6 +61,11 @@ class local_uploadnotification_changelog {
      * @param stdClass $coursemodule The course module of which a backup should created.
      */
     public static function backup_coursemodule($coursemodule) {
+
+        // If the changelog is not enabled in the course --> do not backup the file.
+        if (!local_uploadnotification_util::is_changelog_enabled($coursemodule->course)) {
+            return;
+        }
 
         // Get information to access the course module and create a copy of it.
         $data = self::get_data($coursemodule);

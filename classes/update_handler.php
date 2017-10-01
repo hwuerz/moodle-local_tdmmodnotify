@@ -31,6 +31,7 @@ require_once(dirname(__FILE__) . '/models/course_settings_model.php');
 require_once(dirname(__FILE__) . '/changelog.php');
 require_once(dirname(__FILE__) . '/mailer.php');
 require_once(dirname(__FILE__) . '/recipient_iterator.php');
+require_once(dirname(__FILE__) . '/util.php');
 
 /**
  * Upload notification update handler.
@@ -90,26 +91,14 @@ class local_uploadnotification_update_handler {
      * Checks whether the changelog is enabled.
      * @return bool Whether changelog generation is enabled in this course or not.
      */
-    public function is_changelog_enabled() {
+    public function is_changelog_requested() {
 
         // Check event metadata.
         if (!$this->is_event_valid()) {
             return false;
         }
 
-        // Check admin settings.
-        $allowed = get_config(LOCAL_UPLOADNOTIFICATION_FULL_NAME, 'allow_changelog');
-        if (!$allowed) {
-            return false;
-        }
-
-        // Check course settings.
-        if (!$this->get_course_settings()->is_changelog_enabled()) {
-            return false;
-        }
-
-        // Everything is ok --> Notifications can be scheduled.
-        return true;
+        return local_uploadnotification_util::is_changelog_enabled($this->get_course_id(), $this->course_settings);
     }
 
     /**
@@ -258,7 +247,7 @@ class local_uploadnotification_update_handler {
             return false;
         }
 
-        // Check course settings.
+        // Check course settings. -1 and 1 are handled as true, zero as false.
         if (!$this->get_course_settings()->is_mail_enabled()) {
             return false;
         }

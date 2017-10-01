@@ -95,4 +95,26 @@ ORDER BY userid ASC";
     private static function get_max_timestamp() {
         return time() - 5 * 60;
     }
+
+    /**
+     * Checks whether the changelog is enabled in a course.
+     * @param int $course_id The ID of the course whose settings are requested.
+     * @param null|local_uploadnotification_course_settings_model $course_settings The settings model of the course if known.
+     * @return bool Whether changelog generation is enabled in this course or not.
+     */
+    public static function is_changelog_enabled($course_id, &$course_settings = null) {
+
+        // Check admin settings.
+        $allowed = get_config(LOCAL_UPLOADNOTIFICATION_FULL_NAME, 'allow_changelog');
+        if (!$allowed) {
+            return false;
+        }
+
+        if ($course_settings == null) {
+            $course_settings = new local_uploadnotification_course_settings_model($course_id);
+        }
+
+        // Check course settings.
+        return $course_settings->is_changelog_enabled();
+    }
 }
