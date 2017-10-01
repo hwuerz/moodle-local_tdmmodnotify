@@ -42,7 +42,7 @@ The following activities resources have changed in courses you\'re enrolled in.
 
 {$a->signoff}
 
-You are receiving this mail because you or a course admin has requested this information. You can edit your preferences under {$a->user_settings}';
+You are receiving this mail because you or a teacher has requested this information. You can edit your preferences under {$a->user_settings}';
 $string['templatemessage_html'] = 'Hi {$a->firstname},<br><br>
 
 The following activities resources have changed in courses you\'re enrolled in.
@@ -53,7 +53,7 @@ The following activities resources have changed in courses you\'re enrolled in.
 
 {$a->signoff}<br><br>
 
-You are receiving this mail because you or a course admin has requested this information. You can edit your preferences under your <a href="{$a->user_settings}">preferences</a>.';
+You are receiving this mail because you or a teacher has requested this information. You can edit your preferences under your <a href="{$a->user_settings}">preferences</a>.';
 $string['templateresource'] = '* "{$a->filename}" in "{$a->coursefullname}" ({$a->url_course}) was {$a->action}: {$a->url_file} ';
 $string['templateresource_html'] = '<li><a href="{$a->url_file}">{$a->filename}</a> in <a href="{$a->url_course}">{$a->coursefullname}</a> was {$a->action}</li>';
 $string['actioncreated'] = 'created';
@@ -74,13 +74,13 @@ $string['settings_max_mail_filesize_help'] = 'The maximum material filesize whic
 $string['settings_max_mails_for_resource'] = 'Maximum amount of mails with the same attachment';
 $string['settings_max_mails_for_resource_help'] = 'Adjust this value to avoid to much load at one time. Defines the amount of mails with attachment which are allowed to be send based on one course module.';
 $string['settings_allow_changelog'] = 'Allow automatic changelog generation in courses';
-$string['settings_allow_changelog_help'] = 'Allow course admins to enable the automatic changelog detection for their course. If disabled, course admins will not see this settings and can not enable the functionality.';
+$string['settings_allow_changelog_help'] = 'Allow teachers to enable the automatic changelog detection for their course. If disabled, teachers will not see this settings and can not enable the functionality.';
 $string['settings_max_diff_filesize'] = 'Allowed size of analysed files for the diff detection<br>(in MB)';
 $string['settings_max_diff_filesize_help'] = 'If the filesize of material is greater than this value, no differences will be calculated for it. Set this value to zero to disable the difference detection.<br>The difference detection requires an enabled changelog.';
-$string['settings_enable_changelog_by_default'] = 'Enable the changelog in new courses by default';
-$string['settings_enable_changelog_by_default_help'] = 'If set, the changelog will be activated in new courses and a course admin has to disable it manually if none should be created.';
-$string['settings_enable_diff_by_default'] = 'Enable the diff detection in new courses by default';
-$string['settings_enable_diff_by_default_help'] = 'If set, the diff detection will be activated in new courses and a course admin has to disable it manually if this function should be deactivated.';
+$string['settings_enable_changelog_by_default'] = 'Enable the changelog by default';
+$string['settings_enable_changelog_by_default_help'] = 'If set, the changelog will be activated in courses which have no custom settings. If a teacher does not want this, he has to disable it manually.';
+$string['settings_enable_diff_by_default'] = 'Enable the diff detection by default';
+$string['settings_enable_diff_by_default_help'] = 'If set, the diff detection will be activated in courses which have no custom settings. If a teacher does not want this, he has to disable it manually.';
 $string['settings_diff_not_available'] = '<p>The detection for changes in PDF files is not available because the package <code>poppler-utils</code> is not installed on your system. If you have enabled the setting above, ask your server admin to run <code>apt-get install poppler-utils</code> and visit this page again. This message disappears if the tool is installed correctly.</p>';
 
 // Settings Course.
@@ -106,7 +106,7 @@ $string['settings_user_disable'] = 'Disable';
 $string['settings_user_enable'] = 'Enable';
 $string['settings_user_headline'] = 'Do you want to receive notifications when new material was uploaded to a course?';
 $string['settings_user_enable_mail'] = 'Enable notification mail delivery for material uploads';
-$string['settings_user_enable_mail_help'] = 'No preference: You will only receive emails if a course admin has enabled it explicit for his course<br>Disabled: No mails will be delivered for material changes<br>Enabled: You will receive mails for material changes, expect a course admin has forbidden the delivery explicit';
+$string['settings_user_enable_mail_help'] = 'No preference: You will only receive emails if a teacher has enabled it explicit for his course<br>Disabled: No mails will be delivered for material changes<br>Enabled: You will receive mails for material changes, expect a teacher has forbidden the delivery explicit';
 $string['settings_user_max_mail_filesize'] = 'Maximum filesize of mail attachments<br>(in KB)';
 $string['settings_user_max_mail_filesize_help'] = 'You can receive new or updated material directly via email. This defines the maximum material filesize which is allowed to be send in a mail attachments<br>Set to zero to disable attachments.';
 $string['settings_user_max_mail_filesize_not_more_than_admin'] = 'The moodle admin only allows attachments up to {$a}KB';
