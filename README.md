@@ -27,14 +27,15 @@ Requirements
 ------------
 
 * Tested with Moodle 3.3+
-* Requires the plugin `local_changeloglib`
+* Requires the plugin `local_changeloglib` [https://github.com/hwuerz/moodle-local_changeloglib](https://github.com/hwuerz/moodle-local_changeloglib)
 
 Installation
 --------
 
-1. cd to `MOODLE_HOME`
+1. Install the dependency [local_changeloglib](https://github.com/hwuerz/moodle-local_changeloglib) with the required command line tools (See readme.md in the changeloglib repository.)
 2. Clone the repo inside MOODLE_HOME/local/uploadnotification
    ```bash
+   cd path/to/moodle/home
    git clone git@github.com:hwuerz/moodle-local_uploadnotification.git local/uploadnotification
    ```
 3. Browse to Site Administration -> Notifications and allow the database upgrades to execute
