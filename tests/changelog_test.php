@@ -32,16 +32,30 @@ require_once(dirname(__FILE__) . '/../classes/models/course_settings_model.php')
 
 /**
  * Class local_uploadnotification_changelog_test.
+ *
  * vendor/bin/phpunit local_uploadnotification_changelog_test local/uploadnotification/tests/changelog_test.php
  *
  * Tests changelog generation.
  *
+ * @copyright (c) 2017 Hendrik Wuerz
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @group local_uploadnotification
  */
 class local_uploadnotification_changelog_test extends advanced_testcase {
 
+    /**
+     * @var stdClass The course used for tests.
+     */
     private $course;
+
+    /**
+     * @var stdClass The student used for tests.
+     */
     private $student;
+
+    /**
+     * @var stdClass The teacher used for tests.
+     */
     private $teacher;
 
     /**

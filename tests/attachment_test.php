@@ -36,16 +36,30 @@ require_once(dirname(__FILE__) . '/../classes/util.php');
 
 /**
  * Class local_uploadnotification_attachment_test.
+ *
  * vendor/bin/phpunit local_uploadnotification_attachment_test local/uploadnotification/tests/attachment_test.php
  *
  * Tests mail delivery.
  *
+ * @copyright (c) 2017 Hendrik Wuerz
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @group local_uploadnotification
  */
 class local_uploadnotification_attachment_test extends advanced_testcase {
 
+    /**
+     * @var stdClass The course used for tests.
+     */
     private $course;
+
+    /**
+     * @var stdClass The student used for tests.
+     */
     private $student;
+
+    /**
+     * @var stdClass The teacher used for tests.
+     */
     private $teacher;
 
     /**

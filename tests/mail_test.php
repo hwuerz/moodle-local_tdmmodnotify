@@ -36,19 +36,31 @@ require_once(dirname(__FILE__) . '/../classes/util.php');
 
 /**
  * Class local_uploadnotification_mail_test.
+ *
  * vendor/bin/phpunit local_uploadnotification_mail_test local/uploadnotification/tests/mail_test.php
  *
  * Tests mail delivery.
  *
+ * @copyright (c) 2017 Hendrik Wuerz
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @group local_uploadnotification
  */
 class local_uploadnotification_mail_test extends advanced_testcase {
 
+    /**
+     * @var stdClass The course used for tests.
+     */
     private $course;
-    private $student;
-    private $teacher;
 
-    const NOTIFICATION_TABLE = 'local_uploadnotification';
+    /**
+     * @var stdClass The student used for tests.
+     */
+    private $student;
+
+    /**
+     * @var stdClass The teacher used for tests.
+     */
+    private $teacher;
 
     /**
      * Checks that a notification mail can be send if everything is enabled.
@@ -65,10 +77,10 @@ class local_uploadnotification_mail_test extends advanced_testcase {
         $resource = $this->create_resource(); // Create a resource in the course. This should be captured by the plugin.
 
         // Check that a notification was planed for the enrolled student.
-        $this->assertEquals(1, $DB->count_records(self::NOTIFICATION_TABLE));
+        $this->assertEquals(1, $DB->count_records(local_uploadnotification_test_helper::NOTIFICATION_TABLE));
 
         // Check the content of the planed notification.
-        $planed_notification = $DB->get_record(self::NOTIFICATION_TABLE, array());
+        $planed_notification = $DB->get_record(local_uploadnotification_test_helper::NOTIFICATION_TABLE, array());
         $this->assertEquals($this->course->id, $planed_notification->courseid);
         $this->assertEquals($resource->cmid, $planed_notification->coursemoduleid);
         $this->assertEquals($this->student->id, $planed_notification->userid);
@@ -108,7 +120,7 @@ class local_uploadnotification_mail_test extends advanced_testcase {
         $this->create_resource(); // Create a resource in the course. This should be captured by the plugin.
 
         // Check that no notification was planed.
-        $this->assertEquals(0, $DB->count_records(self::NOTIFICATION_TABLE));
+        $this->assertEquals(0, $DB->count_records(local_uploadnotification_test_helper::NOTIFICATION_TABLE));
     }
 
     /**
@@ -126,7 +138,7 @@ class local_uploadnotification_mail_test extends advanced_testcase {
         $this->create_resource(); // Create a resource in the course. This should be captured by the plugin.
 
         // Check that a notification was planed.
-        $this->assertEquals(1, $DB->count_records(self::NOTIFICATION_TABLE));
+        $this->assertEquals(1, $DB->count_records(local_uploadnotification_test_helper::NOTIFICATION_TABLE));
 
         set_config('allow_mail', 0, LOCAL_UPLOADNOTIFICATION_FULL_NAME);
         local_uploadnotification_test_helper::make_all_notifications_older();

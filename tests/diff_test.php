@@ -32,16 +32,30 @@ require_once(dirname(__FILE__) . '/../classes/models/course_settings_model.php')
 
 /**
  * Class local_uploadnotification_diff_test.
+ *
  * vendor/bin/phpunit local_uploadnotification_diff_test local/uploadnotification/tests/diff_test.php
  *
  * Tests diff generation.
  *
+ * @copyright (c) 2017 Hendrik Wuerz
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @group local_uploadnotification
  */
 class local_uploadnotification_diff_test extends advanced_testcase {
 
+    /**
+     * @var stdClass The course used for tests.
+     */
     private $course;
+
+    /**
+     * @var stdClass The student used for tests.
+     */
     private $student;
+
+    /**
+     * @var stdClass The teacher used for tests.
+     */
     private $teacher;
 
     /**

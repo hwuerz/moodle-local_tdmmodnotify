@@ -29,10 +29,17 @@ require_once(dirname(__FILE__) . '/../definitions.php');
 
 /**
  * Class local_uploadnotification_test_helper.
+ *
  * Provides helper functions which are required by multiple tests.
+ *
+ * @copyright (c) 2017 Hendrik Wuerz
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class local_uploadnotification_test_helper {
 
+    /**
+     * The database table which is used for notifications.
+     */
     const NOTIFICATION_TABLE = 'local_uploadnotification';
 
     /**
