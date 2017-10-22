@@ -28,6 +28,7 @@ defined('MOODLE_INTERNAL') || die;
 require_once(dirname(__FILE__) . '/../definitions.php');
 require_once(dirname(__FILE__) . '/../lib.php');
 require_once(dirname(__FILE__) . '/models/course_settings_model.php');
+require_once(dirname(__FILE__) . '/models/user_settings_model.php');
 require_once(dirname(__FILE__) . '/changelog.php');
 require_once(dirname(__FILE__) . '/mailer.php');
 require_once(dirname(__FILE__) . '/recipient_iterator.php');
@@ -278,7 +279,7 @@ class local_uploadnotification_update_handler {
                 'courseid' => $this->get_course_id(),
                 'coursemoduleid' => $this->get_course_module_id(),
                 'userid' => $enrolled_user->id,
-                'timestamp' => $this->get_notification_timestamp()
+                'timestamp' => $this->get_notification_timestamp($enrolled_user->id)
             ));
         }
     }
@@ -290,10 +291,13 @@ class local_uploadnotification_update_handler {
      *      A docent can define a date when the material becomes available for students.
      *      Do not evaluate (= send) the notification before this date
      *      If the dates becomes modified, an update event will be send and the record will be changed.
+     * @param int $user_id The user for whom the notification should be scheduled.
      * @return int The timestamp when the notification should be delivered earliest.
      */
-    private function get_notification_timestamp() {
+    private function get_notification_timestamp($user_id) {
         $timestamp = time();
+
+        // Check availability API.
         $availability = json_decode($this->get_course_module()->availability);
         if (!is_null($availability) && !is_null($availability->c)) { // This resource has visibility conditions.
             $conditions = $availability->c;
@@ -304,6 +308,18 @@ class local_uploadnotification_update_handler {
                 }
             }
         }
+
+        // Check digest preferences.
+        $user_settings = new local_uploadnotification_user_settings_model($user_id);
+        if ($user_settings->is_digest_enabled()) {
+            $begin_of_day = strtotime("midnight", $timestamp);
+            $digest_time = $begin_of_day + 18 * 60 * 60;
+            if ($digest_time < $timestamp) { // It is already after the sending time --> mail will be send tomorrow.
+                $digest_time = $digest_time + 24 * 60 * 60; // Next day.
+            }
+            $timestamp = $digest_time;
+        }
+
         return $timestamp;
     }
 
