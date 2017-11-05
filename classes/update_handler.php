@@ -313,7 +313,17 @@ class local_uploadnotification_update_handler {
         $user_settings = new local_uploadnotification_user_settings_model($user_id);
         if ($user_settings->is_digest_enabled()) {
             $begin_of_day = strtotime("midnight", $timestamp);
-            $digest_time = $begin_of_day + 18 * 60 * 60;
+
+            // Fetch admin preferences for digest delivery.
+            $digest_hour = get_config(LOCAL_UPLOADNOTIFICATION_FULL_NAME, 'digest_hour');
+            $digest_minute = get_config(LOCAL_UPLOADNOTIFICATION_FULL_NAME, 'digest_minute');
+            if ($digest_hour === false || $digest_minute === false) { // There are no preferences (should never happen).
+                $digest_hour = 18;
+                $digest_minute = 0;
+            }
+
+            // Calculate delivery day.
+            $digest_time = $begin_of_day + $digest_hour * 60 * 60 + $digest_minute;
             if ($digest_time < $timestamp) { // It is already after the sending time --> mail will be send tomorrow.
                 $digest_time = $digest_time + 24 * 60 * 60; // Next day.
             }

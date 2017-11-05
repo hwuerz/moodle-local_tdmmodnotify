@@ -69,6 +69,8 @@ $string['messageprovider:digest'] = 'Course modification digest notification';
 // Settings Admin.
 $string['settings_allow_mail'] = 'Allow notification mail delivery';
 $string['settings_allow_mail_help'] = 'If enabled, mails with notifications about new material can be send';
+$string['settings_digest'] = 'Time for digest delivery';
+$string['settings_digest_help'] = 'The time on each day when the notification digests should be send.';
 $string['settings_max_mail_filesize'] = 'Maximum filesize of mail attachments<br>(in KB)';
 $string['settings_max_mail_filesize_help'] = 'The maximum material filesize which is allowed to be send in a mail attachments<br>Set to zero to disable attachments.';
 $string['settings_max_mails_for_resource'] = 'Maximum amount of mails with the same attachment';

@@ -43,6 +43,14 @@ if ($hassiteconfig) {
         new lang_string('settings_allow_mail_help', LOCAL_UPLOADNOTIFICATION_FULL_NAME),
         1));
 
+    $settings->add(new admin_setting_configtime(
+        LOCAL_UPLOADNOTIFICATION_FULL_NAME . '/digest_hour',
+        LOCAL_UPLOADNOTIFICATION_FULL_NAME . '/digest_minute',
+        new lang_string('settings_digest', LOCAL_UPLOADNOTIFICATION_FULL_NAME),
+        new lang_string('settings_digest_help', LOCAL_UPLOADNOTIFICATION_FULL_NAME),
+        array('h' => 18, 'm' => 0)
+    ));
+
     $settings->add(new admin_setting_configtext(
         LOCAL_UPLOADNOTIFICATION_FULL_NAME . '/max_mail_filesize',
         new lang_string('settings_max_mail_filesize', LOCAL_UPLOADNOTIFICATION_FULL_NAME),
