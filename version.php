@@ -31,7 +31,7 @@ $plugin->component = 'local_uploadnotification';
 
 // Require the backup and compare libs.
 $plugin->dependencies = array(
-    'local_changeloglib' => 2017092800,
+    'local_changeloglib' => 2017111000,
 );
 
 $plugin->release = '0.2.1';
@@ -41,5 +41,5 @@ $plugin->maturity = MATURITY_ALPHA;
 $plugin->cron = 1;
 
 // Version format:  YYYYMMDDXX.
-$plugin->version = 2017110500;
+$plugin->version = 2017111000;
 $plugin->requires = 2017051500;

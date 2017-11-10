@@ -118,65 +118,73 @@ class local_uploadnotification_update_handler {
             $detector->set_ensure_mime_type(false);
             $detector->set_min_similarity(0);
         }
-        $predecessor = $detector->is_update();
-        if ($predecessor != false) { // A predecessor was found.
 
-            $changelog_entry = get_string('printed_changelog_prefix', LOCAL_UPLOADNOTIFICATION_FULL_NAME, (object)array(
-                'filename' => $predecessor->get_filename(),
-                'date' => date("m.d.Y H:i")
-            ));
+        // Perform the mapping.
+        $distribution = $detector->map_backups();
+        if (empty($distribution->mappings)) { // No mapping was performed.
+            return false;
+        }
+        $mapping = array_shift($distribution->mappings);
+        if ($mapping->predecessor == null) { // No predecessor was found.
+            return false;
+        }
+        $predecessor = $mapping->predecessor->get_backup()->get_file();
 
-            $file = $detector->get_new_file();
-            $max_filesize_for_diff = get_config(LOCAL_UPLOADNOTIFICATION_FULL_NAME, 'max_diff_filesize');
-            if ($this->is_diff_enabled()
-                && $predecessor->get_filesize() <= $max_filesize_for_diff * 1024 * 1024
-                && $file->get_filesize() <= $max_filesize_for_diff * 1024 * 1024) {
+        // Prepare the changelog entry. It will be extended in the following.
+        $changelog_entry = get_string('printed_changelog_prefix', LOCAL_UPLOADNOTIFICATION_FULL_NAME, (object)array(
+            'filename' => $predecessor->get_filename(),
+            'date' => date("m.d.Y H:i")
+        ));
 
-                $diff = $this->generate_diff($predecessor, $file);
-                if ($diff !== false) { // After diff generation the predecessor was not rejected.
-                    $changelog_entry .= $diff;
-                } else if ($edit_dialog_used) { // There are too many changes for a diff, but this is a definit predecessor.
-                    $changelog_entry .= '<br>'
-                        . get_string('long_diff_many', LOCAL_UPLOADNOTIFICATION_FULL_NAME);
-                } else {  // There are too many changes and it is not a definit predecessor --> abort.
-                    return '';
-                }
+        // Perform diff detection if required and possible.
+        $file = $mapping->file_wrapper->get_file();
+        $max_filesize_for_diff = get_config(LOCAL_UPLOADNOTIFICATION_FULL_NAME, 'max_diff_filesize');
+        if ($this->is_diff_enabled()
+            && $predecessor->get_filesize() <= $max_filesize_for_diff * 1024 * 1024
+            && $file->get_filesize() <= $max_filesize_for_diff * 1024 * 1024) {
+
+            $diff = $this->generate_diff($predecessor, $file);
+            if ($diff !== false) { // After diff generation the predecessor was not rejected.
+                $changelog_entry .= $diff;
+            } else if ($edit_dialog_used) { // There are too many changes for a diff, but this is a definit predecessor.
+                $changelog_entry .= '<br>'
+                    . get_string('long_diff_many', LOCAL_UPLOADNOTIFICATION_FULL_NAME);
+            } else { // There are too many changes and it is not a definit predecessor --> abort.
+                return '';
             }
-
-            // Get the resource of this course module
-            // The check on top of this function ensures that the course module is a resource.
-            $resource = $DB->get_record('resource', array('id' => $this->get_course_module()->instance));
-
-            // Build new intro based on calculation and current data.
-            $intro = $resource->intro;
-            if (strlen($intro) > 0) { // Add new line if an intro already exists.
-                $intro .= "<br>";
-            }
-            $intro .= $changelog_entry;
-
-            // Store the new intro with the changelog.
-            $DB->update_record('resource', (object)array(
-                'id' => $resource->id,
-                'intro' => $intro
-            ));
-
-            // Show the intro on the course page.
-            $DB->update_record('course_modules', (object)array(
-                'id' => $this->get_course_module()->id,
-                'showdescription' => 1
-            ));
-
-            // Delete the found predecessor to avoid reuse.
-            $detector->delete_found_predecessor();
-
-            // Cache must be rebuild to render intro with changelog.
-            rebuild_course_cache($this->get_course_module()->course, true);
-
-            // Only the generated changelog (not the complete intro).
-            return $changelog_entry;
         }
 
-        return false;
+        // Get the resource of this course module
+        // The check on top of this function ensures that the course module is a resource.
+        $resource = $DB->get_record('resource', array('id' => $this->get_course_module()->instance));
+
+        // Build new intro based on calculation and current data.
+        $intro = $resource->intro;
+        if (strlen($intro) > 0) { // Add new line if an intro already exists.
+            $intro .= "<br>";
+        }
+        $intro .= $changelog_entry;
+
+        // Store the new intro with the changelog.
+        $DB->update_record('resource', (object)array(
+            'id' => $resource->id,
+            'intro' => $intro
+        ));
+
+        // Show the intro on the course page.
+        $DB->update_record('course_modules', (object)array(
+            'id' => $this->get_course_module()->id,
+            'showdescription' => 1
+        ));
+
+        // Delete the found predecessor to avoid reuse.
+        $mapping->delete_found_predecessor();
+
+        // Cache must be rebuild to render intro with changelog.
+        rebuild_course_cache($this->get_course_module()->course, true);
+
+        // Only the generated changelog (not the complete intro).
+        return $changelog_entry;
     }
 
     /**

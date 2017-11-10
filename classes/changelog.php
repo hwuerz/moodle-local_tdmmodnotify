@@ -48,11 +48,12 @@ class local_uploadnotification_changelog {
 
         $new_file = self::get_file($coursemodule->id);
         $new_data = self::get_data($coursemodule);
+        $new_files = array(new local_changeloglib_new_file_wrapper($new_file, $new_data));
         $context = self::get_context($coursemodule);
         $scope = self::get_scope($coursemodule);
         $further_candidates = self::get_pending_files($coursemodule);
 
-        return new local_changeloglib_update_detector($new_file, $new_data, $context, $scope, $further_candidates);
+        return new local_changeloglib_update_detector($new_files, $context, $scope, $further_candidates);
     }
 
     /**
@@ -137,9 +138,14 @@ class local_uploadnotification_changelog {
         ));
 
         // Get the file instances for pending candidates.
-        return array_map(function ($candidate) {
+        $pending_files = array_map(function ($candidate) {
             return self::get_file($candidate->id);
         }, $candidates_pending);
+
+        // The pending files can contain null values if no file was found. Filter these entries.
+        return array_filter($pending_files, function ($file) {
+            return $file instanceof stored_file;
+        });
     }
 
     /**
