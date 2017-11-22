@@ -43,6 +43,12 @@ if ($hassiteconfig) {
         new lang_string('settings_allow_mail_help', LOCAL_UPLOADNOTIFICATION_FULL_NAME),
         1));
 
+    $settings->add(new admin_setting_configtext(
+        LOCAL_UPLOADNOTIFICATION_FULL_NAME . '/required_mail_suffix',
+        new lang_string('settings_required_mail_suffix', LOCAL_UPLOADNOTIFICATION_FULL_NAME),
+        new lang_string('settings_required_mail_suffix_help', LOCAL_UPLOADNOTIFICATION_FULL_NAME),
+        '',  '/^.*$/'));
+
     $settings->add(new admin_setting_configtime(
         LOCAL_UPLOADNOTIFICATION_FULL_NAME . '/digest_hour',
         LOCAL_UPLOADNOTIFICATION_FULL_NAME . '/digest_minute',

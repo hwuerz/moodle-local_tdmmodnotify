@@ -69,6 +69,8 @@ $string['messageprovider:digest'] = 'Course modification digest notification';
 // Settings Admin.
 $string['settings_allow_mail'] = 'Allow notification mail delivery';
 $string['settings_allow_mail_help'] = 'If enabled, mails with notifications about new material can be send';
+$string['settings_required_mail_suffix'] = 'Required suffix of email addresses.';
+$string['settings_required_mail_suffix_help'] = 'Insert your institutional domain name to only allow addresses which end with it. Leave it blank to allow all provider.';
 $string['settings_digest'] = 'Time for digest delivery';
 $string['settings_digest_help'] = 'The time on each day when the notification digests should be send.';
 $string['settings_max_mail_filesize'] = 'Maximum filesize of mail attachments<br>(in KB)';
