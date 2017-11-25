@@ -27,6 +27,7 @@ defined('MOODLE_INTERNAL') || die;
 
 require_once(dirname(__FILE__) . '/definitions.php');
 require_once(dirname(__FILE__) . '/../changeloglib/classes/pdftotext.php');
+require_once(dirname(__FILE__) . '/../changeloglib/classes/diff_detector.php');
 
 if ($hassiteconfig) {
 
@@ -83,8 +84,15 @@ if ($hassiteconfig) {
 
     if (!local_changeloglib_pdftotext::is_installed()) {
         $settings->add(new admin_setting_heading(
+            LOCAL_UPLOADNOTIFICATION_FULL_NAME . '/pdftotext_not_available',
+            new lang_string('warning', LOCAL_UPLOADNOTIFICATION_FULL_NAME),
+            new lang_string('settings_pdftotext_not_available', LOCAL_UPLOADNOTIFICATION_FULL_NAME)));
+    }
+
+    if (!local_changeloglib_diff_detector::is_command_line_diff_installed()) {
+        $settings->add(new admin_setting_heading(
             LOCAL_UPLOADNOTIFICATION_FULL_NAME . '/diff_not_available',
-            "Warning",
+            new lang_string('warning', LOCAL_UPLOADNOTIFICATION_FULL_NAME),
             new lang_string('settings_diff_not_available', LOCAL_UPLOADNOTIFICATION_FULL_NAME)));
     }
 

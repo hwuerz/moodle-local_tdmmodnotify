@@ -90,7 +90,8 @@ class local_uploadnotification_changelog {
     public static function is_diff_allowed() {
         return get_config(LOCAL_UPLOADNOTIFICATION_FULL_NAME, 'allow_changelog')
             && get_config(LOCAL_UPLOADNOTIFICATION_FULL_NAME, 'max_diff_filesize') > 0
-            && local_changeloglib_pdftotext::is_installed();
+            && local_changeloglib_pdftotext::is_installed()
+            && local_changeloglib_diff_detector::is_command_line_diff_installed();
     }
 
     /**
