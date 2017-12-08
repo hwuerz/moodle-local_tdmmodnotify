@@ -29,6 +29,7 @@
       <FIELDS>
         <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
         <FIELD NAME="enable_mail" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="enable_digest" TYPE="int" LENGTH="1" NOTNULL="false" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="max_mail_filesize" TYPE="int" LENGTH="12" NOTNULL="false" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
