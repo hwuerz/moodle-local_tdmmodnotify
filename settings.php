@@ -59,6 +59,12 @@ if ($hassiteconfig) {
     ));
 
     $settings->add(new admin_setting_configtext(
+        LOCAL_UPLOADNOTIFICATION_FULL_NAME . '/max_mail_amount',
+        new lang_string('settings_max_mail_amount', LOCAL_UPLOADNOTIFICATION_FULL_NAME),
+        new lang_string('settings_max_mail_amount_help', LOCAL_UPLOADNOTIFICATION_FULL_NAME),
+        800, '/^[0-9]+$/'));
+
+    $settings->add(new admin_setting_configtext(
         LOCAL_UPLOADNOTIFICATION_FULL_NAME . '/max_mail_filesize',
         new lang_string('settings_max_mail_filesize', LOCAL_UPLOADNOTIFICATION_FULL_NAME),
         new lang_string('settings_max_mail_filesize_help', LOCAL_UPLOADNOTIFICATION_FULL_NAME),

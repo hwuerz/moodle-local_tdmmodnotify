@@ -275,6 +275,13 @@ class local_uploadnotification_update_handler {
         $course_context = context_course::instance($this->get_course_id());
         $enrolled_users = get_enrolled_users($course_context);
 
+        // Check whether this course is bigger than allowed.
+        // The admin can specify a maximum amount of mails which might be send based on one action.
+        $amount_of_users = count($enrolled_users);
+        if ($amount_of_users > get_config(LOCAL_UPLOADNOTIFICATION_FULL_NAME, 'max_mail_amount')) {
+            return;
+        }
+
         foreach ($enrolled_users as $enrolled_user) {
             // Delete entries for this user and file which are already stored in the database.
             // This is needed to avoid duplicated entries on file updates.
