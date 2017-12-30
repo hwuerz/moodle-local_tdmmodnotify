@@ -128,6 +128,10 @@ class local_uploadnotification_update_handler {
         if ($mapping->predecessor == null) { // No predecessor was found.
             return false;
         }
+        if (!$mapping->has_changed()) { // The file has not changed while updating (predecessor == successor).
+            $mapping->delete_found_predecessor();
+            return false;
+        }
         $predecessor = $mapping->predecessor->get_backup()->get_file();
 
         // Prepare the changelog entry. It will be extended in the following.
