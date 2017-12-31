@@ -52,7 +52,7 @@ if ($hassiteconfig) {
 
     $settings->add(new admin_setting_configtime(
         LOCAL_UPLOADNOTIFICATION_FULL_NAME . '/digest_hour',
-        LOCAL_UPLOADNOTIFICATION_FULL_NAME . '/digest_minute',
+        'digest_minute',
         new lang_string('settings_digest', LOCAL_UPLOADNOTIFICATION_FULL_NAME),
         new lang_string('settings_digest_help', LOCAL_UPLOADNOTIFICATION_FULL_NAME),
         array('h' => 18, 'm' => 0)
