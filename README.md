@@ -26,7 +26,7 @@ License
 Requirements
 ------------
 
-* Tested with Moodle 3.3+
+* Tested with Moodle 3.4+
 * Requires the plugin `local_changeloglib` [https://github.com/hwuerz/moodle-local_changeloglib](https://github.com/hwuerz/moodle-local_changeloglib)
 
 Installation
