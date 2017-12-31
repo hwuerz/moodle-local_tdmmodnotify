@@ -70,7 +70,7 @@ As a **moodle admin** follow these steps
 
 Now the feature is visible for teachers and students. As a general rule: A mail will only be send if someone (teacher or student) has requested the delivery and no one has forbidden it.
 
-<img src="https://user-images.githubusercontent.com/9339300/30982447-b9cf8c66-a487-11e7-9914-c118a0dd61fc.png" width="400">
+<img src="https://user-images.githubusercontent.com/9339300/34462757-116ddbaa-ee4b-11e7-8d95-e885799187ca.png" width="400">
 
 As a **teacher** follow these steps
 1. Go to your course -> Open the course menu (where you can access the settings, turn editing on, ...) -> Click on the link `Uploadnotification`
@@ -89,7 +89,7 @@ As a **student** follow these steps
    - `Enable notification mail delivery for material uploads` with the same options as teachers. `No preference` will only send mails if the course settings have enabled them. `Enable` sends always mails except a teacher has disabled the feature for a course. `Disable` will never allow the mail delivery to this student.
    - `Maximum filesize of mail attachments (in KB)` Insert a value greater zero to receive attachments up to this size. You can not request sizes which are greater than the limit of the moodle admin. The attachment will only be send if the teacher has not removed the check mark in his his course.
 
-<img src="https://user-images.githubusercontent.com/9339300/30982471-c7a63fba-a487-11e7-90b0-54e6a76b480e.png" width="400">
+<img src="https://user-images.githubusercontent.com/9339300/34462774-5caf4fcc-ee4b-11e7-9003-8e03d02e36a6.png" width="400">
 
 ###  Changelog generation
 The plugin can build a changelog for uploaded resources. It will include the timestamp of the update and the filename of the predecessor. At the moment only file resources are supported (no folders, pages, or others). For PDF documents, the plugin can detect the page number on which changes were performed. 
