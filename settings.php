@@ -27,6 +27,7 @@ defined('MOODLE_INTERNAL') || die;
 
 require_once(dirname(__FILE__) . '/definitions.php');
 require_once(dirname(__FILE__) . '/../changeloglib/classes/pdftotext.php');
+require_once(dirname(__FILE__) . '/../changeloglib/classes/diff_detector.php');
 
 if ($hassiteconfig) {
 
@@ -42,6 +43,26 @@ if ($hassiteconfig) {
         new lang_string('settings_allow_mail', LOCAL_UPLOADNOTIFICATION_FULL_NAME),
         new lang_string('settings_allow_mail_help', LOCAL_UPLOADNOTIFICATION_FULL_NAME),
         1));
+
+    $settings->add(new admin_setting_configtext(
+        LOCAL_UPLOADNOTIFICATION_FULL_NAME . '/required_mail_suffix',
+        new lang_string('settings_required_mail_suffix', LOCAL_UPLOADNOTIFICATION_FULL_NAME),
+        new lang_string('settings_required_mail_suffix_help', LOCAL_UPLOADNOTIFICATION_FULL_NAME),
+        '',  '/^.*$/'));
+
+    $settings->add(new admin_setting_configtime(
+        LOCAL_UPLOADNOTIFICATION_FULL_NAME . '/digest_hour',
+        'digest_minute',
+        new lang_string('settings_digest', LOCAL_UPLOADNOTIFICATION_FULL_NAME),
+        new lang_string('settings_digest_help', LOCAL_UPLOADNOTIFICATION_FULL_NAME),
+        array('h' => 18, 'm' => 0)
+    ));
+
+    $settings->add(new admin_setting_configtext(
+        LOCAL_UPLOADNOTIFICATION_FULL_NAME . '/max_mail_amount',
+        new lang_string('settings_max_mail_amount', LOCAL_UPLOADNOTIFICATION_FULL_NAME),
+        new lang_string('settings_max_mail_amount_help', LOCAL_UPLOADNOTIFICATION_FULL_NAME),
+        800, '/^[0-9]+$/'));
 
     $settings->add(new admin_setting_configtext(
         LOCAL_UPLOADNOTIFICATION_FULL_NAME . '/max_mail_filesize',
@@ -69,8 +90,15 @@ if ($hassiteconfig) {
 
     if (!local_changeloglib_pdftotext::is_installed()) {
         $settings->add(new admin_setting_heading(
+            LOCAL_UPLOADNOTIFICATION_FULL_NAME . '/pdftotext_not_available',
+            new lang_string('warning', LOCAL_UPLOADNOTIFICATION_FULL_NAME),
+            new lang_string('settings_pdftotext_not_available', LOCAL_UPLOADNOTIFICATION_FULL_NAME)));
+    }
+
+    if (!local_changeloglib_diff_detector::is_command_line_diff_installed()) {
+        $settings->add(new admin_setting_heading(
             LOCAL_UPLOADNOTIFICATION_FULL_NAME . '/diff_not_available',
-            "Warning",
+            new lang_string('warning', LOCAL_UPLOADNOTIFICATION_FULL_NAME),
             new lang_string('settings_diff_not_available', LOCAL_UPLOADNOTIFICATION_FULL_NAME)));
     }
 

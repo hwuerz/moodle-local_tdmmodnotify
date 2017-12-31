@@ -28,6 +28,7 @@ defined('MOODLE_INTERNAL') || die;
 require_once(dirname(__FILE__) . '/../definitions.php');
 require_once(dirname(__FILE__) . '/../lib.php');
 require_once(dirname(__FILE__) . '/models/course_settings_model.php');
+require_once(dirname(__FILE__) . '/models/user_settings_model.php');
 require_once(dirname(__FILE__) . '/changelog.php');
 require_once(dirname(__FILE__) . '/mailer.php');
 require_once(dirname(__FILE__) . '/recipient_iterator.php');
@@ -117,65 +118,77 @@ class local_uploadnotification_update_handler {
             $detector->set_ensure_mime_type(false);
             $detector->set_min_similarity(0);
         }
-        $predecessor = $detector->is_update();
-        if ($predecessor != false) { // A predecessor was found.
 
-            $changelog_entry = get_string('printed_changelog_prefix', LOCAL_UPLOADNOTIFICATION_FULL_NAME, (object)array(
-                'filename' => $predecessor->get_filename(),
-                'date' => date("m.d.Y H:i")
-            ));
+        // Perform the mapping.
+        $distribution = $detector->map_backups();
+        if (empty($distribution->mappings)) { // No mapping was performed.
+            return false;
+        }
+        $mapping = array_shift($distribution->mappings);
+        if ($mapping->predecessor == null) { // No predecessor was found.
+            return false;
+        }
+        if (!$mapping->has_changed()) { // The file has not changed while updating (predecessor == successor).
+            $mapping->delete_found_predecessor();
+            return false;
+        }
+        $predecessor = $mapping->predecessor->get_backup()->get_file();
 
-            $file = $detector->get_new_file();
-            $max_filesize_for_diff = get_config(LOCAL_UPLOADNOTIFICATION_FULL_NAME, 'max_diff_filesize');
-            if ($this->is_diff_enabled()
-                && $predecessor->get_filesize() <= $max_filesize_for_diff * 1024 * 1024
-                && $file->get_filesize() <= $max_filesize_for_diff * 1024 * 1024) {
+        // Prepare the changelog entry. It will be extended in the following.
+        $changelog_entry = get_string('printed_changelog_prefix', LOCAL_UPLOADNOTIFICATION_FULL_NAME, (object)array(
+            'filename' => $predecessor->get_filename(),
+            'date' => date("m.d.Y H:i")
+        ));
 
-                $diff = $this->generate_diff($predecessor, $file);
-                if ($diff !== false) { // After diff generation the predecessor was not rejected.
-                    $changelog_entry .= $diff;
-                } else if ($edit_dialog_used) { // There are too many changes for a diff, but this is a definit predecessor.
-                    $changelog_entry .= '<br>'
-                        . get_string('long_diff_many', LOCAL_UPLOADNOTIFICATION_FULL_NAME);
-                } else {  // There are too many changes and it is not a definit predecessor --> abort.
-                    return '';
-                }
+        // Perform diff detection if required and possible.
+        $file = $mapping->file_wrapper->get_file();
+        $max_filesize_for_diff = get_config(LOCAL_UPLOADNOTIFICATION_FULL_NAME, 'max_diff_filesize');
+        if ($this->is_diff_enabled()
+            && $predecessor->get_filesize() <= $max_filesize_for_diff * 1024 * 1024
+            && $file->get_filesize() <= $max_filesize_for_diff * 1024 * 1024) {
+
+            $diff = $this->generate_diff($predecessor, $file);
+            if ($diff !== false) { // After diff generation the predecessor was not rejected.
+                $changelog_entry .= $diff;
+            } else if ($edit_dialog_used) { // There are too many changes for a diff, but this is a definit predecessor.
+                $changelog_entry .= '<br>'
+                    . get_string('long_diff_many', LOCAL_UPLOADNOTIFICATION_FULL_NAME);
+            } else { // There are too many changes and it is not a definit predecessor --> abort.
+                return '';
             }
-
-            // Get the resource of this course module
-            // The check on top of this function ensures that the course module is a resource.
-            $resource = $DB->get_record('resource', array('id' => $this->get_course_module()->instance));
-
-            // Build new intro based on calculation and current data.
-            $intro = $resource->intro;
-            if (strlen($intro) > 0) { // Add new line if an intro already exists.
-                $intro .= "<br>";
-            }
-            $intro .= $changelog_entry;
-
-            // Store the new intro with the changelog.
-            $DB->update_record('resource', (object)array(
-                'id' => $resource->id,
-                'intro' => $intro
-            ));
-
-            // Show the intro on the course page.
-            $DB->update_record('course_modules', (object)array(
-                'id' => $this->get_course_module()->id,
-                'showdescription' => 1
-            ));
-
-            // Delete the found predecessor to avoid reuse.
-            $detector->delete_found_predecessor();
-
-            // Cache must be rebuild to render intro with changelog.
-            rebuild_course_cache($this->get_course_module()->course, true);
-
-            // Only the generated changelog (not the complete intro).
-            return $changelog_entry;
         }
 
-        return false;
+        // Get the resource of this course module
+        // The check on top of this function ensures that the course module is a resource.
+        $resource = $DB->get_record('resource', array('id' => $this->get_course_module()->instance));
+
+        // Build new intro based on calculation and current data.
+        $intro = $resource->intro;
+        if (strlen($intro) > 0) { // Add new line if an intro already exists.
+            $intro .= "<br>";
+        }
+        $intro .= $changelog_entry;
+
+        // Store the new intro with the changelog.
+        $DB->update_record('resource', (object)array(
+            'id' => $resource->id,
+            'intro' => $intro
+        ));
+
+        // Show the intro on the course page.
+        $DB->update_record('course_modules', (object)array(
+            'id' => $this->get_course_module()->id,
+            'showdescription' => 1
+        ));
+
+        // Delete the found predecessor to avoid reuse.
+        $mapping->delete_found_predecessor();
+
+        // Cache must be rebuild to render intro with changelog.
+        rebuild_course_cache($this->get_course_module()->course, true);
+
+        // Only the generated changelog (not the complete intro).
+        return $changelog_entry;
     }
 
     /**
@@ -266,6 +279,13 @@ class local_uploadnotification_update_handler {
         $course_context = context_course::instance($this->get_course_id());
         $enrolled_users = get_enrolled_users($course_context);
 
+        // Check whether this course is bigger than allowed.
+        // The admin can specify a maximum amount of mails which might be send based on one action.
+        $amount_of_users = count($enrolled_users);
+        if ($amount_of_users > get_config(LOCAL_UPLOADNOTIFICATION_FULL_NAME, 'max_mail_amount')) {
+            return;
+        }
+
         foreach ($enrolled_users as $enrolled_user) {
             // Delete entries for this user and file which are already stored in the database.
             // This is needed to avoid duplicated entries on file updates.
@@ -278,7 +298,7 @@ class local_uploadnotification_update_handler {
                 'courseid' => $this->get_course_id(),
                 'coursemoduleid' => $this->get_course_module_id(),
                 'userid' => $enrolled_user->id,
-                'timestamp' => $this->get_notification_timestamp()
+                'timestamp' => $this->get_notification_timestamp($enrolled_user->id)
             ));
         }
     }
@@ -290,10 +310,13 @@ class local_uploadnotification_update_handler {
      *      A docent can define a date when the material becomes available for students.
      *      Do not evaluate (= send) the notification before this date
      *      If the dates becomes modified, an update event will be send and the record will be changed.
+     * @param int $user_id The user for whom the notification should be scheduled.
      * @return int The timestamp when the notification should be delivered earliest.
      */
-    private function get_notification_timestamp() {
+    private function get_notification_timestamp($user_id) {
         $timestamp = time();
+
+        // Check availability API.
         $availability = json_decode($this->get_course_module()->availability);
         if (!is_null($availability) && !is_null($availability->c)) { // This resource has visibility conditions.
             $conditions = $availability->c;
@@ -304,6 +327,28 @@ class local_uploadnotification_update_handler {
                 }
             }
         }
+
+        // Check digest preferences.
+        $user_settings = new local_uploadnotification_user_settings_model($user_id);
+        if ($user_settings->is_digest_enabled()) {
+            $begin_of_day = strtotime("midnight", $timestamp);
+
+            // Fetch admin preferences for digest delivery.
+            $digest_hour = get_config(LOCAL_UPLOADNOTIFICATION_FULL_NAME, 'digest_hour');
+            $digest_minute = get_config(LOCAL_UPLOADNOTIFICATION_FULL_NAME, 'digest_minute');
+            if ($digest_hour === false || $digest_minute === false) { // There are no preferences (should never happen).
+                $digest_hour = 18;
+                $digest_minute = 0;
+            }
+
+            // Calculate delivery day.
+            $digest_time = $begin_of_day + $digest_hour * 60 * 60 + $digest_minute;
+            if ($digest_time < $timestamp) { // It is already after the sending time --> mail will be send tomorrow.
+                $digest_time = $digest_time + 24 * 60 * 60; // Next day.
+            }
+            $timestamp = $digest_time;
+        }
+
         return $timestamp;
     }
 

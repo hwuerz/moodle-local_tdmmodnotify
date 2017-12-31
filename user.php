@@ -54,6 +54,7 @@ $settings = new local_uploadnotification_user_settings_model($USER->id);
 $user_form = new local_uploadnotification_user_form(null, array(
     'id' => $USER->id,
     'enable_mail' => $settings->is_mail_enabled(),
+    'enable_digest' => $settings->is_digest_enabled(),
     'max_mail_filesize' => $settings->get_max_filesize()));
 
 // Evaluate form data.
@@ -61,6 +62,9 @@ $data = $user_form->get_data();
 if ($data) {
     if (isset($data->enable_mail)) {
         $settings->set_mail_enabled($data->enable_mail);
+    }
+    if (isset($data->enable_digest)) {
+        $settings->set_digest_enabled($data->enable_digest);
     }
     if (isset($data->max_mail_filesize)) { // Admin might have disabled the feature --> form element not rendered.
         $settings->set_max_filesize($data->max_mail_filesize);

@@ -42,6 +42,7 @@ class local_uploadnotification_user_settings_model extends local_uploadnotificat
     private $attributes = array(
         'userid' => -1,
         'enable_mail' => -1,
+        'enable_digest' => 0,
         'max_mail_filesize' => 0
     );
 
@@ -89,6 +90,24 @@ class local_uploadnotification_user_settings_model extends local_uploadnotificat
      */
     public function set_mail_enabled($preference) {
         $this->set_preference('enable_mail', $preference);
+    }
+
+    /**
+     * Checks whether the user wants to receive email notifications in a digest.
+     * @return int 0 for 'disabled', 1 for 'activated'.
+     */
+    public function is_digest_enabled() {
+        return $this->get('enable_digest');
+    }
+
+    /**
+     * Stores the new preference.
+     * Does not update the database until save id called
+     * @param int $preference The new preference. Must be 0 or 1.
+     * @throws InvalidArgumentException If the preference is invalid.
+     */
+    public function set_digest_enabled($preference) {
+        $this->set_binary('enable_digest', $preference);
     }
 
     /**

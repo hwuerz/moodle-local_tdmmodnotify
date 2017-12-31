@@ -67,8 +67,15 @@ $string['messageprovider:digest'] = 'Course modification digest notification';
 
 
 // Settings Admin.
+$string['warning'] = 'Warning';
 $string['settings_allow_mail'] = 'Allow notification mail delivery';
 $string['settings_allow_mail_help'] = 'If enabled, mails with notifications about new material can be send';
+$string['settings_required_mail_suffix'] = 'Required suffix of email addresses.';
+$string['settings_required_mail_suffix_help'] = 'Insert your institutional domain name to only allow addresses which end with it. Leave it blank to allow all provider.';
+$string['settings_digest'] = 'Time for digest delivery';
+$string['settings_digest_help'] = 'The time on each day when the notification digests should be send.';
+$string['settings_max_mail_amount'] = 'Maximum course size for notifications';
+$string['settings_max_mail_amount_help'] = 'Adjust this value to avoid to much load at one time. Defines the size of the course up to which mails are delivered.';
 $string['settings_max_mail_filesize'] = 'Maximum filesize of mail attachments<br>(in KB)';
 $string['settings_max_mail_filesize_help'] = 'The maximum material filesize which is allowed to be send in a mail attachments<br>Set to zero to disable attachments.';
 $string['settings_max_mails_for_resource'] = 'Maximum amount of mails with the same attachment';
@@ -81,7 +88,8 @@ $string['settings_enable_changelog_by_default'] = 'Enable the changelog by defau
 $string['settings_enable_changelog_by_default_help'] = 'If set, the changelog will be activated in courses which have no custom settings. If a teacher does not want this, he has to disable it manually.';
 $string['settings_enable_diff_by_default'] = 'Enable the diff detection by default';
 $string['settings_enable_diff_by_default_help'] = 'If set, the diff detection will be activated in courses which have no custom settings. If a teacher does not want this, he has to disable it manually.';
-$string['settings_diff_not_available'] = '<p>The detection for changes in PDF files is not available because the package <code>poppler-utils</code> is not installed on your system. If you have enabled the setting above, ask your server admin to run <code>apt-get install poppler-utils</code> and visit this page again. This message disappears if the tool is installed correctly.</p>';
+$string['settings_pdftotext_not_available'] = '<p>The detection for changes in PDF files is not available because the tool <code>pdftotext</code> could not be found on your system. If you have enabled the setting above, have a look in the admin settings of the local Plugin ChangelogLib to specify the correct path. This message disappears if the tool could be found.</p>';
+$string['settings_diff_not_available'] = '<p>The detection for changes in PDF files is not available because the tool <code>diff</code> could not be found on your system. If you have enabled the setting above, have a look in the admin settings of the local Plugin ChangelogLib to specify the correct path. This message disappears if the tool could be found.</p>';
 
 // Settings Course.
 $string['settings_course_link'] = 'Uploadnotification';
@@ -107,6 +115,8 @@ $string['settings_user_enable'] = 'Enable';
 $string['settings_user_headline'] = 'Do you want to receive notifications when new material was uploaded to a course?';
 $string['settings_user_enable_mail'] = 'Enable notification mail delivery for material uploads';
 $string['settings_user_enable_mail_help'] = 'No preference: You will only receive emails if a teacher has enabled it explicit for his course<br>Disabled: No mails will be delivered for material changes<br>Enabled: You will receive mails for material changes, expect a teacher has forbidden the delivery explicit';
+$string['settings_user_enable_digest'] = 'Only send digest of the day';
+$string['settings_user_enable_digest_help'] = 'Enabled: You will only receive one mail in the evening with all changes on this day<br>Disabled: You will receive a mail as soon as possible after uploads';
 $string['settings_user_max_mail_filesize'] = 'Maximum filesize of mail attachments<br>(in KB)';
 $string['settings_user_max_mail_filesize_help'] = 'You can receive new or updated material directly via email. This defines the maximum material filesize which is allowed to be send in a mail attachments<br>Set to zero to disable attachments.';
 $string['settings_user_max_mail_filesize_not_more_than_admin'] = 'The moodle admin only allows attachments up to {$a}KB';

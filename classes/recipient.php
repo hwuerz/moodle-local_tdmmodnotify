@@ -124,6 +124,20 @@ class local_uploadnotification_recipient extends local_uploadnotification_model 
     }
 
     /**
+     * Checks whether string ends with test.
+     * Taken from https://stackoverflow.com/a/619725
+     * @param string $string The full string in which the search shoud be performed.
+     * @param string $test The required suffix of the string.
+     * @return bool Whether test is a suffix of string.
+     */
+    private function endswith($string, $test) {
+        $strlen = strlen($string);
+        $testlen = strlen($test);
+        if ($testlen > $strlen) return false;
+        return substr_compare($string, $test, $strlen - $testlen, $testlen) === 0;
+    }
+
+    /**
      * Build the notification content.
      * @param stdClass $substitutions The string substitions to be passed to the location API when generating the
      *                                content. If this recipient object will have contain notifications, this object
@@ -140,6 +154,16 @@ class local_uploadnotification_recipient extends local_uploadnotification_model 
         // Whether the user has requested mails.
         $user_settings = new local_uploadnotification_user_settings_model($this->userid);
         if ($user_settings->is_mail_enabled() == 0) {
+            return array();
+        }
+
+        // Check whether the email domain is allowed.
+        if (empty($this->user->email)) { // The mail address must be available.
+            return array();
+        }
+        $address = $this->user->email;
+        $required_suffix = get_config(LOCAL_UPLOADNOTIFICATION_FULL_NAME, 'required_mail_suffix');
+        if (!$this->endswith($address, $required_suffix)) { // The address must end with the required domain name.
             return array();
         }
 

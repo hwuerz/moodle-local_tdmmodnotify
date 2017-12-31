@@ -71,6 +71,14 @@ class local_uploadnotification_user_form extends moodleform {
             ));
         }
 
+        // Whether mails should be send all together or as soon as possible.
+        if ($admin_allow_mail) {
+            $this->add_setting('select', 'enable_digest', array(
+                '0' => get_string(self::STRING_PREFIX . 'disable', LOCAL_UPLOADNOTIFICATION_FULL_NAME),
+                '1' => get_string(self::STRING_PREFIX . 'enable', LOCAL_UPLOADNOTIFICATION_FULL_NAME)
+            ));
+        }
+
         // Whether attachments should be send.
         if ($admin_allow_mail && $admin_allow_attachment) {
             $this->add_setting('text', 'max_mail_filesize');

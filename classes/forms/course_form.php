@@ -63,6 +63,13 @@ class local_uploadnotification_course_form extends moodleform {
         $admin_allow_changelog = get_config(LOCAL_UPLOADNOTIFICATION_FULL_NAME, 'allow_changelog');
         $admin_allow_diff = get_config(LOCAL_UPLOADNOTIFICATION_FULL_NAME, 'max_diff_filesize') > 0;
 
+        // Check whether this course is too big for notification delivery.
+        $course_context = context_course::instance($this->_customdata['id']);
+        $amount_of_users = count_enrolled_users($course_context);
+        if ($amount_of_users > get_config(LOCAL_UPLOADNOTIFICATION_FULL_NAME, 'max_mail_amount')) {
+            $admin_allow_mail = false;
+        }
+
         // Whether mails should be delivered.
         if ($admin_allow_mail) {
             $this->add_setting('select', 'enable_mail', array(

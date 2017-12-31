@@ -40,5 +40,20 @@ function xmldb_local_uploadnotification_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2017081400, 'local', 'uploadnotification');
     }
 
+    if ($oldversion < 2017102200) {
+
+        // Define field enable_digest to be added to local_uploadnotification_usr.
+        $table = new xmldb_table('local_uploadnotification_usr');
+        $field = new xmldb_field('enable_digest', XMLDB_TYPE_INTEGER, '1', null, null, null, '0', 'enable_mail');
+
+        // Conditionally launch add field enable_digest.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Uploadnotification savepoint reached.
+        upgrade_plugin_savepoint(true, 2017102200, 'local', 'uploadnotification');
+    }
+
     return true;
 }
