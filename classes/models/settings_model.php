@@ -205,23 +205,37 @@ abstract class local_uploadnotification_settings_model {
     public function save() {
         global $DB;
 
-        $settings = (array) $this->settings;
+        $id = $this->settings->{$this->get_id_attribute()};
 
-        $sql = "REPLACE INTO {".$this->get_table_name()."} ("
-            . implode(', ', array_keys($settings)) // All attributes.
-            . ") VALUES ("
-            . implode(', ', $this->get_questionmark_foreach_setting())
-            . ")";
-        $DB->execute($sql, $settings);
+        // Check whether this setting has already a row in the database.
+        $db_entry_exist = $DB->record_exists($this->get_table_name(),
+            array($this->get_id_attribute() => $id));
+
+        if ($db_entry_exist) { // Update the existing entry if it exists.
+            $settings_array = (array) $this->settings;
+            $sql = "UPDATE {".$this->get_table_name()."} SET "
+                . implode(', ', $this->get_set_string_foreach_setting($settings_array))
+                . " WHERE "
+                . $this->get_id_attribute() . "=?";
+            // Add the primary key (id) to the end of the settings array for where clause.
+            $settings_array[] = $id;
+            // Hint: $DB->update_record() can not be used because the primary key can be named other than 'id'.
+            $DB->execute($sql, $settings_array);
+
+        } else { // Crate a new settings entry.
+            $DB->insert_record($this->get_table_name(), (object)$this->settings, false);
+        }
     }
 
     /**
-     * Set a '?' for each settings attribute.
-     * @return array of '?' strings. Size is equal to the amount of attributes.
+     * Generates an array of strings to update the passed settings array via SQL.
+     * The values are escaped with '?' and should be passed as a parameter in the execute.
+     * @return array with of all settings attribute names followed by '=?'.
+     *         Example: ['userid=?', 'enable_mail=?', 'enable_digest=?', 'max_mail_filesize=?'].
      */
-    private function get_questionmark_foreach_setting() {
+    private function get_set_string_foreach_setting($settings_array) {
         return array_map(function($a) {
-            return '?';
-        }, (array) $this->settings);
+            return $a . '=?';
+        }, array_keys($settings_array));
     }
 }
