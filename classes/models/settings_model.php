@@ -205,23 +205,56 @@ abstract class local_uploadnotification_settings_model {
     public function save() {
         global $DB;
 
-        $settings = (array) $this->settings;
+        $id = $this->settings->{$this->get_id_attribute()};
 
-        $sql = "REPLACE INTO {".$this->get_table_name()."} ("
-            . implode(', ', array_keys($settings)) // All attributes.
-            . ") VALUES ("
-            . implode(', ', $this->get_questionmark_foreach_setting())
-            . ")";
-        $DB->execute($sql, $settings);
+        // Check whether this setting has already a row in the database.
+        $db_entry_exist = $DB->record_exists($this->get_table_name(),
+            array($this->get_id_attribute() => $id));
+
+        $settings_array = (array) $this->settings;
+        $sql = '';
+
+        if ($db_entry_exist) { // Update the existing entry if it exists.
+            $sql = "UPDATE {".$this->get_table_name()."} SET "
+                . implode(', ', $this->get_string_foreach_setting($settings_array))
+                . " WHERE "
+                . $this->get_id_attribute() . "=?";
+            // Add the primary key (id) to the end of the settings array for where clause.
+            $settings_array[] = $id;
+
+        } else { // Crate a new settings entry.
+            $sql = "INSERT INTO {".$this->get_table_name()."} ("
+                . implode(', ', array_keys($settings_array)) // All attributes.
+                . ") VALUES ("
+                . implode(', ', $this->get_questionmark_foreach_setting($settings_array))
+                . ")";
+        }
+
+        // Hint: The default moodle DB access functions can not be used because the primary key can be named other than 'id'.
+        $DB->execute($sql, $settings_array);
+    }
+
+    /**
+     * Generates an array of strings to update the passed settings array via SQL.
+     * The values are escaped with '?' and should be passed as a parameter in the execute.
+     * @param array $settings_array array The array containing all settings in a definit order.
+     * @return array with all settings attribute names followed by '=?'.
+     *         Example: ['userid=?', 'enable_mail=?', 'enable_digest=?', 'max_mail_filesize=?'].
+     */
+    private function get_string_foreach_setting($settings_array) {
+        return array_map(function($a) {
+            return $a . '=?';
+        }, array_keys($settings_array));
     }
 
     /**
      * Set a '?' for each settings attribute.
+     * @param array $settings_array The array containing all settings in a definit order.
      * @return array of '?' strings. Size is equal to the amount of attributes.
      */
-    private function get_questionmark_foreach_setting() {
+    private function get_questionmark_foreach_setting($settings_array) {
         return array_map(function($a) {
             return '?';
-        }, (array) $this->settings);
+        }, $settings_array);
     }
 }
