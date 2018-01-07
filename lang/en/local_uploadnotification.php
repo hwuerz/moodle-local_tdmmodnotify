@@ -54,7 +54,7 @@ The following activities resources have changed in courses you\'re enrolled in.
 {$a->signoff}<br><br>
 
 You are receiving this mail because you or a teacher has requested this information. You can edit your preferences under your <a href="{$a->user_settings}">preferences</a>.';
-$string['templateresource'] = '* "{$a->filename}" in "{$a->coursefullname}" ({$a->url_course}) was {$a->action}: {$a->url_file} ';
+$string['templateresource'] = '* "{$a->filename}" in "{$a->coursefullname}" ({$a->url_course}) was {$a->action}: {$a->url_file}';
 $string['templateresource_html'] = '<li><a href="{$a->url_file}">{$a->filename}</a> in <a href="{$a->url_course}">{$a->coursefullname}</a> was {$a->action}</li>';
 $string['actioncreated'] = 'created';
 $string['actionupdated'] = 'updated';
@@ -65,6 +65,8 @@ $string['uploadnotification:receivedigest'] = 'Receive course modification diges
 // Message providers.
 $string['messageprovider:digest'] = 'Course modification digest notification';
 
+// Settings general.
+$string['settings_saved_successfully'] = 'Your settings have been saved.';
 
 // Settings Admin.
 $string['warning'] = 'Warning';
@@ -92,6 +94,8 @@ $string['settings_pdftotext_not_available'] = '<p>The detection for changes in P
 $string['settings_diff_not_available'] = '<p>The detection for changes in PDF files is not available because the tool <code>diff</code> could not be found on your system. If you have enabled the setting above, have a look in the admin settings of the local Plugin ChangelogLib to specify the correct path. This message disappears if the tool could be found.</p>';
 
 // Settings Course.
+$string['settings_course_require_valid_course_id'] = 'This feature is only available for valid course IDs.';
+$string['settings_course_require_valid_course_admin'] = 'This feature is only available for course admins.';
 $string['settings_course_link'] = 'Uploadnotification';
 $string['settings_course_no_preferences'] = 'No preferences';
 $string['settings_course_disable'] = 'Disable';
@@ -108,6 +112,7 @@ $string['settings_course_enable_diff_help'] = 'If set, an automatic analyse will
 $string['settings_course_error_diff_no_changelog'] = 'The diff detection requires the changelog functionality. Please enable the changelog or disable the diff detection.';
 
 // Settings User.
+$string['settings_user_require_valid_users'] = 'This feature is only available for valid users.';
 $string['settings_user_link'] = 'Uploadnotification';
 $string['settings_user_no_preferences'] = 'No preferences';
 $string['settings_user_disable'] = 'Disable';
@@ -123,7 +128,7 @@ $string['settings_user_max_mail_filesize_not_more_than_admin'] = 'The moodle adm
 $string['settings_user_not_negative'] = 'Negative values are not allowed';
 
 // Changelog.
-$string['printed_changelog_prefix'] = 'This file is an update of {$a->filename} from {$a->date}. ';
+$string['printed_changelog_prefix'] = 'This file is an update of {$a->filename} from {$a->date}.';
 $string['long_diff'] = 'In this file {$a} pages were changed.';
 $string['long_diff_many'] = 'In this file many pages were changed.';
-$string['printed_diff_prefix'] = 'The following pages of this file were changed: ';
+$string['printed_diff_prefix'] = 'The following pages of this file were changed:';

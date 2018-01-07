@@ -33,25 +33,36 @@ require_once(dirname(__FILE__) . '/classes/models/course_settings_model.php');
 // Globals.
 global $DB, $CFG, $OUTPUT, $USER, $SITE, $PAGE;
 
+require_login();
+
+$homeurl = new moodle_url('/');
 $course_id = required_param('id', PARAM_INT);
-$course = $DB->get_record('course', array('id' => $course_id), '*', MUST_EXIST);
+try {
+    $course = $DB->get_record('course', array('id' => $course_id), '*', MUST_EXIST);
+} catch (dml_exception $e) {
+    redirect($homeurl,
+        get_string('settings_course_require_valid_course_id', LOCAL_UPLOADNOTIFICATION_FULL_NAME),
+        5);
+}
 require_login($course, true);
 
 $PAGE->set_url("/mod/" . LOCAL_UPLOADNOTIFICATION_NAME . "/course.php", array('id' => $course_id));
 $PAGE->set_title('Uploadnotification Settings');
 $PAGE->set_heading('Uploadnotification Settings');
 
-$homeurl = new moodle_url('/');
-require_login();
 
 // Only add settings item on non-site course pages.
 if ($course_id == 1) {
-    redirect($homeurl, "This feature is only available for valid course ids.", 5);
+    redirect($homeurl,
+        get_string('settings_course_require_valid_course_id', LOCAL_UPLOADNOTIFICATION_FULL_NAME),
+        5);
 }
 
 // Only let users with the appropriate capability see this settings item.
 if (!has_capability('moodle/backup:backupcourse', context_course::instance($course_id))) {
-    redirect($homeurl, "This feature is only available for course admins.", 5);
+    redirect($homeurl,
+        get_string('settings_course_require_valid_course_admin', LOCAL_UPLOADNOTIFICATION_FULL_NAME),
+        5);
 }
 
 echo $OUTPUT->header();
@@ -75,6 +86,7 @@ if ($data) {
     $settings->set_changelog_enabled($data->enable_changelog);
     $settings->set_diff_enabled($data->enable_diff);
     $settings->save();
+    \core\notification::success(get_string('settings_saved_successfully', LOCAL_UPLOADNOTIFICATION_FULL_NAME));
 }
 
 $course_form->display();

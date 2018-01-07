@@ -133,7 +133,9 @@ class local_uploadnotification_recipient extends local_uploadnotification_model 
     private function endswith($string, $test) {
         $strlen = strlen($string);
         $testlen = strlen($test);
-        if ($testlen > $strlen) return false;
+        if ($testlen > $strlen) {
+            return false;
+        }
         return substr_compare($string, $test, $strlen - $testlen, $testlen) === 0;
     }
 
