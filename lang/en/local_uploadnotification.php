@@ -54,7 +54,7 @@ The following activities resources have changed in courses you\'re enrolled in.
 {$a->signoff}<br><br>
 
 You are receiving this mail because you or a teacher has requested this information. You can edit your preferences under your <a href="{$a->user_settings}">preferences</a>.';
-$string['templateresource'] = '* "{$a->filename}" in "{$a->coursefullname}" ({$a->url_course}) was {$a->action}: {$a->url_file} ';
+$string['templateresource'] = '* "{$a->filename}" in "{$a->coursefullname}" ({$a->url_course}) was {$a->action}: {$a->url_file}';
 $string['templateresource_html'] = '<li><a href="{$a->url_file}">{$a->filename}</a> in <a href="{$a->url_course}">{$a->coursefullname}</a> was {$a->action}</li>';
 $string['actioncreated'] = 'created';
 $string['actionupdated'] = 'updated';
@@ -128,7 +128,7 @@ $string['settings_user_max_mail_filesize_not_more_than_admin'] = 'The moodle adm
 $string['settings_user_not_negative'] = 'Negative values are not allowed';
 
 // Changelog.
-$string['printed_changelog_prefix'] = 'This file is an update of {$a->filename} from {$a->date}. ';
+$string['printed_changelog_prefix'] = 'This file is an update of {$a->filename} from {$a->date}.';
 $string['long_diff'] = 'In this file {$a} pages were changed.';
 $string['long_diff_many'] = 'In this file many pages were changed.';
-$string['printed_diff_prefix'] = 'The following pages of this file were changed: ';
+$string['printed_diff_prefix'] = 'The following pages of this file were changed:';

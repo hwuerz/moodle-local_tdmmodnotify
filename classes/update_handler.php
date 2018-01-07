@@ -137,7 +137,7 @@ class local_uploadnotification_update_handler {
         // Prepare the changelog entry. It will be extended in the following.
         $changelog_entry = get_string('printed_changelog_prefix', LOCAL_UPLOADNOTIFICATION_FULL_NAME, (object)array(
             'filename' => $predecessor->get_filename(),
-            'date' => date("m.d.Y H:i")
+            'date' => date("Y-m-d H:i")
         ));
 
         // Perform diff detection if required and possible.
@@ -224,6 +224,7 @@ class local_uploadnotification_update_handler {
                 } else {
                     $diff_output .= '<br>'
                         . get_string('printed_diff_prefix', LOCAL_UPLOADNOTIFICATION_FULL_NAME)
+                        . ' '
                         . $diff;
                 }
             } else {
