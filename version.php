@@ -35,11 +35,11 @@ $plugin->dependencies = array(
 );
 
 $plugin->release = '0.2.3';
-$plugin->maturity = MATURITY_ALPHA;
+$plugin->maturity = MATURITY_STABLE;
 
 // Directly send mails.
 $plugin->cron = 1;
 
 // Version format:  YYYYMMDDXX.
-$plugin->version = 2018010701;
+$plugin->version = 2018010702;
 $plugin->requires = 2017051500;
