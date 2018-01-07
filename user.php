@@ -33,17 +33,20 @@ require_once(dirname(__FILE__) . '/classes/models/user_settings_model.php');
 // Globals.
 global $DB, $CFG, $OUTPUT, $USER, $SITE, $PAGE;
 
+$homeurl = new moodle_url('/');
+require_login();
+if (isguestuser($USER)) {
+    redirect($homeurl, get_string('settings_user_require_valid_users', LOCAL_UPLOADNOTIFICATION_FULL_NAME), 5);
+}
+
 $PAGE->set_context(context_user::instance($USER->id));
 $PAGE->set_url("/mod/".LOCAL_UPLOADNOTIFICATION_NAME."/user.php");
-$PAGE->set_title('Uploadnotification Settings');
-$PAGE->set_heading('Uploadnotification Settings');
-
-$homeurl = new moodle_url('/');
+$PAGE->set_title(get_string('heading', LOCAL_UPLOADNOTIFICATION_FULL_NAME));
+$PAGE->set_heading(get_string('heading', LOCAL_UPLOADNOTIFICATION_FULL_NAME));
 
 // Only add settings item on non-site course pages.
-require_login();
 if (!$USER->id) {
-    redirect($homeurl, "This feature is only available for valid users.", 5);
+    redirect($homeurl, get_string('settings_user_require_valid_users', LOCAL_UPLOADNOTIFICATION_FULL_NAME), 5);
 }
 
 echo $OUTPUT->header();
@@ -70,6 +73,7 @@ if ($data) {
         $settings->set_max_filesize($data->max_mail_filesize);
     }
     $settings->save();
+    \core\notification::success(get_string('settings_saved_successfully', LOCAL_UPLOADNOTIFICATION_FULL_NAME));
 }
 
 $user_form->display();

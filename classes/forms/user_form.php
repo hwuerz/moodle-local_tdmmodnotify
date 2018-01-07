@@ -85,7 +85,7 @@ class local_uploadnotification_user_form extends moodleform {
             $mform->setType('max_mail_filesize', PARAM_INT);
         }
 
-        $this->add_action_buttons();
+        $this->add_action_buttons(false);
     }
 
     /**

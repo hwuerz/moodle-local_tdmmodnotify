@@ -94,7 +94,7 @@ class local_uploadnotification_course_form extends moodleform {
             $this->add_setting('checkbox', 'enable_diff');
         }
 
-        $this->add_action_buttons();
+        $this->add_action_buttons(false);
     }
 
     /**
