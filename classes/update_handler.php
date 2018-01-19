@@ -89,6 +89,30 @@ class local_uploadnotification_update_handler {
     }
 
     /**
+     * Checks whether this update has changed the used file in the course module.
+     * @return bool True if the file was changed, false if this update only changed some meta data.
+     */
+    private function is_file_changed() {
+
+        // Get the current file of the course module.
+        $coursemodule_id = $this->get_course_module()->id;
+        $context = context_module::instance($coursemodule_id);
+        $fs = get_file_storage();
+        $area_files = $fs->get_area_files(
+            $context->id,
+            'mod_resource',
+            'content',
+            0,
+            'sortorder DESC, id ASC',
+            false);
+        $file = array_shift($area_files); // Get only the first file.
+
+        // The file was changed if this event was created maximum five seconds after the last modification of the current file.
+        // Add the delta of five seconds to handle slow servers.
+        return $this->event->timecreated - 5 < $file->get_timemodified();
+    }
+
+    /**
      * Checks whether the changelog is enabled.
      * @return bool Whether changelog generation is enabled in this course or not.
      */
@@ -263,6 +287,11 @@ class local_uploadnotification_update_handler {
 
         // Check course settings. -1 and 1 are handled as true, zero as false.
         if (!$this->get_course_settings()->is_mail_enabled()) {
+            return false;
+        }
+
+        // Only send notification for changed files (not for updates in meta data).
+        if (!$this->is_file_changed()) {
             return false;
         }
 
