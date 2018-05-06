@@ -41,5 +41,5 @@ $plugin->maturity = MATURITY_STABLE;
 $plugin->cron = 1;
 
 // Version format:  YYYYMMDDXX.
-$plugin->version = 2018010702;
+$plugin->version = 2018050600;
 $plugin->requires = 2017051500;

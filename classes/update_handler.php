@@ -372,7 +372,7 @@ class local_uploadnotification_update_handler {
             }
 
             // Calculate delivery day.
-            $digest_time = $begin_of_day + $digest_hour * 60 * 60 + $digest_minute;
+            $digest_time = $begin_of_day + $digest_hour * 60 * 60 + $digest_minute * 60;
             if ($digest_time < $timestamp) { // It is already after the sending time --> mail will be send tomorrow.
                 $digest_time = $digest_time + 24 * 60 * 60; // Next day.
             }
