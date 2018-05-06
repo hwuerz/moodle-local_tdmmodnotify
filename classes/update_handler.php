@@ -89,6 +89,30 @@ class local_uploadnotification_update_handler {
     }
 
     /**
+     * Checks whether this update has changed the used file in the course module.
+     * @return bool True if the file was changed, false if this update only changed some meta data.
+     */
+    private function is_file_changed() {
+
+        // Get the current file of the course module.
+        $coursemodule_id = $this->get_course_module()->id;
+        $context = context_module::instance($coursemodule_id);
+        $fs = get_file_storage();
+        $area_files = $fs->get_area_files(
+            $context->id,
+            'mod_resource',
+            'content',
+            0,
+            'sortorder DESC, id ASC',
+            false);
+        $file = array_shift($area_files); // Get only the first file.
+
+        // The file was changed if this event was created maximum five seconds after the last modification of the current file.
+        // Add the delta of five seconds to handle slow servers.
+        return $this->event->timecreated - 5 < $file->get_timemodified();
+    }
+
+    /**
      * Checks whether the changelog is enabled.
      * @return bool Whether changelog generation is enabled in this course or not.
      */
@@ -266,6 +290,11 @@ class local_uploadnotification_update_handler {
             return false;
         }
 
+        // Only send notification for changed files (not for updates in meta data).
+        if (!$this->is_file_changed()) {
+            return false;
+        }
+
         // Everything is ok --> Notifications can be scheduled.
         return true;
     }
@@ -343,7 +372,7 @@ class local_uploadnotification_update_handler {
             }
 
             // Calculate delivery day.
-            $digest_time = $begin_of_day + $digest_hour * 60 * 60 + $digest_minute;
+            $digest_time = $begin_of_day + $digest_hour * 60 * 60 + $digest_minute * 60;
             if ($digest_time < $timestamp) { // It is already after the sending time --> mail will be send tomorrow.
                 $digest_time = $digest_time + 24 * 60 * 60; // Next day.
             }
